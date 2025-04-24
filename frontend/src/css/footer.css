@@ -55,10 +55,11 @@
 .footer-col h4::before {
   content: '';
   position: absolute;
+  left: 0;
   bottom: -10px;
   background-color: var(--white);
   height: 2px;
-  width: 80px;
+  width: 50px;
 }
 
 .footer-col ul {
