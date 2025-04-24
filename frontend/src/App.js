@@ -17,6 +17,7 @@ import Home from './pages/Home';
 import Signup from './pages/Signup';
 import CourseForm from './pages/courses/AddCourseForm'; // Added import for CourseForm
 import AllCourses from './pages/courses/AllCourses';
+import Login from './pages/Login';
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/add-course" element={<CourseForm />} /> {/* New route for CourseForm */}
           <Route path="/courses" element={<AllCourses />} />
+          <Route path="/Signup" element={<Signup />} />
+          <Route path="/Login" element={<Login />} />
         </Routes>
       </Router>
     //</AuthProvider>
