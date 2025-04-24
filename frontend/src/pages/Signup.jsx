@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import '../css/signup.css';
 import Header from './Header';
 import Footer from './Footer';
-//import googleIcon from './google-icon.png'; 
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ const SignUp = () => {
     password: '',
     confirmPassword: ''
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,22 +26,35 @@ const SignUp = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validate form data
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords don't match!");
       return;
     }
-    // Process form submission
-    console.log('Form submitted:', formData);
-    // Add your API call or other logic here
-  };
 
-//   const handleGoogleSignUp = () => {
-//     // Implement Google authentication logic
-//     console.log('Sign up with Google clicked');
-//   };
+    try {
+      const response = await axios.post('http://localhost:8000/api/auth/signup', {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        username: formData.username,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        address: formData.address,
+        password: formData.password
+      });
+      console.log('Signup successful:', response.data);
+      navigate('/login');
+    } catch (error) {
+      console.error('Signup error:', {
+        message: error.message,
+        response: error.response,
+        status: error.response?.status,
+        data: error.response?.data
+      });
+      alert(error.response?.data || 'Signup failed. Please try again.');
+    }
+  };
 
   return (
     <div className="signup-page">
@@ -171,11 +186,6 @@ const SignUp = () => {
           <div className="signup-divider">
             <span className="signup-divider-text">OR SIGN UP WITH</span>
           </div>
-          
-          {/* <button className="signup-google-button" onClick={handleGoogleSignUp}>
-            <img src={googleIcon} alt="Google" className="signup-google-icon" />
-            <span>Sign up with Google</span>
-          </button> */}
           
           <p className="signup-login-link">
             Already have an account? <a href="/login">Log in</a>
