@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import '../css/login.css';
 import Header from './Header';
 import Footer from './Footer';
-//import googleIcon from './google-icon.png'; // Make sure to have this icon in your project
 
 const Login = () => {
   const [formData, setFormData] = useState({
     userIdentifier: '',
     password: ''
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,17 +20,25 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Process login form submission
-    console.log('Login form submitted:', formData);
-    // Add your API call or other logic here
+    try {
+      const response = await axios.post('http://localhost:8000/api/auth/login', {
+        userIdentifier: formData.userIdentifier,
+        password: formData.password
+      });
+      console.log('Login successful:', response.data);
+      navigate('/');
+    } catch (error) {
+      console.error('Login error:', {
+        message: error.message,
+        response: error.response,
+        status: error.response?.status,
+        data: error.response?.data
+      });
+      alert(error.response?.data || 'Login failed. Please try again.');
+    }
   };
-
-//   const handleGoogleLogin = () => {
-//     // Implement Google authentication logic
-//     console.log('Login with Google clicked');
-//   };
 
   return (
     <div className="login-page">
@@ -82,11 +92,6 @@ const Login = () => {
           <div className="login-divider">
             <span className="login-divider-text">OR LOGIN WITH</span>
           </div>
-          
-          {/* <button className="login-google-button" onClick={handleGoogleLogin}>
-            <img src={googleIcon} alt="Google" className="login-google-icon" />
-            <span>Login with Google</span>
-          </button> */}
           
           <p className="login-signup-link">
             Don't have an account? <a href="/signup">Sign up</a>
