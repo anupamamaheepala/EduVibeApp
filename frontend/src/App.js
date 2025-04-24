@@ -15,15 +15,18 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 //import { AuthProvider } from './context/Context';
 import Home from './pages/Home';
 import Signup from './pages/Signup';
-<<<<<<< HEAD
 import AddPost from './components/AddPost';
 import CheckImages from './components/CheckImages';
-
-=======
 import CourseForm from './pages/courses/AddCourseForm'; // Added import for CourseForm
 import AllCourses from './pages/courses/AllCourses';
 import Login from './pages/Login';
->>>>>>> master
+import AddPost from './components/AddPost';
+import CheckImages from './components/CheckImages';
+
+import CourseForm from './pages/courses/AddCourseForm'; // Added import for CourseForm
+import AllCourses from './pages/courses/AllCourses';
+import Login from './pages/Login';
+
 
 function App() {
   return (
@@ -35,12 +38,13 @@ function App() {
           <Route path="/add-course" element={<CourseForm />} /> {/* New route for CourseForm */}
           <Route path="/courses" element={<AllCourses />} />
           <Route path="/Signup" element={<Signup />} />
-<<<<<<< HEAD
           <Route path="/AddPost" element={<AddPost />} />
           <Route path="/CheckImages" element={<CheckImages />} />
-=======
           <Route path="/Login" element={<Login />} />
->>>>>>> master
+          <Route path="/AddPost" element={<AddPost />} />
+          <Route path="/CheckImages" element={<CheckImages />} />
+          <Route path="/Login" element={<Login />} />
+
         </Routes>
       </Router>
     //</AuthProvider>
