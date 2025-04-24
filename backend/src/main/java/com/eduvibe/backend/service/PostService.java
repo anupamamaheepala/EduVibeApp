@@ -25,4 +25,9 @@ public class PostService {
     public void deletePost(String id) {
         postRepository.deleteById(id);
     }
+
+    public List<Post> getPostsByUserId(String userId) {
+        return postRepository.findByUserId(userId);
+    }
+
 }
