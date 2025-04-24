@@ -1,6 +1,7 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom'; // Import NavLink
 import '../css/header.css';
-import logo from '../images/logo.png'; // Import the logo image
+import logo from '../images/logo.png';
 
 const Header = () => {
   return (
@@ -11,11 +12,46 @@ const Header = () => {
         </div>
         <nav className="navigation">
           <ul>
-            <li><a href="/" className="active">Home</a></li>
-            <li><a href="/courses">Courses</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/resources">Resources</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <NavLink
+                to="/"
+                className={({ isActive }) => (isActive ? 'active' : '')}
+              >
+                Home
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/courses"
+                className={({ isActive }) => (isActive ? 'active' : '')}
+              >
+                Courses
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/about"
+                className={({ isActive }) => (isActive ? 'active' : '')}
+              >
+                About
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/resources"
+                className={({ isActive }) => (isActive ? 'active' : '')}
+              >
+                Resources
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/contact"
+                className={({ isActive }) => (isActive ? 'active' : '')}
+              >
+                Contact
+              </NavLink>
+            </li>
           </ul>
         </nav>
         <div className="auth-buttons">
