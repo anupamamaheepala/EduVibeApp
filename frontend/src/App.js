@@ -18,6 +18,8 @@ import Signup from './pages/Signup';
 import CourseForm from './pages/courses/AddCourseForm'; // Added import for CourseForm
 import AllCourses from './pages/courses/AllCourses';
 import Login from './pages/Login';
+import CommentSystem from './pages/comments/CommentSystem'; 
+
 
 function App() {
   return (
@@ -30,6 +32,7 @@ function App() {
           <Route path="/courses" element={<AllCourses />} />
           <Route path="/Signup" element={<Signup />} />
           <Route path="/Login" element={<Login />} />
+          <Route path="/Comment" element={<CommentSystem />} />
         </Routes>
       </Router>
     //</AuthProvider>
