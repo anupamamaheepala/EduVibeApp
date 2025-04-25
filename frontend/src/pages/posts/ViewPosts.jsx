@@ -8,10 +8,12 @@ function Posts() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const BACKEND_URL = 'http://localhost:8000/api/view-posts'; // ✅ Correct backend endpoint
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch('/api/posts');
+        const response = await fetch(BACKEND_URL);
         if (!response.ok) {
           throw new Error('Failed to fetch posts');
         }
@@ -29,17 +31,14 @@ function Posts() {
 
   return (
     <div className="page-container">
-      {/* Header Component */}
       <Header />
 
-      {/* Main Content */}
       <div className="posts-container">
         <div className="posts-header">
           <h1>Community Posts</h1>
           <a href="/add-post" className="create-post-button">Create Post</a>
         </div>
 
-        {/* Posts Feed */}
         {loading ? (
           <div className="loading-spinner">
             <div className="spinner"></div>
@@ -68,7 +67,8 @@ function Posts() {
                 <div className="post-content">
                   <p className="post-caption">{post.content}</p>
                   <p className="post-meta">
-                    Posted by {post.userId} on {new Date(post.createdAt).toLocaleDateString()}
+                    Posted by {post.username || post.userId} on{' '}
+                    {new Date(post.createdAt).toLocaleDateString()}
                   </p>
                 </div>
               </div>
@@ -77,7 +77,6 @@ function Posts() {
         )}
       </div>
 
-      {/* Footer Component */}
       <Footer />
     </div>
   );

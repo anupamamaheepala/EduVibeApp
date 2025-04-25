@@ -10,36 +10,32 @@ import com.eduvibe.backend.service.AddPostService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping("/api/add-post")
 @CrossOrigin(origins = "http://localhost:3000")
 public class AddPostController {
 
     @Autowired
-    private AddPostService AddpostService;
+    private AddPostService addPostService;
 
-    // Create a new post
     @PostMapping
-    public AddPost createPost(@RequestBody AddPost Addpost) {
-        return AddpostService.savePost(Addpost);
+    public AddPost createPost(@RequestBody AddPost post) {
+        // CreatedAt handled in service
+        return addPostService.savePost(post);
     }
 
-    // Get all posts
     @GetMapping
     public List<AddPost> getAllPosts() {
-        return AddpostService.getAllPosts();
+        return addPostService.getAllPosts();
     }
 
-    // Delete a post by ID
     @DeleteMapping("/{id}")
     public void deletePost(@PathVariable String id) {
-        AddpostService.deletePost(id);
-
+        addPostService.deletePost(id);
     }
 
-    // 🆕 Get posts by userId
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<AddPost>> getPostsByUser(@PathVariable String userId) {
-        List<AddPost> userPosts = AddpostService.getPostsByUserId(userId);
+        List<AddPost> userPosts = addPostService.getPostsByUserId(userId);
         return ResponseEntity.ok(userPosts);
     }
 }
