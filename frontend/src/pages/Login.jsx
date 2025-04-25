@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import '../css/login.css';
 import Header from './Header';
 import Footer from './Footer';
@@ -19,6 +20,7 @@ const Login = () => {
       [name]: value
     });
   };
+
 
 //   const handleSubmit = async (e) => {
 //   e.preventDefault();
@@ -72,6 +74,38 @@ const handleSubmit = async (e) => {
   }
 };
 
+
+  const clearForm = () => {
+    setFormData({
+      userIdentifier: '',
+      password: ''
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post('http://localhost:8000/api/auth/login', {
+        userIdentifier: formData.userIdentifier,
+        password: formData.password
+      });
+      Swal.fire({
+        icon: 'success',
+        title: 'Login Successful',
+        text: 'You have successfully logged in.'
+      });
+      navigate('/');
+      clearForm();
+    } catch (error) {
+      console.error('Login error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Login Failed',
+        text: 'Invalid username or password. Please try again.'
+      });
+      clearForm();
+    }
+  };
 
   return (
     <div className="login-page">
