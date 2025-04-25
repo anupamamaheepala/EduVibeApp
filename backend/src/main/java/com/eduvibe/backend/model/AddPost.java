@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Date;
 
 @Document(collection = "posts")
-public class Post {
+public class AddPost {
 
     @Id
     private String id;
@@ -17,9 +17,9 @@ public class Post {
     private String mediaType;
     private Date createdAt;
 
-    public Post() {}
+    public AddPost() {}
 
-    public Post(String userId, String content, String mediaUrl, String mediaType, Date createdAt) {
+    public AddPost(String userId, String content, String mediaUrl, String mediaType, Date createdAt) {
         this.userId = userId;
         this.content = content;
         this.mediaUrl = mediaUrl;

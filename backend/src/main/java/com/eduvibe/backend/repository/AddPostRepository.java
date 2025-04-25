@@ -2,11 +2,11 @@ package com.eduvibe.backend.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import com.eduvibe.backend.model.Post;
+import com.eduvibe.backend.model.AddPost;
 
 import java.util.List;
 
-public interface PostRepository extends MongoRepository<Post, String> {
+public interface AddPostRepository extends MongoRepository<AddPost, String> {
     // Custom method to find posts by user ID
-    List<Post> findByUserId(String userId);
+    List<AddPost> findByUserId(String userId);
 }
