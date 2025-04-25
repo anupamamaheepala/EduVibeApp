@@ -1,0 +1,148 @@
+/* Posts.css */
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .posts-container {
+    flex: 1;
+    background: linear-gradient(135deg, #f5f7fa 0%, #ebedff 100%);
+    padding: 2rem;
+  }
+  
+  .posts-header {
+    max-width: 64rem;
+    margin: 0 auto 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .posts-header h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #1f2937;
+  }
+  
+  .create-post-button {
+    background: #6d28d9;
+    color: #ffffff;
+    padding: 0.5rem 1.5rem;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  
+  .create-post-button:hover {
+    background: #5b21b6;
+    transform: scale(1.05);
+  }
+  
+  .loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+  
+  .spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 4px solid #e5e7eb;
+    border-top: 4px solid #6d28d9;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .loading-spinner p,
+  .no-posts {
+    font-size: 1rem;
+    color: #6b7280;
+    text-align: center;
+  }
+  
+  .error-message {
+    font-size: 1rem;
+    color: #dc2626;
+    text-align: center;
+    margin-top: 3rem;
+  }
+  
+  .posts-feed {
+    max-width: 64rem;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .post-card {
+    background: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .post-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  .post-media {
+    width: 100%;
+  }
+  
+  .post-media img,
+  .post-media video {
+    width: 100%;
+    height: 16rem;
+    object-fit: cover;
+    display: block;
+  }
+  
+  .post-content {
+    padding: 1.5rem;
+  }
+  
+  .post-caption {
+    font-size: 1rem;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+  }
+  
+  .post-meta {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 640px) {
+    .posts-container {
+      padding: 1rem;
+    }
+  
+    .posts-header {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+    }
+  
+    .posts-header h1 {
+      font-size: 1.5rem;
+    }
+  
+    .post-media img,
+    .post-media video {
+      height: 12rem;
+    }
+  }
