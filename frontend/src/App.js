@@ -24,6 +24,7 @@ import AddPost from './pages/posts/AddPosts';
 import ViewPost from './pages/posts/ViewPosts';
 import UserPosts from './pages/posts/UserPosts';
 import EditUserPosts from './pages/posts/EditUserPosts';
+import DeleteUserPosts from './pages/posts/EditUserPosts';
 function App() {
   return (
     //<AuthProvider>
@@ -40,6 +41,7 @@ function App() {
           <Route path="/posts" element={<ViewPost />} />
           <Route path="/UserPosts" element={<UserPosts />} />
           <Route path="/EditUserPosts/:id" element={<EditUserPosts />} />
+          <Route path="/DeleteUserPosts/:id" element={<DeleteUserPosts />} />
         </Routes>
       </Router>
     //</AuthProvider>

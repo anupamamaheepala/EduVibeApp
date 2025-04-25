@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '../../css/UserPosts.css';
+import DeleteUserPost from './DeleteUserPosts';
 
 function UserPosts() {
   const [posts, setPosts] = useState([]);
@@ -10,10 +12,8 @@ function UserPosts() {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  // Mock current user ID (replace with actual auth system)
-  const currentUserId = 'currentUser';
+  const currentUserId = localStorage.getItem('userId'); // ✅ Get logged-in userId
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -24,17 +24,17 @@ function UserPosts() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Fetch posts on mount
   useEffect(() => {
     const fetchUserPosts = async () => {
       try {
-        const response = await fetch('/api/posts');
-        if (!response.ok) {
-          throw new Error('Failed to fetch posts');
+        if (!currentUserId) {
+          setError('User not logged in.');
+          setLoading(false);
+          return;
         }
-        const data = await response.json();
-        const userPosts = data.filter((post) => post.userId === currentUserId);
-        setPosts(userPosts);
+
+        const response = await axios.get(`/api/view-posts/user/${currentUserId}`);
+        setPosts(response.data);
       } catch (err) {
         setError('Error fetching posts: ' + err.message);
       } finally {
@@ -43,41 +43,27 @@ function UserPosts() {
     };
 
     fetchUserPosts();
-  }, []);
+  }, [currentUserId]);
 
-  // Handle dropdown toggle
   const toggleDropdown = (postId) => {
     setOpenDropdown(openDropdown === postId ? null : postId);
   };
-
-  // Handle delete post
-  const handleDelete = async (postId) => {
-    try {
-      const response = await fetch(`/api/posts/${postId}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error('Failed to delete post');
-      }
-      setPosts(posts.filter((post) => post.id !== postId));
-      setOpenDropdown(null);
-    } catch (err) {
-      setError('Error deleting post: ' + err.message);
-    }
-  };
-
 
   const handleEdit = (postId) => {
     navigate(`/EditUserPosts/${postId}`);
     setOpenDropdown(null);
   };
-  
-  // Handle share post
+
   const handleShare = (postId) => {
     const postUrl = `${window.location.origin}/posts/${postId}`;
     navigator.clipboard.writeText(postUrl).then(() => {
       alert('Post URL copied to clipboard!');
     });
+    setOpenDropdown(null);
+  };
+
+  const handlePostDeleted = (deletedId) => {
+    setPosts((prev) => prev.filter((post) => post.id !== deletedId));
     setOpenDropdown(null);
   };
 
@@ -98,39 +84,28 @@ function UserPosts() {
           {posts.map((post) => (
             <div key={post.id} className="post-card">
               <div className="post-header">
-              <div className="dropdown-container">
-  <button
-    onClick={() => toggleDropdown(post.id)}
-    className="dropdown-button"
-    aria-label="More options"
-  >
-    ⋮
-  </button>
-  {openDropdown === post.id && (
-    <div className="dropdown-menu" ref={dropdownRef}>
-      <button
-        onClick={() => handleEdit(post.id)}
-        className="dropdown-item"
-      >
-        Edit
-      </button>
-      <button
-        onClick={() => handleDelete(post.id)}
-        className="dropdown-item delete"
-      >
-        Delete
-      </button>
-      <button
-        onClick={() => handleShare(post.id)}
-        className="dropdown-item"
-      >
-        Share
-      </button>
-    </div>
-  )}
-</div>
-
+                <div className="dropdown-container">
+                  <button
+                    onClick={() => toggleDropdown(post.id)}
+                    className="dropdown-button"
+                    aria-label="More options"
+                  >
+                    ⋮
+                  </button>
+                  {openDropdown === post.id && (
+                    <div className="dropdown-menu" ref={dropdownRef}>
+                      <button onClick={() => handleEdit(post.id)} className="dropdown-item">
+                        Edit
+                      </button>
+                      <DeleteUserPost postId={post.id} onDelete={handlePostDeleted} />
+                      <button onClick={() => handleShare(post.id)} className="dropdown-item">
+                        Share
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
+
               {post.mediaUrl && (
                 <div className="post-media">
                   {post.mediaType === 'image' ? (
