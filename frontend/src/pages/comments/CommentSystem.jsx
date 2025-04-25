@@ -87,9 +87,10 @@ const CommentSystem = ({ postId }) => {
         ) : (
           comments.map((comment) => (
             <div key={comment.id} className="comment-item">
-              <div className="comment-avatar">
-                <img src={comment.userAvatar || '/api/placeholder/40/40'} alt={`${comment.username}'s avatar`} />
+              <div className="comment-avatar-circle">
+                 {comment.username?.charAt(0).toUpperCase()}
               </div>
+
               <div className="comment-content">
                 <div className="comment-header">
                   <span className="comment-username">{comment.username}</span>
