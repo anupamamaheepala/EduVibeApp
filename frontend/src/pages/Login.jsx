@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import '../css/login.css';
 import Header from './Header';
 import Footer from './Footer';
+import { AuthContext } from './AuthContext';
 
 const Login = () => {
   const [formData, setFormData] = useState({
     userIdentifier: '',
     password: ''
   });
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -85,10 +87,13 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8000/api/auth/login', {
+      const response = await axios.post('http://localhost:8000/api/auth/login', {
         userIdentifier: formData.userIdentifier,
         password: formData.password
       });
+      // Assuming API returns token and username
+      const { token, username } = response.data;
+      login(username || formData.userIdentifier, token);
       Swal.fire({
         icon: 'success',
         title: 'Login Successful',
