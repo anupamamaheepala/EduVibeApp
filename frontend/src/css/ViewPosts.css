@@ -145,4 +145,19 @@
     .post-media video {
       height: 12rem;
     }
+    .post-media-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .post-media-gallery img,
+    .post-media-gallery video {
+      max-width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    
   }
