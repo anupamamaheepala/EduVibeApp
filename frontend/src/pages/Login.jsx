@@ -49,32 +49,32 @@ const Login = () => {
 //     alert(error.response?.data || 'Login failed. Please try again.');
 //   }
 // };
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const response = await axios.post('http://localhost:8000/api/auth/login', {
-      userIdentifier: formData.userIdentifier,
-      password: formData.password
-    });
+// const handleSubmit = async (e) => {
+//   e.preventDefault();
+//   try {
+//     const response = await axios.post('http://localhost:8000/api/auth/login', {
+//       userIdentifier: formData.userIdentifier,
+//       password: formData.password
+//     });
 
-    const user = response.data;
+//     const user = response.data;
 
-    // ✅ Save user info in localStorage
-    localStorage.setItem('userId', user.id);         // or user._id
-    localStorage.setItem('username', user.username); // ⬅️ added username here
+//     // ✅ Save user info in localStorage
+//     localStorage.setItem('userId', user.id);         // or user._id
+//     localStorage.setItem('username', user.username); // ⬅️ added username here
 
-    console.log('Login successful:', user);
-    navigate('/');
-  } catch (error) {
-    console.error('Login error:', {
-      message: error.message,
-      response: error.response,
-      status: error.response?.status,
-      data: error.response?.data
-    });
-    alert(error.response?.data || 'Login failed. Please try again.');
-  }
-};
+//     console.log('Login successful:', user);
+//     navigate('/');
+//   } catch (error) {
+//     console.error('Login error:', {
+//       message: error.message,
+//       response: error.response,
+//       status: error.response?.status,
+//       data: error.response?.data
+//     });
+//     alert(error.response?.data || 'Login failed. Please try again.');
+//   }
+// };
 
 
   const clearForm = () => {

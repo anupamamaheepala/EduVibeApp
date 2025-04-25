@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../Header';
 import Footer from '../Footer';
 import '../../css/ViewPosts.css';
+import PostWithComments from '../comments/PostWithComments';
 
 function Posts() {
   const [posts, setPosts] = useState([]);
@@ -61,9 +62,13 @@ function Posts() {
                         <source src={post.mediaUrl} type="video/mp4" />
                         Your browser does not support the video tag.
                       </video>
+                     
                     )}
+                   
                   </div>
+                    
                 )}
+                <PostWithComments post={post} />
                 <div className="post-content">
                   <p className="post-caption">{post.content}</p>
                   <p className="post-meta">
