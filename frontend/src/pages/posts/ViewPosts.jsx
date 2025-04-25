@@ -65,9 +65,11 @@ function Posts() {
                       </video>
                      
                     )}
-                     <PostWithComments post={post} />
+                   
                   </div>
+                    
                 )}
+                <PostWithComments post={post} />
                 <div className="post-content">
                   <p className="post-caption">{post.content}</p>
                   <p className="post-meta">
