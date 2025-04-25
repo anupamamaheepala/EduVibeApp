@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import '../css/signup.css';
 import Header from './Header';
 import Footer from './Footer';
@@ -20,21 +21,64 @@ const SignUp = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === 'firstName' || name === 'lastName') {
+      if (/[^a-zA-Z ]/.test(value)) {
+        return;
+      }
+    }
+
+    if (name === 'phoneNumber') {
+      if (/[^0-9]/.test(value)) {
+        return;
+      }
+      if (value.length > 10) {
+        return;
+      }
+    }
+
     setFormData({
       ...formData,
       [name]: value
     });
   };
 
+  const clearForm = () => {
+    setFormData({
+      firstName: '',
+      lastName: '',
+      username: '',
+      email: '',
+      phoneNumber: '',
+      address: '',
+      password: '',
+      confirmPassword: ''
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords don't match!");
+      Swal.fire({
+        icon: 'error',
+        title: "Passwords don't match!",
+        text: 'Please make sure both passwords are the same.'
+      });
+      return;
+    }
+
+    if (formData.phoneNumber.length !== 10) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Invalid Phone Number',
+        text: 'Phone number must be 10 digits long.'
+      });
       return;
     }
 
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/signup', {
+      await axios.post('http://localhost:8000/api/auth/signup', {
         firstName: formData.firstName,
         lastName: formData.lastName,
         username: formData.username,
@@ -43,16 +87,21 @@ const SignUp = () => {
         address: formData.address,
         password: formData.password
       });
-      console.log('Signup successful:', response.data);
-      navigate('/login');
-    } catch (error) {
-      console.error('Signup error:', {
-        message: error.message,
-        response: error.response,
-        status: error.response?.status,
-        data: error.response?.data
+      Swal.fire({
+        icon: 'success',
+        title: 'Signup successful',
+        text: 'You have successfully signed up. You can now log in.'
       });
-      alert(error.response?.data || 'Signup failed. Please try again.');
+      navigate('/login');
+      clearForm();
+    } catch (error) {
+      console.error('Signup error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Signup Failed',
+        text: 'An error occurred while signing up. Please try again.'
+      });
+      clearForm();
     }
   };
 
@@ -134,6 +183,7 @@ const SignUp = () => {
                 placeholder="Enter your phone number"
                 value={formData.phoneNumber}
                 onChange={handleChange}
+                required
               />
             </div>
             
