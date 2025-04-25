@@ -64,12 +64,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .cors().and()
-            .csrf().disable() // Disable CSRF for APIs (consider enabling with token for production)
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/posts/**").permitAll()
-                .anyRequest().authenticated()
+            .csrf().disable() // disable for APIs, or use token-based CSRF
+            .authorizeHttpRequests((authz) -> authz
+                .anyRequest().permitAll() // allow all requests
             );
-
         return http.build();
     }
 }
