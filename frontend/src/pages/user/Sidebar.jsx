@@ -9,7 +9,15 @@ const Sidebar = () => {
         <ul>
           <li>
             <NavLink
-              to="/mycourses"
+              to=""
+              className={({ isActive }) => (isActive ? 'active' : '')}
+            >
+              Dashboard
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="mycourses"
               className={({ isActive }) => (isActive ? 'active' : '')}
             >
               My Courses
@@ -17,7 +25,7 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/learning-plan"
+              to="learning-plan"
               className={({ isActive }) => (isActive ? 'active' : '')}
             >
               My Learning Plan
@@ -25,7 +33,7 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/groups"
+              to="groups"
               className={({ isActive }) => (isActive ? 'active' : '')}
             >
               Groups
@@ -33,7 +41,7 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/settings"
+              to="settings"
               className={({ isActive }) => (isActive ? 'active' : '')}
             >
               Settings
