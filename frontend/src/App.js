@@ -36,9 +36,11 @@ const App = () => {
           <Route path="/comment" element={<CommentSystem />} />
           <Route path="/add-post" element={<AddPost />} />
           <Route path="/posts" element={<ViewPost />} />
-          <Route path="/user-posts" element={<UserPosts />} />
-          <Route path="/edit-user-posts/:id" element={<EditUserPosts />} />
-          <Route path="/delete-user-posts/:id" element={<DeleteUserPosts />} />
+          <Route path="/UserPosts" element={<UserPosts />} />
+          <Route path="/EditUserPosts/:id" element={<EditUserPosts />} />
+          <Route path="/DeleteUserPosts/:id" element={<DeleteUserPosts />} />
+
+         />
         </Routes>
       </Router>
     </AuthProvider>
