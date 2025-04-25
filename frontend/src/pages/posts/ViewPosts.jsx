@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext} from 'react';
 import Header from '../Header';
+import UserHeader from '../UserHeader';
 import Footer from '../Footer';
 import '../../css/ViewPosts.css';
 import PostWithComments from '../comments/PostWithComments';
+import { AuthContext } from '../AuthContext';
+
 
 function Posts() {
+  const { isLoggedIn } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -19,7 +23,9 @@ function Posts() {
           throw new Error('Failed to fetch posts');
         }
         const data = await response.json();
-        setPosts(data);
+        const sortedPosts = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setPosts(sortedPosts);
+
       } catch (err) {
         setError('Error fetching posts: ' + err.message);
       } finally {
@@ -32,8 +38,8 @@ function Posts() {
 
   return (
     <div className="page-container">
-      <Header />
-
+      {isLoggedIn ? <UserHeader /> : <Header />}
+      
       <div className="posts-container">
         <div className="posts-header">
           <h1>Community Posts</h1>
@@ -53,21 +59,21 @@ function Posts() {
           <div className="posts-feed">
             {posts.map((post) => (
               <div key={post.id} className="post-card">
-                {post.mediaUrl && (
-                  <div className="post-media">
-                    {post.mediaType === 'image' ? (
-                      <img src={post.mediaUrl} alt="Post media" />
-                    ) : (
-                      <video controls aria-label="Post video">
-                        <source src={post.mediaUrl} type="video/mp4" />
-                        Your browser does not support the video tag.
-                      </video>
-                     
-                    )}
-                   
-                  </div>
-                    
-                )}
+{post.mediaUrl && (
+  <div className="single-media-frame">
+    {post.mediaType === 'image' ? (
+      <img src={post.mediaUrl} alt="Post media" />
+    ) : (
+      <video controls aria-label="Post video">
+        <source src={post.mediaUrl} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    )}
+  </div>
+)}
+
+
+
                 <PostWithComments post={post} />
                 <div className="post-content">
                   <p className="post-caption">{post.content}</p>

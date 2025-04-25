@@ -1,10 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef , useContext} from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../css/UserPosts.css';
 import DeleteUserPost from './DeleteUserPosts';
+import Header from '../Header';
+import UserHeader from '../UserHeader';
+import Footer from '../Footer';
+import { AuthContext } from '../AuthContext';
 
 function UserPosts() {
+  const { isLoggedIn } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -68,7 +73,9 @@ function UserPosts() {
   };
 
   return (
-    <div className="user-posts-container">
+    <div className="page-container">
+      {isLoggedIn ? <UserHeader /> : <Header />}
+    <div className="user-posts-container">     
       <h2>Your Posts</h2>
       {loading ? (
         <div className="loading-spinner">
@@ -128,6 +135,9 @@ function UserPosts() {
           ))}
         </div>
       )}
+      <Footer />
+    </div>
+    <Footer />
     </div>
   );
 }
