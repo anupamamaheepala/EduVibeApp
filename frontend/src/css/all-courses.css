@@ -152,3 +152,64 @@
     grid-template-columns: 1fr;
   }
 }
+/* Styles for MyCourses header to align title and button */
+.my-courses-header .search-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Styles for the Add New Course button */
+.add-course-btn {
+  padding: 0.8rem 1.8rem;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: var(--primary); /* #773beb */
+  color: var(--white); /* #ffffff */
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.add-course-btn:hover {
+  background-color: #6a32d5; /* A darker shade of primary for hover effect */
+}
+
+/* Styles for course actions (update and delete buttons) */
+.course-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* General button styles for update and delete */
+.update-btn,
+.delete-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Update button styling */
+.update-btn {
+  background-color: var(--primary); /* Assuming --primary is defined, e.g., #773beb */
+  color: var(--white); /* Assuming --white is defined, e.g., #ffffff */
+}
+
+.update-btn:hover {
+  background-color: #6a32d5; /* Darker shade of primary */
+}
+
+/* Delete button styling */
+.delete-btn {
+  background-color: #ff4d4f; /* Red for delete action */
+  color: var(--white); /* Assuming --white is defined, e.g., #ffffff */
+}
+
+.delete-btn:hover {
+  background-color: #e63946; /* Darker red on hover */
+}
