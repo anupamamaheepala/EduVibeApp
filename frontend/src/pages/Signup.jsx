@@ -26,6 +26,19 @@ const SignUp = () => {
     });
   };
 
+  const clearForm = () => {
+    setFormData({
+      firstName: '',
+      lastName: '',
+      username: '',
+      email: '',
+      phoneNumber: '',
+      address: '',
+      password: '',
+      confirmPassword: ''
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
@@ -45,6 +58,7 @@ const SignUp = () => {
       });
       console.log('Signup successful:', response.data);
       navigate('/login');
+      clearForm();  // Clear the form after successful submission
     } catch (error) {
       console.error('Signup error:', {
         message: error.message,
@@ -53,6 +67,7 @@ const SignUp = () => {
         data: error.response?.data
       });
       alert(error.response?.data || 'Signup failed. Please try again.');
+      clearForm();  // Clear the form if an error occurs
     }
   };
 

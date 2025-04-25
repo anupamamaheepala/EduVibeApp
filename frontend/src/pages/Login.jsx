@@ -20,6 +20,13 @@ const Login = () => {
     });
   };
 
+  const clearForm = () => {
+    setFormData({
+      userIdentifier: '',
+      password: ''
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -29,6 +36,7 @@ const Login = () => {
       });
       console.log('Login successful:', response.data);
       navigate('/');
+      clearForm();  // Clear the form after successful login
     } catch (error) {
       console.error('Login error:', {
         message: error.message,
@@ -37,6 +45,7 @@ const Login = () => {
         data: error.response?.data
       });
       alert(error.response?.data || 'Login failed. Please try again.');
+      clearForm();  // Clear the form if an error occurs
     }
   };
 
