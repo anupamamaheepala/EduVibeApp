@@ -19,6 +19,7 @@ import CheckImages from './components/CheckImages';
 import CourseForm from './pages/courses/AddCourseForm'; // Added import for CourseForm
 import AllCourses from './pages/courses/AllCourses';
 import Login from './pages/Login';
+import CommentSystem from './pages/comments/CommentSystem'; 
 import AddPost from './pages/posts/AddPosts';
 import ViewPost from './pages/posts/ViewPosts';
 import UserPosts from './pages/posts/UserPosts';
@@ -34,6 +35,7 @@ function App() {
           <Route path="/courses" element={<AllCourses />} />
           <Route path="/CheckImages" element={<CheckImages />} />
           <Route path="/Login" element={<Login />} />
+          <Route path="/Comment" element={<CommentSystem />} />
           <Route path="/AddPost" element={<AddPost />} />
           <Route path="/posts" element={<ViewPost />} />
           <Route path="/UserPosts" element={<UserPosts />} />
