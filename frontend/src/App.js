@@ -39,6 +39,8 @@ const App = () => {
           <Route path="/UserPosts" element={<UserPosts />} />
           <Route path="/EditUserPosts/:id" element={<EditUserPosts />} />
           <Route path="/DeleteUserPosts/:id" element={<DeleteUserPosts />} />
+
+         />
         </Routes>
       </Router>
     </AuthProvider>
