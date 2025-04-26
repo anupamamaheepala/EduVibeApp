@@ -110,3 +110,16 @@
     background-color: #5b21b6;
   }
   
+  .comment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8rem;
+    color: #777;
+  }
+  
+  .comment-time {
+    font-size: 0.75rem;
+    color: #999;
+  }
+  

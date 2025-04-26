@@ -104,6 +104,23 @@ const CommentSection = ({ postId }) => {
     }
   };
 
+  const formatDateTime = (timestamp) => {
+    if (!timestamp) return '';  // if no timestamp, show nothing
+    const date = new Date(timestamp);
+    if (isNaN(date)) return ''; // if invalid date, show nothing
+    const options = {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+    };
+    return date.toLocaleString('en-US', options);
+  };
+  
+  
+
   return (
     <div className="comment-section">
       <h4>Comments ({comments.length})</h4>
@@ -114,7 +131,11 @@ const CommentSection = ({ postId }) => {
         <div className="comments-list">
           {comments.map((c, index) => (
             <div key={index} className="comment">
+            <div className="comment-header">
               <span className="comment-username">{c.username}:</span>
+              <small className="comment-time">{formatDateTime(c.createdAt)}</small>
+            </div>
+          
 
               {editingCommentId === c.id ? (
                 <>
@@ -132,6 +153,7 @@ const CommentSection = ({ postId }) => {
               ) : (
                 <>
                   <span className="comment-text">{c.text}</span>
+                  
                   {c.userId === userId && (
                     <div className="comment-actions">
                       <button onClick={() => handleEditClick(c)}>Edit</button>
