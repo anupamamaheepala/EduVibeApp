@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState , useContext} from 'react';
 import Header from '../Header';
+import UserHeader from '../UserHeader';
 import Footer from '../Footer';
 import '../../css/AddPosts.css';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../firebase"; // your firebase.js file
+import axios from 'axios';
+import { AuthContext } from '../AuthContext';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 function AddPost() {
+  const { isLoggedIn } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [content, setContent] = useState('');
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
@@ -15,6 +22,7 @@ function AddPost() {
   const userId = localStorage.getItem('userId');
   const username = localStorage.getItem('username');
 
+  
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
     let images = files.filter(file => file.type.startsWith('image'));
@@ -84,19 +92,19 @@ function AddPost() {
       setMessage('User not logged in.');
       return;
     }
-
+  
     if (!content && files.length === 0) {
       setMessage('Please add a caption or media.');
       return;
     }
-
+  
     setLoading(true);
     setMessage('');
-
+  
     try {
       let mediaUrls = [];
       let mediaTypes = [];
-
+  
       if (files.length > 0) {
         // Upload all files and get URLs
         mediaUrls = await Promise.all(
@@ -105,13 +113,13 @@ function AddPost() {
             return url;
           })
         );
-
+  
         // Detect media types
         mediaTypes = files.map((file) =>
           file.type.startsWith('image') ? 'image' : 'video'
         );
       }
-
+  
       const postData = {
         userId,
         username,
@@ -120,32 +128,40 @@ function AddPost() {
         mediaTypes,
         createdAt: new Date().toISOString(),
       };
-
-      const response = await fetch('http://localhost:8000/api/add-post', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(postData),
+  
+      // ✅ Here we use axios instead of fetch
+      const response = await axios.post('http://localhost:8000/api/add-post', postData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
-
-      if (!response.ok) {
-        throw new Error(await response.text() || 'Failed to create post.');
-      }
-
+  
       setMessage('Post created successfully!');
       setContent('');
       setFiles([]);
       setPreviews([]);
+      // ✅ Show sweet alert
+Swal.fire({
+  title: 'Success!',
+  text: 'Post added successfully!',
+  icon: 'success',
+  confirmButtonText: 'View Posts'
+}).then(() => {
+  // ✅ After user clicks OK, navigate to posts page
+  navigate('/posts'); // <-- adjust this path to your posts page
+});
     } catch (error) {
-      setMessage('Error: ' + error.message);
       console.error('Post creation failed:', error);
+      setMessage('Error: ' + (error.response?.data || error.message));
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="page-container">
-      <Header />
+      {isLoggedIn ? <UserHeader /> : <Header />}
 
       <div className="add-post-container">
         <div className="add-post-form">

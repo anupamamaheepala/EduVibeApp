@@ -196,33 +196,78 @@ font-size: 1.75rem;
 }
 
 .post-card {
-  width: 500px;
-  height: 600px;
+  width: 700px;
+  height: 500px; /* Reduced to optimize space */
   margin: 20px auto;
-  padding: 15px;
+  padding: 16px;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 12px;
 }
 
+/* Unified media container with fixed height */
 .media-gallery {
-  width: 100%;
-  height: 60%;
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 columns */
-  grid-template-rows: repeat(2, 1fr);    /* 2 rows */
-  gap: 5px;
-  overflow: hidden;
+  width: 100%;
+  height: 400px;
+  gap: 6px;
   border-radius: 10px;
+  overflow: hidden;
 }
 
+/* Grid layout changes dynamically */
+.media-gallery.media-1 {
+  grid-template-columns: 1fr;
+}
+
+.media-gallery.media-2 {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 1fr;
+}
+
+/* .media-gallery.media-3 {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr;
+} */
+.media-gallery.media-3 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+
+.media-gallery.media-4 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  height: 400px; /* or whatever height you're using consistently */
+}
+
+.media-gallery.media-4 img,
+.media-gallery.media-4 video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  aspect-ratio: 1 / 1; /* ensures perfect squares */
+}
+
+
+.media-gallery.media-video-only {
+  grid-template-columns: 1fr;
+}
+
+.media-gallery.media-video-image {
+  grid-template-columns: 2fr 1fr;
+}
+
+/* Media items */
 .media-gallery img,
 .media-gallery video {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 8px;
 }

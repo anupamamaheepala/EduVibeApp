@@ -40,6 +40,17 @@
   border-left: 3px solid #773beb;
 }
 
+/* Example dashboard layout styles */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.dashboard-content {
+  flex: 1;
+  padding: 20px;
+}
+
 @media (max-width: 768px) {
   .sidebar {
     width: 200px;
@@ -50,3 +61,4 @@
     padding: 0.6rem 1.2rem;
   }
 }
+
