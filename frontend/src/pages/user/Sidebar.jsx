@@ -1,48 +1,64 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import './../../css/user/Sidebar.css';
 
 const Sidebar = () => {
+  const location = useLocation();
+
+  // Check if current route is a dashboard sub-route
+  const isDashboardRoute = location.pathname.startsWith('/dashboard');
+
   return (
     <aside className="sidebar">
       <nav className="sidebar-navigation">
         <ul>
           <li>
             <NavLink
-              to=""
-              className={({ isActive }) => (isActive ? 'active' : '')}
+              to="/dashboard" // Updated to absolute path
+              end // Highlights only on exact match
+              className={({ isActive }) => 
+                isActive ? 'active' : ''
+              }
             >
               Dashboard
             </NavLink>
           </li>
           <li>
             <NavLink
-              to="mycourses"
-              className={({ isActive }) => (isActive ? 'active' : '')}
+              to="/dashboard/mycourses" // Absolute path
+              className={({ isActive }) => 
+                isActive ? 'active' : ''
+              }
             >
               My Courses
             </NavLink>
           </li>
           <li>
             <NavLink
-              to="learning-plan"
-              className={({ isActive }) => (isActive ? 'active' : '')}
+              to="/dashboard/learning-plan" // Absolute path
+              className={({ isActive }) => 
+                isActive ? 'active' : ''
+              }
             >
               My Learning Plan
             </NavLink>
           </li>
           <li>
             <NavLink
-              to="groups"
-              className={({ isActive }) => (isActive ? 'active' : '')}
+              to="/dashboard/groups" // Absolute path
+              className={({ isActive }) => 
+                isActive ? 'active' : ''
+              }
             >
               Groups
             </NavLink>
           </li>
           <li>
             <NavLink
-              to="settings"
-              className={({ isActive }) => (isActive ? 'active' : '')}
+              to="/dashboard/settings" // Absolute path
+              className={({ isActive }) => 
+                isActive ? 'active' : ''
+              }
             >
               Settings
             </NavLink>

@@ -8,7 +8,6 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import CourseForm from './pages/courses/AddCourseForm';
 import AllCourses from './pages/courses/AllCourses';
-import UserDashboard from './pages/user/UserDashboard';
 
 import CheckImages from './components/CheckImages';
 import CommentSystem from './pages/comments/CommentSystem';
@@ -16,8 +15,8 @@ import AddPost from './pages/posts/AddPosts';
 import ViewPost from './pages/posts/ViewPosts';
 import UserPosts from './pages/posts/UserPosts';
 import EditUserPosts from './pages/posts/EditUserPosts';
-
-import DeleteUserPosts from './pages/posts/DeleteUserPosts'; // If this is correct
+import DeleteUserPosts from './pages/posts/DeleteUserPosts';
+import UserRoutes from './pages/user/UserRoutes';
 
 const App = () => {
   return (
@@ -30,7 +29,6 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/courses" element={<AllCourses />} />
           <Route path="/add-course" element={<CourseForm />} />
-          <Route path="/dashboard" element={<UserDashboard />} />
 
           {/* Posts and Comments */}
           <Route path="/check-images" element={<CheckImages />} />
@@ -40,6 +38,7 @@ const App = () => {
           <Route path="/UserPosts" element={<UserPosts />} />
           <Route path="/EditUserPosts/:id" element={<EditUserPosts />} />
           <Route path="/DeleteUserPosts/:id" element={<DeleteUserPosts />} />
+          <Route path="/dashboard/*" element={<UserRoutes />} />
 
 
         </Routes>
