@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState , useContext} from 'react';
 import Header from '../Header';
+import UserHeader from '../UserHeader';
 import Footer from '../Footer';
 import '../../css/AddPosts.css';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../firebase"; // your firebase.js file
 import axios from 'axios';
+import { AuthContext } from '../AuthContext';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 function AddPost() {
+  const { isLoggedIn } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [content, setContent] = useState('');
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
@@ -134,6 +140,16 @@ function AddPost() {
       setContent('');
       setFiles([]);
       setPreviews([]);
+      // ✅ Show sweet alert
+Swal.fire({
+  title: 'Success!',
+  text: 'Post added successfully!',
+  icon: 'success',
+  confirmButtonText: 'View Posts'
+}).then(() => {
+  // ✅ After user clicks OK, navigate to posts page
+  navigate('/posts'); // <-- adjust this path to your posts page
+});
     } catch (error) {
       console.error('Post creation failed:', error);
       setMessage('Error: ' + (error.response?.data || error.message));
@@ -145,7 +161,7 @@ function AddPost() {
 
   return (
     <div className="page-container">
-      <Header />
+      {isLoggedIn ? <UserHeader /> : <Header />}
 
       <div className="add-post-container">
         <div className="add-post-form">
