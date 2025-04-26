@@ -5,6 +5,8 @@ import Footer from '../Footer';
 import '../../css/ViewPosts.css';
 import { AuthContext } from '../AuthContext';
 import userLogo from '../../images/user.png';
+import CommentSection from '../comments/CommentSection';
+
 
 function Posts() {
   const { isLoggedIn } = useContext(AuthContext);
@@ -161,6 +163,9 @@ function Posts() {
                     Posted by {post.username || post.userId} on {new Date(post.createdAt).toLocaleDateString()}
                   </p>
                 </div>
+
+                {/* 🔽 Comment system component */}
+                <CommentSection postId={post.id} />
 
               </div>
             ))}
