@@ -25,6 +25,16 @@ public class CommentService {
         return commentRepository.findByPostId(postId);
     }
 
+    public Comment updateComment(String id, String newText) {
+        Comment comment = commentRepository.findById(id).orElse(null);
+        if (comment != null) {
+            comment.setText(newText);
+            return commentRepository.save(comment);
+        }
+        return null;
+    }
+    
+
     public void deleteComment(String id) {
         commentRepository.deleteById(id);
     }
