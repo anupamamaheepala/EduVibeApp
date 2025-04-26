@@ -148,21 +148,21 @@
   grid-template-rows: 1fr;
 }
 
-/* .media-gallery.media-3 {
+.media-gallery.media-3 {
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: 1fr;
-} */
-.media-gallery.media-3 {
+}
+/* .media-gallery.media-3 {
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-}
+} */
 
 
 .media-gallery.media-4 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 1fr);
-  height: 400px; /* or whatever height you're using consistently */
+  height: 200px; /* or whatever height you're using consistently */
 }
 
 .media-gallery.media-4 img,
