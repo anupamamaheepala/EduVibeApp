@@ -3,6 +3,9 @@ package com.eduvibe.backend.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Document(collection = "users")
 public class User {
     @Id
@@ -14,6 +17,7 @@ public class User {
     private String phoneNumber;
     private String address;
     private String password;
+    private List<String> courses = new ArrayList<>(); // New field to store course IDs
 
     // Constructors
     public User() {}
@@ -52,4 +56,7 @@ public class User {
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+
+    public List<String> getCourses() { return courses; }
+    public void setCourses(List<String> courses) { this.courses = courses; }
 }

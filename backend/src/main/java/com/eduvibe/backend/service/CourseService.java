@@ -14,14 +14,18 @@ public class CourseService {
     @Autowired
     private CourseRepository courseRepository;
 
-    public Course saveCourse(Course course) {
-        // Debug logs
+    @Autowired
+    private UserService userService;
+    public Course saveCourse(Course course, String userId) {
         System.out.println("Creating Course:");
         System.out.println("Name: " + course.getName());
         System.out.println("Description: " + course.getDescription());
         System.out.println("Chapters: " + course.getChapters());
-
-        // Validation
+        System.out.println("Created By User ID: " + userId);
+    
+        if (userId == null || userId.isEmpty()) {
+            throw new IllegalArgumentException("User ID is required");
+        }
         if (course.getName() == null || course.getName().isEmpty()) {
             throw new IllegalArgumentException("Course name is required");
         }
@@ -31,14 +35,14 @@ public class CourseService {
         if (course.getChapters() == null || course.getChapters().isEmpty()) {
             throw new IllegalArgumentException("At least one chapter is required");
         }
-
-        // Set createdAt if not set (optional, if you add a createdAt field to Course model)
-        // if (course.getCreatedAt() == null) {
-        //     course.setCreatedAt(new Date());
-        // }
-
+    
+        course.setCreatedBy(userId);
+        course.setCreatedAt(new Date());
+    
         Course saved = courseRepository.save(course);
-        System.out.println("Saved Course ID: " + saved.getId());
+        System.out.println("Saved course: " + saved.getId() + ", createdBy: " + saved.getCreatedBy());
+        userService.addCourseToUser(userId, saved.getId());
+    
         return saved;
     }
 
@@ -49,5 +53,12 @@ public class CourseService {
     public Course getCourseById(String id) {
         return courseRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Course not found with ID: " + id));
+    }
+
+    public List<Course> getCoursesByUserId(String userId) {
+        System.out.println("Fetching courses for user ID: " + userId);
+        List<Course> courses = courseRepository.findByCreatedBy(userId);
+        System.out.println("Found " + courses.size() + " courses for user ID: " + userId);
+        return courses;
     }
 }

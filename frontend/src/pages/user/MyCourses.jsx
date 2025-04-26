@@ -1,49 +1,146 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Swal from 'sweetalert2';
+import UserHeader from '../UserHeader';
 import Header from '../Header';
 import Footer from '../Footer';
 import '../../css/all-courses.css';
-
-// Mock data for user-created courses
-const myMockCourses = [
-  {
-    id: 1,
-    name: 'My Web Development Course',
-    author: 'Me',
-    description: 'A course I created to teach web development basics.',
-    chapters: 10,
-    image: '', // Placeholder for image URL
-  },
-  {
-    id: 2,
-    name: 'My Design Principles',
-    author: 'Me',
-    description: 'Learn design fundamentals through my perspective.',
-    chapters: 8,
-    image: '',
-  },
-];
+import { AuthContext } from '../AuthContext';
 
 const MyCourses = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchBy, setSearchBy] = useState('name'); // 'name' or 'author'
+  const [searchBy, setSearchBy] = useState('name');
+  const [courses, setCourses] = useState([]);
+  const [message, setMessage] = useState('');
+  const { isLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Filter courses based on search term and search type
-  const filteredCourses = myMockCourses.filter((course) =>
-    searchBy === 'name'
-      ? course.name.toLowerCase().includes(searchTerm.toLowerCase())
-      : course.author.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const userId = localStorage.getItem('userId');
+
+  useEffect(() => {
+    if (!isLoggedIn || !userId) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Not Logged In',
+        text: 'Please log in to view your courses.',
+      }).then(() => {
+        navigate('/login');
+      });
+      return;
+    }
+
+    const fetchCourses = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          throw new Error('No authentication token found.');
+        }
+
+        const response = await axios.get(`http://localhost:8000/api/courses/user/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setCourses(response.data);
+        setMessage('');
+      } catch (error) {
+        const errorMessage =
+          error.response?.status === 401
+            ? 'Session expired. Please log in again.'
+            : error.response?.data?.message || 'Failed to fetch courses. Please try again.';
+        
+        setMessage(`Error: ${errorMessage}`);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: errorMessage,
+        }).then(() => {
+          if (error.response?.status === 401) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('username');
+            navigate('/login');
+          }
+        });
+      }
+    };
+
+    fetchCourses();
+  }, [isLoggedIn, userId, navigate]);
+
+  const handleDelete = async (courseId) => {
+    // Show confirmation dialog
+    const result = await Swal.fire({
+      icon: 'warning',
+      title: 'Are you sure?',
+      text: 'This will permanently delete the course.',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#ff4d4f', // Match delete button color
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found.');
+      }
+
+      await axios.delete(`http://localhost:8000/api/courses/${courseId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Update courses state to remove deleted course
+      setCourses(courses.filter((course) => course.id !== courseId));
+      setMessage('Course deleted successfully');
+      Swal.fire({
+        icon: 'success',
+        title: 'Deleted',
+        text: 'The course has been deleted.',
+      });
+    } catch (error) {
+      const errorMessage =
+        error.response?.status === 401
+          ? 'Session expired. Please log in again.'
+          : error.response?.data?.message || 'Failed to delete course. Please try again.';
+      
+      setMessage(`Error: ${errorMessage}`);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: errorMessage,
+      }).then(() => {
+        if (error.response?.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('userId');
+          localStorage.removeItem('username');
+          navigate('/login');
+        }
+      });
+    }
+  };
+
+  const handleUpdate = (courseId) => {
+    // Navigate to the edit course page
+    navigate(`/edit-course/${courseId}`);
+  };
 
   const toggleSearchBy = () => {
     setSearchBy(searchBy === 'name' ? 'author' : 'name');
-    setSearchTerm(''); // Clear search term when toggling
+    setSearchTerm('');
   };
+
+  const filteredCourses = courses.filter((course) =>
+    searchBy === 'name'
+      ? (course.name || '').toLowerCase().includes(searchTerm.toLowerCase())
+      : (course.username || '').toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="all-courses-page">
-      <Header />
+      {isLoggedIn ? <UserHeader /> : <Header />}
       <div className="semi-header my-courses-header">
         <div className="search-container">
           <h2>My Courses</h2>
@@ -65,21 +162,36 @@ const MyCourses = () => {
       </div>
       <div className="courses-section">
         <div className="courses-grid">
+          {message && (
+            <p className={`feedback-message ${message.includes('success') ? 'success' : 'error'}`}>
+              {message}
+            </p>
+          )}
           {filteredCourses.length > 0 ? (
             filteredCourses.map((course) => (
               <div key={course.id} className="course-card">
-                <div className="course-image"></div>
-                <div className="course-content">
-                  <h3>{course.name}</h3>
-                  <p className="course-author">By {course.author}</p>
-                  <p className="course-description">{course.description}</p>
-                  <div className="course-meta">
-                    <span>{course.chapters} Chapters</span>
-                  </div>
-                  <div className="course-actions">
-                    <button className="update-btn">Update</button>
-                    <button className="delete-btn">Delete</button>
-                  </div>
+                <h3>{course.name || 'Unnamed Course'}</h3>
+                <p>{course.description || 'No description available'}</p>
+                <p>Created by: {course.username || 'Unknown'}</p>
+                <div className="course-actions">
+                  <button
+                    className="view-btn"
+                    onClick={() => navigate(`/course/${course.id}`)}
+                  >
+                    View Course
+                  </button>
+                  <button
+                    className="update-btn"
+                    onClick={() => handleUpdate(course.id)}
+                  >
+                    Update
+                  </button>
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDelete(course.id)}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             ))

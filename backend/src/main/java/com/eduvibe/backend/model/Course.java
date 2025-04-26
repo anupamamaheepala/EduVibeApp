@@ -14,7 +14,8 @@ public class Course {
     private String name;
     private String description;
     private List<Chapter> chapters;
-    private Date createdAt; // New field
+    private Date createdAt;
+    private String createdBy; // New field to store user ID
 
     // Getters and Setters
     public String getId() { return id; }
@@ -27,4 +28,6 @@ public class Course {
     public void setChapters(List<Chapter> chapters) { this.chapters = chapters; }
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
+    public String getCreatedBy() { return createdBy; }
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
 }

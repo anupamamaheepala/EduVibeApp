@@ -1,14 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 import Header from '../Header';
+import UserHeader from '../UserHeader';
 import Footer from '../Footer';
 import '../../css/course-form.css';
+import { AuthContext } from '../AuthContext';
 
 const CourseForm = () => {
+  const { isLoggedIn } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [course, setCourse] = useState({
     name: '',
     description: '',
     chapters: [{ title: '', description: '', youtubeUrl: '' }],
   });
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const userId = localStorage.getItem('userId');
+  const username = localStorage.getItem('username');
 
   const handleCourseChange = (e) => {
     const { name, value } = e.target;
@@ -36,15 +48,62 @@ const CourseForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Course Data:', course);
-    // Add your submit logic here (e.g., API call)
+
+    if (!userId || !username) {
+      setMessage('You must be logged in to create a course.');
+      return;
+    }
+
+    if (!course.name || !course.description || course.chapters.length === 0) {
+      setMessage('Please fill in all required fields.');
+      return;
+    }
+
+    setLoading(true);
+    setMessage('');
+
+    try {
+      const courseData = {
+        userId,
+        username,
+        name: course.name,
+        description: course.description,
+        chapters: course.chapters,
+      };
+
+      const response = await axios.post('http://localhost:8000/api/courses', courseData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      Swal.fire({
+        title: 'Success!',
+        text: 'Course created successfully!',
+        icon: 'success',
+        confirmButtonText: 'View Courses',
+      }).then(() => {
+        navigate('/my-courses');
+      });
+
+      setCourse({
+        name: '',
+        description: '',
+        chapters: [{ title: '', description: '', youtubeUrl: '' }],
+      });
+    } catch (error) {
+      console.error('Course creation failed:', error);
+      setMessage('Error: ' + (error.response?.data || error.message));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="course-form-page">
-      <Header />
+      {isLoggedIn ? <UserHeader /> : <Header />}
       <div className="form-section">
         <div className="form-container">
           <h1 className="form-title">Add New Course</h1>
@@ -127,10 +186,15 @@ const CourseForm = () => {
               Add Another Chapter
             </button>
             <div className="form-actions">
-              <button type="submit" className="submit-btn">
-                Create Course
+              <button type="submit" className="submit-btn" disabled={loading}>
+                {loading ? 'Creating...' : 'Create Course'}
               </button>
             </div>
+            {message && (
+              <p className={`feedback-message ${message.includes('successfully') ? 'success' : 'error'}`}>
+                {message}
+              </p>
+            )}
           </form>
         </div>
       </div>

@@ -41,4 +41,16 @@ public class UserService {
 
         return user;
     }
+
+    public void addCourseToUser(String userId, String courseId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    System.out.println("User not found for ID: " + userId); // Log user not found
+                    return new IllegalArgumentException("User not found with ID: " + userId);
+                });
+        user.getCourses().add(courseId);
+        System.out.println("Adding course " + courseId + " to user " + userId);
+        userRepository.save(user);
+        System.out.println("User courses after save: " + user.getCourses());
+    }
 }

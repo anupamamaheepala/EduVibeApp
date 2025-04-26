@@ -38,15 +38,24 @@ const Login = () => {
         password: formData.password
       });
 
-      // Assuming API returns token, username, and id (or _id)
-      const { token, username, id, _id } = response.data;
+      // Log the full response for debugging
+      console.log('Login response:', response.data);
+
+      // Extract token, username, and userId
+      const { token, username, id, _id, userId } = response.data;
+
+      // Determine userId from possible field names
+      const resolvedUserId = id || _id || userId;
+      if (!resolvedUserId) {
+        throw new Error('User ID not provided in login response. Expected field: id, _id, or userId');
+      }
 
       // Save user info to localStorage
-      localStorage.setItem('userId', id || _id); // Handle both id and _id cases
-      localStorage.setItem('username', username);
+      localStorage.setItem('userId', resolvedUserId);
+      localStorage.setItem('username', username || formData.userIdentifier);
 
       // Update AuthContext with login info
-      login(username || formData.userIdentifier, token);
+      login(username || formData.userIdentifier, token, resolvedUserId);
 
       // Show success notification
       Swal.fire({
@@ -55,8 +64,8 @@ const Login = () => {
         text: 'You have successfully logged in.'
       });
 
-      // Navigate to home and clear form
-      navigate('/');
+      // Navigate to dashboard and clear form
+      navigate('/dashboard');
       clearForm();
     } catch (error) {
       // Detailed error logging
@@ -71,7 +80,7 @@ const Login = () => {
       Swal.fire({
         icon: 'error',
         title: 'Login Failed',
-        text: error.response?.data?.message || 'Invalid username or password. Please try again.'
+        text: error.message || error.response?.data?.message || 'Invalid username or password. Please try again.'
       });
 
       clearForm();
