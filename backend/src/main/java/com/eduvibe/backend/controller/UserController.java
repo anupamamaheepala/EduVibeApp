@@ -34,6 +34,14 @@ public class UserController {
         }
     }
 
+    // Logout endpoint to clear the session on frontend side
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        // If you're using JWT, you don't really need to do anything in the backend, 
+        // since JWT is stateless. Just return a success message.
+        return ResponseEntity.ok("Logged out successfully");
+    }
+
     // Inner class for login request payload
     public static class LoginRequest {
         private String userIdentifier;

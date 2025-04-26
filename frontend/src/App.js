@@ -13,10 +13,7 @@ import AddPost from './pages/posts/AddPosts';
 import ViewPost from './pages/posts/ViewPosts';
 import UserPosts from './pages/posts/UserPosts';
 import EditUserPosts from './pages/posts/EditUserPosts';
-
 import DeleteUserPosts from './pages/posts/EditUserPosts';
-function App() {
-
 const App = () => {
   return (
     <AuthProvider>
