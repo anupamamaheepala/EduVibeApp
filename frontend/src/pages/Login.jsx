@@ -23,66 +23,31 @@ const Login = () => {
     });
   };
 
-
-//   const handleSubmit = async (e) => {
-//   e.preventDefault();
-//   try {
-//     const response = await axios.post('http://localhost:8000/api/auth/login', {
-//       userIdentifier: formData.userIdentifier,
-//       password: formData.password
-//     });
-
-//     const user = response.data;
-
-//     // ✅ Save userId in localStorage for use in post creation
-//     localStorage.setItem('userId', user.id); // or user._id if that's what's returned
-
-//     console.log('Login successful:', user);
-//     navigate('/');
-//   } catch (error) {
-//     console.error('Login error:', {
-//       message: error.message,
-//       response: error.response,
-//       status: error.response?.status,
-//       data: error.response?.data
-//     });
-//     alert(error.response?.data || 'Login failed. Please try again.');
-//   }
-// };
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const response = await axios.post('http://localhost:8000/api/auth/login', {
-      userIdentifier: formData.userIdentifier,
-      password: formData.password
-    });
-
-    const user = response.data;
-
-    // ✅ Save user info in localStorage
-    localStorage.setItem('userId', user.id);         // or user._id
-    localStorage.setItem('username', user.username); // ⬅️ added username here
-
-    console.log('Login successful:', user);
-    navigate('/');
-  } catch (error) {
-    console.error('Login error:', {
-      message: error.message,
-      response: error.response,
-      status: error.response?.status,
-      data: error.response?.data
-    });
-    alert(error.response?.data || 'Login failed. Please try again.');
-  }
-};
-
-
-  const clearForm = () => {
-    setFormData({
-      userIdentifier: '',
-      password: ''
-    });
-  };
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const response = await axios.post('http://localhost:8000/api/auth/login', {
+  //       userIdentifier: formData.userIdentifier,
+  //       password: formData.password
+  //     });
+  //
+  //     const user = response.data;
+  //
+  //     // ✅ Save userId in localStorage for use in post creation
+  //     localStorage.setItem('userId', user.id); // or user._id if that's what's returned
+  //
+  //     console.log('Login successful:', user);
+  //     navigate('/');
+  //   } catch (error) {
+  //     console.error('Login error:', {
+  //       message: error.message,
+  //       response: error.response,
+  //       status: error.response?.status,
+  //       data: error.response?.data
+  //     });
+  //     alert(error.response?.data || 'Login failed. Please try again.');
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -91,25 +56,53 @@ const handleSubmit = async (e) => {
         userIdentifier: formData.userIdentifier,
         password: formData.password
       });
-      // Assuming API returns token and username
-      const { token, username } = response.data;
+      const user = response.data;
+
+      // Save user info in localStorage
+      localStorage.setItem('userId', user.id || user._id); // Handle both id and _id
+      if (user.username) {
+        localStorage.setItem('username', user.username);
+      }
+
+      // Update AuthContext with login info (assuming token and username are returned)
+      const { token, username } = user;
       login(username || formData.userIdentifier, token);
+
+      // Show success notification
       Swal.fire({
         icon: 'success',
         title: 'Login Successful',
         text: 'You have successfully logged in.'
       });
+
+      // Navigate to home and clear form
       navigate('/');
       clearForm();
     } catch (error) {
-      console.error('Login error:', error);
+      // Detailed error logging
+      console.error('Login error:', {
+        message: error.message,
+        response: error.response,
+        status: error.response?.status,
+        data: error.response?.data
+      });
+
+      // Show error notification
       Swal.fire({
         icon: 'error',
         title: 'Login Failed',
-        text: 'Invalid username or password. Please try again.'
+        text: error.response?.data?.message || 'Invalid username or password. Please try again.'
       });
+
       clearForm();
     }
+  };
+
+  const clearForm = () => {
+    setFormData({
+      userIdentifier: '',
+      password: ''
+    });
   };
 
   return (
