@@ -64,6 +64,7 @@ const MyCourses = () => {
   }, [isLoggedIn, userId, navigate]);
 
   const handleDelete = async (courseId) => {
+    // Show confirmation dialog
     const result = await Swal.fire({
       icon: 'warning',
       title: 'Are you sure?',
@@ -71,7 +72,7 @@ const MyCourses = () => {
       showCancelButton: true,
       confirmButtonText: 'Delete',
       cancelButtonText: 'Cancel',
-      confirmButtonColor: '#ff4d4f',
+      confirmButtonColor: '#ff4d4f', // Match delete button color
     });
 
     if (!result.isConfirmed) return;
@@ -81,12 +82,14 @@ const MyCourses = () => {
         headers: { 'X-User-Id': userId },
       });
 
+      // Update courses state to remove deleted course
       setCourses(courses.filter((course) => course.id !== courseId));
       setMessage('Course deleted successfully');
       Swal.fire({
         icon: 'success',
-        title: 'Deleted',
-        text: 'The course has been deleted.',
+        title: 'Success!',
+        text: 'Course deleted successfully!',
+        confirmButtonText: 'OK',
       });
     } catch (error) {
       const errorMessage =
@@ -115,6 +118,7 @@ const MyCourses = () => {
   };
 
   const handleUpdate = (courseId) => {
+    // Navigate to the edit course page
     navigate(`/edit-course/${courseId}`);
   };
 
