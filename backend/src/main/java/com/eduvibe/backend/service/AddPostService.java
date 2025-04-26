@@ -15,24 +15,40 @@ public class AddPostService {
     @Autowired
     private AddPostRepository addPostRepository;
 
+    // public AddPost savePost(AddPost post) {
+    //     // Debug logs — check if mediaUrl is received
+    //     System.out.println("Creating Post:");
+    //     System.out.println("UserId: " + post.getUserId());
+    //     System.out.println("Username: " + post.getUsername());
+    //     System.out.println("Content: " + post.getContent());
+    //     System.out.println("Media URL: " + post.getMediaUrl());
+    //     System.out.println("Media Type: " + post.getMediaType());
+
+    //     // Set createdAt only if not set
+    //     if (post.getCreatedAt() == null) {
+    //         post.setCreatedAt(new Date());
+    //     }
+
+    //     AddPost saved = addPostRepository.save(post);
+    //     System.out.println("Saved Post ID: " + saved.getId());
+    //     return saved;
+    // }
+
     public AddPost savePost(AddPost post) {
-        // Debug logs — check if mediaUrl is received
-        System.out.println("Creating Post:");
-        System.out.println("UserId: " + post.getUserId());
-        System.out.println("Username: " + post.getUsername());
-        System.out.println("Content: " + post.getContent());
-        System.out.println("Media URL: " + post.getMediaUrl());
-        System.out.println("Media Type: " + post.getMediaType());
+    System.out.println("Saving Post:");
+    System.out.println("UserId: " + post.getUserId());
+    System.out.println("Username: " + post.getUsername());
+    System.out.println("Content: " + post.getContent());
+    System.out.println("Media URLs: " + post.getMediaUrls()); // Updated
+    System.out.println("Media Types: " + post.getMediaTypes());
 
-        // Set createdAt only if not set
-        if (post.getCreatedAt() == null) {
-            post.setCreatedAt(new Date());
-        }
-
-        AddPost saved = addPostRepository.save(post);
-        System.out.println("Saved Post ID: " + saved.getId());
-        return saved;
+    if (post.getCreatedAt() == null) {
+        post.setCreatedAt(new Date());
     }
+
+    return addPostRepository.save(post);
+}
+
 
     public List<AddPost> getAllPosts() {
         return addPostRepository.findAll();

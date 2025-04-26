@@ -17,24 +17,27 @@ function EditPost() {
 
   // Fetch the post on component mount
   useEffect(() => {
-    console.log("Post ID:", id);
-    console.log("API Call:", `/api/view-posts/${id}`);
-
     const fetchPost = async () => {
+      console.log("Fetching post with ID:", id);
+      console.log("API Endpoint:", `/api/view-posts/${id}`);
+  
       try {
         const response = await fetch(`/api/view-posts/${id}`);
+        
         if (!response.ok) {
-          throw new Error('Failed to fetch post');
+          throw new Error(`Failed to fetch post: ${response.status} ${response.statusText}`);
         }
+  
         const postData = await response.json();
         setPost(postData);
         setContent(postData.content || '');
         setPreview(postData.mediaUrl || null);
       } catch (err) {
+        console.error("Fetch error:", err);
         setMessage('Error fetching post: ' + err.message);
       }
     };
-
+  
     fetchPost();
   }, [id]);
 
