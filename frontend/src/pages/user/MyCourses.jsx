@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import Header from '../Header';
-import Footer from '../Footer';
 import '../../css/all-courses.css';
 
 // Mock data (replace with actual data fetch)
@@ -31,7 +29,7 @@ const mockCourses = [
   },
 ];
 
-const AllCourses = () => {
+const MyCourses = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchBy, setSearchBy] = useState('name'); // 'name' or 'author'
 
@@ -48,48 +46,45 @@ const AllCourses = () => {
   };
 
   return (
-    <div className="all-courses-page">
-      <Header />
-      <div className="semi-header">
-        <div className="search-container">
-          <h2>Explore All Courses</h2>
-          <div className="search-bar">
-            <input
-              type="text"
-              placeholder={`Search by ${searchBy}`}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <button className="toggle-search-btn" onClick={toggleSearchBy}>
-              Search by {searchBy === 'name' ? 'Author' : 'Name'}
-            </button>
-          </div>
+    <div className="dashboard-courses-container">
+      {/* Search Section */}
+      <div className="dashboard-courses-header">
+        <h2>My Courses</h2>
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder={`Search by ${searchBy}`}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <button className="toggle-search-btn" onClick={toggleSearchBy}>
+            Search by {searchBy === 'name' ? 'Author' : 'Name'}
+          </button>
         </div>
       </div>
-      <div className="courses-section">
-        <div className="courses-grid">
-          {filteredCourses.length > 0 ? (
-            filteredCourses.map((course) => (
-              <div key={course.id} className="course-card">
-                <div className="course-image"></div>
-                <div className="course-content">
-                  <h3>{course.name}</h3>
-                  <p className="course-author">By {course.author}</p>
-                  <p className="course-description">{course.description}</p>
-                  <div className="course-meta">
-                    <span>{course.chapters} Chapters</span>
-                  </div>
+
+      {/* Courses Grid */}
+      <div className="dashboard-courses-grid">
+        {filteredCourses.length > 0 ? (
+          filteredCourses.map((course) => (
+            <div key={course.id} className="dashboard-course-card">
+              <div className="course-image"></div>
+              <div className="course-content">
+                <h3>{course.name}</h3>
+                <p className="course-author">By {course.author}</p>
+                <p className="course-description">{course.description}</p>
+                <div className="course-meta">
+                  <span>{course.chapters} Chapters</span>
                 </div>
               </div>
-            ))
-          ) : (
-            <p className="no-courses">No courses found.</p>
-          )}
-        </div>
+            </div>
+          ))
+        ) : (
+          <p className="no-courses">No courses found.</p>
+        )}
       </div>
-      <Footer />
     </div>
   );
 };
 
-export default AllCourses;
+export default MyCourses;
