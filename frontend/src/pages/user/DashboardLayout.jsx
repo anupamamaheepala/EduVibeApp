@@ -1,13 +1,13 @@
 import React from 'react';
 import Sidebar from './Sidebar';
-import Header from '../Header';
+import UserHeader from '../UserHeader';
 import { Outlet } from 'react-router-dom';
 import './../../css/user/UserDashboard.css'; // Reuse your existing CSS
 
 const DashboardLayout = () => {
   return (
     <>
-      <Header />
+      <UserHeader />
       <div className="dashboard-container">
         <Sidebar />
         <main className="dashboard-content">

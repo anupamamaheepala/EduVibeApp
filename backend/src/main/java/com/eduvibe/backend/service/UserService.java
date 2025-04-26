@@ -41,4 +41,37 @@ public class UserService {
 
         return user;
     }
+
+    // UserService.java - Add these methods
+    public User getUserById(String userId) throws Exception {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new Exception("User not found"));
+    }
+
+    public User updateUser(String userId, User updatedUser) throws Exception {
+        User existingUser = getUserById(userId);
+        
+        // Update fields if they're provided
+        if (updatedUser.getFirstName() != null) {
+            existingUser.setFirstName(updatedUser.getFirstName());
+        }
+        if (updatedUser.getLastName() != null) {
+            existingUser.setLastName(updatedUser.getLastName());
+        }
+        if (updatedUser.getEmail() != null) {
+            // Add email validation if needed
+            existingUser.setEmail(updatedUser.getEmail());
+        }
+        if (updatedUser.getPhoneNumber() != null) {
+            existingUser.setPhoneNumber(updatedUser.getPhoneNumber());
+        }
+        if (updatedUser.getAddress() != null) {
+            existingUser.setAddress(updatedUser.getAddress());
+        }
+        if (updatedUser.getProfilePicture() != null) {
+            existingUser.setProfilePicture(updatedUser.getProfilePicture());
+        }
+        
+        return userRepository.save(existingUser);
+    }
 }
