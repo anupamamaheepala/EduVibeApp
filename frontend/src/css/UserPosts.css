@@ -5,7 +5,7 @@
 max-width: 64rem;
   margin: 0 auto 2rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
 }
 
@@ -17,6 +17,7 @@ font-size: 1.75rem;
 }
 
 .page-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -28,7 +29,7 @@ font-size: 1.75rem;
   padding: 2rem;
 }
 .user-posts-container {
-  max-width: 80rem;
+  max-width: 100rem;
   margin: 0 15rem;
   padding: 0 2rem 2rem;
 }
@@ -84,7 +85,7 @@ font-size: 1.75rem;
 }
 
 .post-card {
-  max-width: 100%;
+  max-width: 1000px;
   background: #ffffff;
   border-radius: 1rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
@@ -114,7 +115,7 @@ font-size: 1.75rem;
 .dropdown-menu {
   position: absolute;
   top: 100%;
-  right: 0;
+  left: 0;
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;

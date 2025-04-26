@@ -121,38 +121,36 @@ function Posts() {
                   );
                 })()} */
                   post.mediaUrls && post.mediaUrls.length > 0 && (() => {
-                    const images = post.mediaUrls.filter((url, idx) => (post.mediaTypes?.[idx] || url.endsWith('.mp4')) !== 'video');
-                    const videos = post.mediaUrls.filter((url, idx) => (post.mediaTypes?.[idx] || url.endsWith('.mp4')) === 'video');
-                    const mediaCount = post.mediaUrls.length;
-                  
-                    let mediaClass = 'media-gallery';
-                  
-                    if (mediaCount === 1) {
-                      mediaClass += videos.length ? ' media-video-only' : ' media-1';
-                    } else if (mediaCount === 2) {
-                      mediaClass += ' media-2';
-                    } else if (mediaCount === 3) {
-                      mediaClass += ' media-3';
-                    } else if (mediaCount === 4) {
-                      mediaClass += ' media-4';
-                    }
-                  
-                    return (
-                      <div className={mediaClass}>
-                        {post.mediaUrls.map((url, index) => {
-                          const type = post.mediaTypes?.[index] || (url.endsWith('.mp4') ? 'video' : 'image');
-                          return type === 'image' ? (
-                            <img key={index} src={url} alt={`Post media ${index}`} />
-                          ) : (
-                            <video key={index} controls aria-label={`Post video ${index}`}>
-                              <source src={url} type="video/mp4" />
-                              Your browser does not support the video tag.
-                            </video>
-                          );
-                        })}
-                      </div>
-                    );
-                  })()}
+  const mediaCount = post.mediaUrls.length;
+
+  let mediaClass = 'media-gallery';
+  if (mediaCount === 1) {
+    mediaClass += ' media-1';
+  } else if (mediaCount === 2) {
+    mediaClass += ' media-2';
+  } else if (mediaCount === 3) {
+    mediaClass += ' media-3';
+  } else if (mediaCount === 4) {
+    mediaClass += ' media-4';
+  }
+
+  return (
+    <div className={mediaClass}>
+      {post.mediaUrls.map((url, index) => {
+        const type = post.mediaTypes?.[index] || (url.endsWith('.mp4') ? 'video' : 'image');
+        return type === 'image' ? (
+          <img key={index} src={url} alt={`Post media ${index}`} />
+        ) : (
+          <video key={index} controls aria-label={`Post video ${index}`}>
+            <source src={url} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        );
+      })}
+    </div>
+  );
+})()}
+
                   
                 
                 {/*<PostWithComments post={post} />*/}
@@ -165,7 +163,7 @@ function Posts() {
                 </div>
 
                 {/* 🔽 Comment system component */}
-                <CommentSection postId={post.id} />
+               <CommentSection postId={post.id} /> 
 
               </div>
             ))}
