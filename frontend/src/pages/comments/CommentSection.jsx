@@ -56,7 +56,7 @@ const CommentSection = ({ postId }) => {
   };
 
   const handleEditClick = (comment) => {
-    setEditingCommentId(comment.id); // Using id
+    setEditingCommentId(comment.id);
     setEditingText(comment.text);
   };
 
@@ -84,6 +84,26 @@ const CommentSection = ({ postId }) => {
     }
   };
 
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm('Are you sure you want to delete this comment?')) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`http://localhost:8000/api/comments/${commentId}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        setComments(prevComments => prevComments.filter(comment => comment.id !== commentId));
+      } else {
+        console.error('Failed to delete comment');
+      }
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
+  };
+
   return (
     <div className="comment-section">
       <h4>Comments ({comments.length})</h4>
@@ -96,7 +116,7 @@ const CommentSection = ({ postId }) => {
             <div key={index} className="comment">
               <span className="comment-username">{c.username}:</span>
 
-              {editingCommentId === c.id ? ( // Using id here
+              {editingCommentId === c.id ? (
                 <>
                   <input
                     type="text"
@@ -105,7 +125,8 @@ const CommentSection = ({ postId }) => {
                     className="comment-edit-input"
                   />
                   <div className="comment-actions">
-                    <button onClick={() => handleSaveEdit(c.id)}>Save</button> {/* Using id here */}
+                    <button onClick={() => handleSaveEdit(c.id)}>Save</button>
+                    <button onClick={() => setEditingCommentId(null)}>Cancel</button>
                   </div>
                 </>
               ) : (
@@ -114,6 +135,7 @@ const CommentSection = ({ postId }) => {
                   {c.userId === userId && (
                     <div className="comment-actions">
                       <button onClick={() => handleEditClick(c)}>Edit</button>
+                      <button onClick={() => handleDeleteComment(c.id)}>Delete</button>
                     </div>
                   )}
                 </>
