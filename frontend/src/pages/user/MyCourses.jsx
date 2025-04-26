@@ -32,13 +32,8 @@ const MyCourses = () => {
 
     const fetchCourses = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          throw new Error('No authentication token found.');
-        }
-
         const response = await axios.get(`http://localhost:8000/api/courses/user/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { 'X-User-Id': userId },
         });
 
         setCourses(response.data);
@@ -69,7 +64,6 @@ const MyCourses = () => {
   }, [isLoggedIn, userId, navigate]);
 
   const handleDelete = async (courseId) => {
-    // Show confirmation dialog
     const result = await Swal.fire({
       icon: 'warning',
       title: 'Are you sure?',
@@ -77,22 +71,16 @@ const MyCourses = () => {
       showCancelButton: true,
       confirmButtonText: 'Delete',
       cancelButtonText: 'Cancel',
-      confirmButtonColor: '#ff4d4f', // Match delete button color
+      confirmButtonColor: '#ff4d4f',
     });
 
     if (!result.isConfirmed) return;
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No authentication token found.');
-      }
-
       await axios.delete(`http://localhost:8000/api/courses/${courseId}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 'X-User-Id': userId },
       });
 
-      // Update courses state to remove deleted course
       setCourses(courses.filter((course) => course.id !== courseId));
       setMessage('Course deleted successfully');
       Swal.fire({
@@ -104,6 +92,10 @@ const MyCourses = () => {
       const errorMessage =
         error.response?.status === 401
           ? 'Session expired. Please log in again.'
+          : error.response?.status === 403
+          ? 'You are not authorized to delete this course.'
+          : error.response?.status === 404
+          ? 'Course not found.'
           : error.response?.data?.message || 'Failed to delete course. Please try again.';
       
       setMessage(`Error: ${errorMessage}`);
@@ -123,7 +115,6 @@ const MyCourses = () => {
   };
 
   const handleUpdate = (courseId) => {
-    // Navigate to the edit course page
     navigate(`/edit-course/${courseId}`);
   };
 

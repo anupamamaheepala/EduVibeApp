@@ -16,7 +16,6 @@ public class UserService {
     private BCryptPasswordEncoder passwordEncoder;
 
     public User signup(User user) throws Exception {
-        // Check if username or email already exists
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new Exception("Username already exists");
         }
@@ -24,17 +23,14 @@ public class UserService {
             throw new Exception("Email already exists");
         }
 
-        // Encode password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
     public User login(String userIdentifier, String password) throws Exception {
-        // Find user by username or email
         User user = userRepository.findByUsernameOrEmail(userIdentifier, userIdentifier)
                 .orElseThrow(() -> new Exception("User not found"));
 
-        // Verify password
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new Exception("Invalid password");
         }
@@ -45,11 +41,23 @@ public class UserService {
     public void addCourseToUser(String userId, String courseId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
-                    System.out.println("User not found for ID: " + userId); // Log user not found
+                    System.out.println("User not found for ID: " + userId);
                     return new IllegalArgumentException("User not found with ID: " + userId);
                 });
         user.getCourses().add(courseId);
         System.out.println("Adding course " + courseId + " to user " + userId);
+        userRepository.save(user);
+        System.out.println("User courses after save: " + user.getCourses());
+    }
+
+    public void removeCourseFromUser(String userId, String courseId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    System.out.println("User not found for ID: " + userId);
+                    return new IllegalArgumentException("User not found with ID: " + userId);
+                });
+        user.getCourses().remove(courseId);
+        System.out.println("Removing course " + courseId + " from user " + userId);
         userRepository.save(user);
         System.out.println("User courses after save: " + user.getCourses());
     }

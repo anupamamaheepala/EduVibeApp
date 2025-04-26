@@ -4,10 +4,9 @@ import com.eduvibe.backend.model.Course;
 import com.eduvibe.backend.model.Chapter;
 import com.eduvibe.backend.model.User;
 import com.eduvibe.backend.service.CourseService;
-import com.eduvibe.backend.service.EditCourseService;
-import com.eduvibe.backend.service.DeleteCourseService;
 import com.eduvibe.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,12 +21,6 @@ public class CourseController {
 
     @Autowired
     private CourseService courseService;
-
-    @Autowired
-    private EditCourseService editCourseService;
-
-    @Autowired
-    private DeleteCourseService deleteCourseService;
 
     @Autowired
     private UserRepository userRepository;
@@ -52,23 +45,22 @@ public class CourseController {
     }
 
     @GetMapping
-public ResponseEntity<List<CourseResponse>> getAllCourses() {
-    List<Course> courses = courseService.getAllCourses();
-    List<CourseResponse> courseResponses = courses.stream().map(course -> {
-        CourseResponse response = new CourseResponse();
-        response.setId(course.getId());
-        response.setName(course.getName());
-        response.setDescription(course.getDescription());
-        response.setChapters(course.getChapters());
-        response.setCreatedAt(course.getCreatedAt());
-        response.setCreatedBy(course.getCreatedBy());
-        // Fetch username from UserRepository
-        User user = userRepository.findById(course.getCreatedBy()).orElse(null);
-        response.setUsername(user != null ? user.getUsername() : "Unknown");
-        return response;
-    }).collect(Collectors.toList());
-    return ResponseEntity.ok(courseResponses);
-}
+    public ResponseEntity<List<CourseResponse>> getAllCourses() {
+        List<Course> courses = courseService.getAllCourses();
+        List<CourseResponse> courseResponses = courses.stream().map(course -> {
+            CourseResponse response = new CourseResponse();
+            response.setId(course.getId());
+            response.setName(course.getName());
+            response.setDescription(course.getDescription());
+            response.setChapters(course.getChapters());
+            response.setCreatedAt(course.getCreatedAt());
+            response.setCreatedBy(course.getCreatedBy());
+            User user = userRepository.findById(course.getCreatedBy()).orElse(null);
+            response.setUsername(user != null ? user.getUsername() : "Unknown");
+            return response;
+        }).collect(Collectors.toList());
+        return ResponseEntity.ok(courseResponses);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Course> getCourseById(@PathVariable String id) {
@@ -76,31 +68,18 @@ public ResponseEntity<List<CourseResponse>> getAllCourses() {
         return ResponseEntity.ok(course);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Course> updateCourse(@PathVariable String id, @RequestBody Course course) {
-        Course updatedCourse = editCourseService.updateCourse(id, course);
-        return ResponseEntity.ok(updatedCourse);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCourse(@PathVariable String id) {
-        deleteCourseService.deleteCourse(id);
-        return ResponseEntity.noContent().build();
-    }
-
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<CourseResponse>> getCoursesByUser(@PathVariable String userId) {
-        System.out.println("Fetching courses for user ID: " + userId); // Add logging
+        System.out.println("Fetching courses for user ID: " + userId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
-                    System.out.println("User not found for ID: " + userId); // Log user not found
+                    System.out.println("User not found for ID: " + userId);
                     return new IllegalArgumentException("User not found with ID: " + userId);
                 });
-    
-        List<Course> userCourses = courseService.getCoursesByUserId(userId);
 
-        System.out.println("Found courses: " + userCourses.size()); // Log number of courses
-        
+        List<Course> userCourses = courseService.getCoursesByUserId(userId);
+        System.out.println("Found courses: " + userCourses.size());
+
         List<CourseResponse> courseResponses = userCourses.stream().map(course -> {
             CourseResponse response = new CourseResponse();
             response.setId(course.getId());
@@ -112,8 +91,37 @@ public ResponseEntity<List<CourseResponse>> getAllCourses() {
             response.setUsername(user.getUsername());
             return response;
         }).collect(Collectors.toList());
-    
+
         return ResponseEntity.ok(courseResponses);
+    }
+
+    @PutMapping("/{courseId}")
+    public ResponseEntity<?> updateCourse(
+            @PathVariable String courseId,
+            @RequestBody CourseUpdateRequest updateRequest,
+            @RequestHeader("X-User-Id") String userId) {
+        try {
+            Course updatedCourse = courseService.updateCourse(courseId, updateRequest, userId);
+            return ResponseEntity.ok(updatedCourse);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{courseId}")
+    public ResponseEntity<?> deleteCourse(
+            @PathVariable String courseId,
+            @RequestHeader("X-User-Id") String userId) {
+        try {
+            courseService.deleteCourse(courseId, userId);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        }
     }
 
     // Inner class for course creation request payload
@@ -126,16 +134,26 @@ public ResponseEntity<List<CourseResponse>> getAllCourses() {
 
         public String getUserId() { return userId; }
         public void setUserId(String userId) { this.userId = userId; }
-
         public String getUsername() { return username; }
         public void setUsername(String username) { this.username = username; }
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        public String getDescription() { return description; }
+        public void setDescription(String description) { this.description = description; }
+        public List<Chapter> getChapters() { return chapters; }
+        public void setChapters(List<Chapter> chapters) { this.chapters = chapters; }
+    }
+
+    // Inner class for course update request payload
+    public static class CourseUpdateRequest {
+        private String name;
+        private String description;
+        private List<Chapter> chapters;
 
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
-
         public String getDescription() { return description; }
         public void setDescription(String description) { this.description = description; }
-
         public List<Chapter> getChapters() { return chapters; }
         public void setChapters(List<Chapter> chapters) { this.chapters = chapters; }
     }
@@ -152,22 +170,16 @@ public ResponseEntity<List<CourseResponse>> getAllCourses() {
 
         public String getId() { return id; }
         public void setId(String id) { this.id = id; }
-
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
-
         public String getDescription() { return description; }
         public void setDescription(String description) { this.description = description; }
-
         public List<Chapter> getChapters() { return chapters; }
         public void setChapters(List<Chapter> chapters) { this.chapters = chapters; }
-
         public Date getCreatedAt() { return createdAt; }
         public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
-
         public String getCreatedBy() { return createdBy; }
         public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
-
         public String getUsername() { return username; }
         public void setUsername(String username) { this.username = username; }
     }
