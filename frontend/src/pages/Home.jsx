@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Header from './Header';
+import UserHeader from './UserHeader';
 import Footer from './Footer';
 import '../css/home.css';
+import { AuthContext } from './AuthContext';
 
 const Home = () => {
+  const { isLoggedIn } = useContext(AuthContext);
+
   return (
     <div className="home-page">
-      <Header />
+      {isLoggedIn ? <UserHeader /> : <Header />}
       <div className="hero-section">
         <div className="hero-content">
           <h1>Learn Without Limits</h1>
