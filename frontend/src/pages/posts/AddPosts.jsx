@@ -4,6 +4,7 @@ import Footer from '../Footer';
 import '../../css/AddPosts.css';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../firebase"; // your firebase.js file
+import axios from 'axios';
 
 function AddPost() {
   const [content, setContent] = useState('');
@@ -12,9 +13,10 @@ function AddPost() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const userId = localStorage.getItem('userId');       // ✅ Get user ID
-  const username = localStorage.getItem('username');   // ✅ Get username
+  const userId = localStorage.getItem('userId');
+  const username = localStorage.getItem('username');
 
+  
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
     let images = files.filter(file => file.type.startsWith('image'));
@@ -73,120 +75,12 @@ function AddPost() {
     setPreviews(updatedPreviews);
   };
 
-  // const handleSubmit = async () => {
-  //   if (!userId || !username) {
-  //     setMessage('User not logged in.');
-  //     console.warn('User ID or username missing in localStorage. Redirect to login may be needed.');
-  //     return;
-  //   }
-
-  //   if (!content && files.length === 0) {
-  //     setMessage('Please add a caption or media.');
-  //     return;
-  //   }
-
-  //   setLoading(true);
-  //   setMessage('');
-
-  //   try {
-  //     // Simulated media upload logic (replace with real upload if needed)
-  //     const mediaUrls = files.map(() => 'mock-url');
-  //     const mediaTypes = files.map(file =>
-  //       file.type.startsWith('image') ? 'image' : 'video'
-  //     );
-
-  //     const postData = {
-  //       userId,
-  //       username, // ✅ Include username
-  //       content,
-  //       mediaUrls,
-  //       mediaTypes,
-  //       createdAt: new Date().toISOString(),
-  //     };
-
-  //     const response = await fetch('/api/add-post', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify(postData),
-  //     });
-
-  //     if (!response.ok) {
-  //       const errorText = await response.text();
-  //       throw new Error(errorText || 'Failed to create post.');
-  //     }
-
-  //     setMessage('Post created successfully!');
-  //     setContent('');
-  //     setFiles([]);
-  //     setPreviews([]);
-  //   } catch (error) {
-  //     setMessage('Error: ' + error.message);
-  //     console.error('Post creation failed:', error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // const handleSubmit = async () => {
-  //   if (!userId || !username) {
-  //     setMessage('User not logged in.');
-  //     return;
-  //   }
-  
-  //   if (!content && files.length === 0) {
-  //     setMessage('Please add a caption or media.');
-  //     return;
-  //   }
-  
-  //   setLoading(true);
-  //   setMessage('');
-  
-  //   try {
-  //     // Simulate Firebase upload logic — use first file only
-  //     let mediaUrl = null;
-  //     let mediaType = null;
-  
-  //     if (files.length > 0) {
-  //       mediaUrl = 'https://firebasestorage.googleapis.com/mock-url'; // 🔁 Replace with actual Firebase URL if implemented
-  //       mediaType = files[0].type.startsWith('image') ? 'image' : 'video';
-  //     }
-  
-  //     const postData = {
-  //       userId,
-  //       username,
-  //       content,
-  //       mediaUrl,   // ✅ single URL
-  //       mediaType,  // ✅ single type
-  //       createdAt: new Date().toISOString(),
-  //     };
-  
-  //     const response = await fetch('/api/add-post', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify(postData),
-  //     });
-  
-  //     if (!response.ok) {
-  //       const errorText = await response.text();
-  //       throw new Error(errorText || 'Failed to create post.');
-  //     }
-  
-  //     setMessage('Post created successfully!');
-  //     setContent('');
-  //     setFiles([]);
-  //     setPreviews([]);
-  //   } catch (error) {
-  //     setMessage('Error: ' + error.message);
-  //     console.error('Post creation failed:', error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const uploadFileAndGetURL = async (file) => {
     const storageRef = ref(storage, `posts/${file.name + Date.now()}`);
     await uploadBytes(storageRef, file);
     return await getDownloadURL(storageRef);
   };
+
   const handleSubmit = async () => {
     if (!userId || !username) {
       setMessage('User not logged in.');
@@ -202,44 +96,52 @@ function AddPost() {
     setMessage('');
   
     try {
-      let mediaUrl = null;
-      let mediaType = null;
+      let mediaUrls = [];
+      let mediaTypes = [];
   
       if (files.length > 0) {
-        mediaUrl = await uploadFileAndGetURL(files[0]); // ✅ real Firebase URL
-        mediaType = files[0].type.startsWith('image') ? 'image' : 'video';
+        // Upload all files and get URLs
+        mediaUrls = await Promise.all(
+          files.map(async (file) => {
+            const url = await uploadFileAndGetURL(file);
+            return url;
+          })
+        );
+  
+        // Detect media types
+        mediaTypes = files.map((file) =>
+          file.type.startsWith('image') ? 'image' : 'video'
+        );
       }
   
       const postData = {
         userId,
         username,
         content,
-        mediaUrl,
-        mediaType,
+        mediaUrls,
+        mediaTypes,
         createdAt: new Date().toISOString(),
       };
   
-      const response = await fetch('/api/add-post', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(postData),
+      // ✅ Here we use axios instead of fetch
+      const response = await axios.post('http://localhost:8000/api/add-post', postData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
-  
-      if (!response.ok) {
-        throw new Error(await response.text() || 'Failed to create post.');
-      }
   
       setMessage('Post created successfully!');
       setContent('');
       setFiles([]);
       setPreviews([]);
     } catch (error) {
-      setMessage('Error: ' + error.message);
       console.error('Post creation failed:', error);
+      setMessage('Error: ' + (error.response?.data || error.message));
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="page-container">

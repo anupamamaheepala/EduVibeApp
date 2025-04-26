@@ -5,6 +5,8 @@ import com.eduvibe.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -24,14 +26,34 @@ public class UserController {
         }
     }
 
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        try {
-            User user = userService.login(loginRequest.getUserIdentifier(), loginRequest.getPassword());
-            return ResponseEntity.ok(user);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    try {
+        User user = userService.login(loginRequest.getUserIdentifier(), loginRequest.getPassword());
+
+        // Build custom response with only needed fields
+        Map<String, Object> response = new HashMap<>();
+        response.put("username", user.getUsername());
+        response.put("userId", user.getId()); // ✅ This fixes your undefined issue
+
+        // Add token here if you have authentication
+        // response.put("token", jwtToken);
+
+        return ResponseEntity.ok(response);
+
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+}
+
+
+    // Logout endpoint to clear the session on frontend side
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        // If you're using JWT, you don't really need to do anything in the backend, 
+        // since JWT is stateless. Just return a success message.
+        return ResponseEntity.ok("Logged out successfully");
     }
 
     // Inner class for login request payload

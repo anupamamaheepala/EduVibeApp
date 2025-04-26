@@ -20,8 +20,10 @@ public class EditPostService {
 
             // Update fields
             existingPost.setContent(updatedPost.getContent());
-            existingPost.setMediaUrl(updatedPost.getMediaUrl());
-            existingPost.setMediaType(updatedPost.getMediaType());
+            // existingPost.setMediaUrl(updatedPost.getMediaUrl());
+            // existingPost.setMediaType(updatedPost.getMediaType());
+            existingPost.setMediaUrls(updatedPost.getMediaUrls()); 
+            existingPost.setMediaTypes(updatedPost.getMediaTypes()); 
             existingPost.setCreatedAt(updatedPost.getCreatedAt()); // Optional: consider keeping original timestamp
 
             return addPostRepository.save(existingPost);
