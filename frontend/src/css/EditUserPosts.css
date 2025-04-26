@@ -1,4 +1,4 @@
-/* src/css/EditUserPost.css */
+/* src/css/EditUserPost.css
 .edit-post-container {
   padding: 20px;
 }
@@ -14,4 +14,128 @@
   font-size: 1rem;
   margin-top: 10px;
   cursor: pointer;
+} */
+/* EditUserPosts.css */
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+.edit-post-container {
+  flex: 1;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.edit-post-container h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.edit-post-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-post-form label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+}
+
+.edit-post-form textarea {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  resize: vertical;
+  min-height: 120px;
+}
+
+.edit-post-form input[type="file"] {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.update-button {
+  margin-top: 2rem;
+  padding: 0.8rem;
+  font-size: 1.1rem;
+  background-color: #6d28d9;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.update-button:hover {
+  background-color: #2563eb;
+}
+
+.update-button:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}
+
+.media-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.media-preview img,
+.media-preview video {
+  width: 150px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.feedback-message {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.feedback-message.success {
+  color: #16a34a;
+}
+
+.feedback-message.error {
+  color: #dc2626;
+}
+
+.error-message {
+  color: #dc2626;
+  text-align: center;
+  margin: 2rem 0;
+  font-size: 1.2rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .edit-post-container {
+    padding: 1rem;
+    margin: 1rem;
+  }
+
+  .media-preview img,
+  .media-preview video {
+    width: 100px;
+  }
 }
