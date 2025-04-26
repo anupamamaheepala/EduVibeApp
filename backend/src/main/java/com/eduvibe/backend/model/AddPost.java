@@ -1,4 +1,5 @@
 package com.eduvibe.backend.model;
+import java.util.List;
 
 import java.util.Date; // ✅ Required
 import org.springframework.data.annotation.Id; // ✅ Required
@@ -13,18 +14,22 @@ public class AddPost {
     private String userId;
     private String username;
     private String content;
-    private String mediaUrl;
-    private String mediaType;
+    // private String mediaUrl;
+    // private String mediaType;
+    private List<String> mediaUrls; // ⬅️ Change here to List
+    private List<String> mediaTypes; // ⬅️ Optional: media type for each media
     private Date createdAt;
 
     public AddPost() {}
 
-    public AddPost(String userId, String username, String content, String mediaUrl, String mediaType, Date createdAt) {
+    public AddPost(String userId, String username, String content, List<String> mediaUrls, List<String> mediaTypes, Date createdAt) {  //String mediaUrl, String mediaType
         this.userId = userId;
         this.username = username;
         this.content = content;
-        this.mediaUrl = mediaUrl;
-        this.mediaType = mediaType;
+        // this.mediaUrl = mediaUrl;
+        // this.mediaType = mediaType;
+        this.mediaUrls = mediaUrls;
+        this.mediaTypes = mediaTypes;
         this.createdAt = createdAt;
     }
 
@@ -41,11 +46,17 @@ public class AddPost {
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
 
-    public String getMediaUrl() { return mediaUrl; }
-    public void setMediaUrl(String mediaUrl) { this.mediaUrl = mediaUrl; }
+    // public String getMediaUrl() { return mediaUrl; }
+    // public void setMediaUrl(String mediaUrl) { this.mediaUrl = mediaUrl; }
 
-    public String getMediaType() { return mediaType; }
-    public void setMediaType(String mediaType) { this.mediaType = mediaType; }
+    // public String getMediaType() { return mediaType; }
+    // public void setMediaType(String mediaType) { this.mediaType = mediaType; }
+
+    public List<String> getMediaUrls() { return mediaUrls; }
+    public void setMediaUrls(List<String> mediaUrls) { this.mediaUrls = mediaUrls; }
+
+    public List<String> getMediaTypes() { return mediaTypes; }
+    public void setMediaTypes(List<String> mediaTypes) { this.mediaTypes = mediaTypes; }
 
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
