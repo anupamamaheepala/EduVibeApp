@@ -37,8 +37,15 @@ const Login = () => {
         userIdentifier: formData.userIdentifier,
         password: formData.password
       });
-      // Assuming API returns token and username
-      const { token, username } = response.data;
+  
+      // Assuming your backend returns { token, username, userId }
+      const { token, username, userId } = response.data;
+  
+      // Save to localStorage
+      localStorage.setItem('username', username);
+      localStorage.setItem('userId', userId); // ✅ fixes "undefined"
+ 
+      // AuthContext login
       login(username || formData.userIdentifier, token);
       Swal.fire({
         icon: 'success',
@@ -57,7 +64,7 @@ const Login = () => {
       clearForm();
     }
   };
-
+  
   return (
     <div className="login-page">
       <Header />
