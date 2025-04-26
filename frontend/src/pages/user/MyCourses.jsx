@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../Header';
 import Footer from '../Footer';
@@ -25,7 +25,21 @@ const myMockCourses = [
 ];
 
 const MyCourses = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchBy, setSearchBy] = useState('name'); // 'name' or 'author'
   const navigate = useNavigate();
+
+  // Filter courses based on search term and search type
+  const filteredCourses = myMockCourses.filter((course) =>
+    searchBy === 'name'
+      ? course.name.toLowerCase().includes(searchTerm.toLowerCase())
+      : course.author.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const toggleSearchBy = () => {
+    setSearchBy(searchBy === 'name' ? 'author' : 'name');
+    setSearchTerm(''); // Clear search term when toggling
+  };
 
   return (
     <div className="all-courses-page">
@@ -33,15 +47,26 @@ const MyCourses = () => {
       <div className="semi-header my-courses-header">
         <div className="search-container">
           <h2>My Courses</h2>
-          <button className="add-course-btn" onClick={() => navigate('/add-course')}>
-            Add New Course
-          </button>
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder={`Search by ${searchBy}`}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <button className="toggle-search-btn" onClick={toggleSearchBy}>
+              Search by {searchBy === 'name' ? 'Author' : 'Name'}
+            </button>
+            <button className="add-course-btn" onClick={() => navigate('/add-course')}>
+              Add New Course
+            </button>
+          </div>
         </div>
       </div>
       <div className="courses-section">
         <div className="courses-grid">
-          {myMockCourses.length > 0 ? (
-            myMockCourses.map((course) => (
+          {filteredCourses.length > 0 ? (
+            filteredCourses.map((course) => (
               <div key={course.id} className="course-card">
                 <div className="course-image"></div>
                 <div className="course-content">

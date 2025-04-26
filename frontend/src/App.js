@@ -8,7 +8,6 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import CourseForm from './pages/courses/AddCourseForm';
 import AllCourses from './pages/courses/AllCourses';
-import UserDashboard from './pages/user/UserDashboard';
 
 import MyCourse from './pages/user/MyCourses';
 import CheckImages from './components/CheckImages';
@@ -22,6 +21,8 @@ import EditUserPosts from './pages/posts/EditUserPosts';
 
 
 import DeleteUserPosts from './pages/posts/DeleteUserPosts'; // If this is correct
+import DeleteUserPosts from './pages/posts/DeleteUserPosts';
+import UserRoutes from './pages/user/UserRoutes';
 
 
 const App = () => {
@@ -35,7 +36,6 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/courses" element={<AllCourses />} />
           <Route path="/add-course" element={<CourseForm />} />
-          <Route path="/dashboard" element={<UserDashboard />} />
 
           {/* Posts and Comments */}
           <Route path="/check-images" element={<CheckImages />} />
@@ -51,6 +51,7 @@ const App = () => {
           <Route path="/UserPosts" element={<UserPosts />} />
           <Route path="/EditUserPosts/:id" element={<EditUserPosts />} />
           <Route path="/DeleteUserPosts/:id" element={<DeleteUserPosts />} />
+          <Route path="/dashboard/*" element={<UserRoutes />} />
 
 
         </Routes>
