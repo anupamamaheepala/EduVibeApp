@@ -1,18 +1,20 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../AuthContext';
-import '../../css/user/UserDashboard.css'; // Reuse your existing CSS
-import defaultProfilePic from '../../images/user.png'; // Add a default image in your assets
+import '../../css/user/UserDashboard.css';
+import defaultProfilePic from '../../images/user.png';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 const UserDashboard = () => {
-  const { userId, username } = useContext(AuthContext);
+  const { userId, username, logout } = useContext(AuthContext);
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState({});
   const [profilePic, setProfilePic] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const fetchUserData = useCallback(async () => {
     try {
@@ -54,6 +56,7 @@ const UserDashboard = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('handleSubmit called with editedUser:', editedUser);
     try {
       const response = await axios.put(
         `http://localhost:8000/api/auth/user/${userId}`,
@@ -61,6 +64,7 @@ const UserDashboard = () => {
       );
       setUser(response.data);
       setIsEditing(false);
+      setProfilePic(null);
       Swal.fire({
         icon: 'success',
         title: 'Profile Updated',
@@ -73,6 +77,58 @@ const UserDashboard = () => {
         title: 'Update Failed',
         text: err.response?.data?.message || 'Failed to update profile. Please try again.'
       });
+    }
+  };
+
+  const handleEditClick = (e) => {
+    e.preventDefault();
+    console.log('Edit Profile clicked, setting isEditing to true');
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    console.log('Cancel clicked, resetting state');
+    setIsEditing(false);
+    setEditedUser(user);
+    setProfilePic(null);
+  };
+
+  const handleDeleteProfile = async () => {
+    const result = await Swal.fire({
+      icon: 'warning',
+      title: 'Are you sure?',
+      text: 'Deleting your profile is permanent and cannot be undone.',
+      showCancelButton: true,
+      confirmButtonColor: '#e74c3c',
+      cancelButtonColor: '#773beb',
+      confirmButtonText: 'Yes, delete it',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:8000/api/auth/user/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        await logout();
+        Swal.fire({
+          icon: 'success',
+          title: 'Profile Deleted',
+          text: 'Your profile has been successfully deleted.',
+          timer: 2000,
+          showConfirmButton: false
+        });
+        navigate('/login');
+      } catch (err) {
+        console.error('Failed to delete profile:', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Deletion Failed',
+          text: err.response?.data?.message || 'Failed to delete profile. Please try again.'
+        });
+      }
     }
   };
 
@@ -97,6 +153,8 @@ const UserDashboard = () => {
       </div>
     );
   }
+
+  console.log('Rendering with isEditing:', isEditing);
 
   return (
     <div className="user-dashboard">
@@ -136,7 +194,7 @@ const UserDashboard = () => {
                       className="detail-value editable"
                     />
                   ) : (
-                    <div className="detail-value">{user?.firstName}</div>
+                    <div className="detail-value">{user?.firstName || 'Not provided'}</div>
                   )}
                 </div>
                 <div className="detail-group">
@@ -150,14 +208,14 @@ const UserDashboard = () => {
                       className="detail-value editable"
                     />
                   ) : (
-                    <div className="detail-value">{user?.lastName}</div>
+                    <div className="detail-value">{user?.lastName || 'Not provided'}</div>
                   )}
                 </div>
               </div>
 
               <div className="detail-group">
                 <label className="detail-label">Username</label>
-                <div className="detail-value">{username}</div>
+                <div className="detail-value">{username || 'Not provided'}</div>
               </div>
 
               <div className="detail-group">
@@ -171,7 +229,7 @@ const UserDashboard = () => {
                     className="detail-value editable"
                   />
                 ) : (
-                  <div className="detail-value">{user?.email}</div>
+                  <div className="detail-value">{user?.email || 'Not provided'}</div>
                 )}
               </div>
 
@@ -186,7 +244,7 @@ const UserDashboard = () => {
                     className="detail-value editable"
                   />
                 ) : (
-                  <div className="detail-value">{user?.phoneNumber}</div>
+                  <div className="detail-value">{user?.phoneNumber || 'Not provided'}</div>
                 )}
               </div>
 
@@ -207,34 +265,40 @@ const UserDashboard = () => {
                 )}
               </div>
 
-              {isEditing ? (
-                <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+              {isEditing && (
+                <div className="button-container">
                   <button type="submit" className="edit-button">
                     Save Changes
                   </button>
                   <button
                     type="button"
-                    className="edit-button"
-                    style={{ backgroundColor: 'var(--error-color)' }}
-                    onClick={() => {
-                      setIsEditing(false);
-                      setEditedUser(user);
-                      setProfilePic(null);
-                    }}
+                    className="edit-button cancel-button"
+                    onClick={handleCancel}
                   >
                     Cancel
                   </button>
-                </div>                
-              ) : (
+                </div>
+              )}
+            </form>
+
+            {!isEditing && (
+              <div className="button-container">
                 <button
                   type="button"
                   className="edit-button"
-                  onClick={() => setIsEditing(true)}
+                  onClick={handleEditClick}
                 >
                   Edit Profile
                 </button>
-              )}
-            </form>
+                <button
+                  type="button"
+                  className="edit-button delete-button"
+                  onClick={handleDeleteProfile}
+                >
+                  Delete Profile
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

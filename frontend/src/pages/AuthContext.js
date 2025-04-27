@@ -8,7 +8,6 @@ export const AuthProvider = ({ children }) => {
   const [username, setUsername] = useState('');
   const [userId, setUserId] = useState('');
 
-  // Check localStorage on mount to restore login state
   useEffect(() => {
     const token = localStorage.getItem('token');
     const storedUsername = localStorage.getItem('username');
@@ -16,14 +15,14 @@ export const AuthProvider = ({ children }) => {
     if (token && storedUsername && storedUserId) {
       setIsLoggedIn(true);
       setUsername(storedUsername);
-      setUserId(storedUserId); // Initialize userId
+      setUserId(storedUserId);
     }
   }, []);
 
-  const login = (username, token, userId) => { // Add userId parameter
+  const login = (username, token, userId) => {
     localStorage.setItem('token', token);
     localStorage.setItem('username', username);
-    localStorage.setItem('userId', userId); // Store userId
+    localStorage.setItem('userId', userId);
     setIsLoggedIn(true);
     setUsername(username);
     setUserId(userId);
@@ -32,19 +31,19 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       const token = localStorage.getItem('token');
-      // Send a request to the backend to notify it of logout (optional)
       if (token) {
         await axios.post('http://localhost:8000/api/auth/logout', {}, {
           headers: {
-            Authorization: `Bearer ${token}`,  // Send token in Authorization header
+            Authorization: `Bearer ${token}`,
           },
         });
       }
-      // Clear token from localStorage
       localStorage.removeItem('token');
       localStorage.removeItem('username');
+      localStorage.removeItem('userId'); // Clear userId
       setIsLoggedIn(false);
       setUsername('');
+      setUserId('');
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -56,4 +55,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
