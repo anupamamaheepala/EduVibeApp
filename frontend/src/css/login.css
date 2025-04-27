@@ -245,3 +245,10 @@
       margin-top: 5px;
     }
   }
+
+  .google-login-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  

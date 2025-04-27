@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google'; 
+
 // import { AuthProvider, AuthContext } from './pages/context/AuthContext';
 import { AuthProvider } from './pages/AuthContext';
 
@@ -20,7 +22,8 @@ import UserRoutes from './pages/user/UserRoutes';
 
 const App = () => {
   return (
-    <AuthProvider>
+  <AuthProvider>
+    <GoogleOAuthProvider clientId="672064114622-86o0ke8k6adn1gcdptcutc2l5439kbkq.apps.googleusercontent.com">
       <Router>
         <Routes>
           {/* Public Routes */}
@@ -43,6 +46,7 @@ const App = () => {
 
         </Routes>
       </Router>
+      </GoogleOAuthProvider>
     </AuthProvider>
   );
 };

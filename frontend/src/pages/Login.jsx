@@ -138,6 +138,8 @@ import '../css/login.css';
 import Header from './Header';
 import Footer from './Footer';
 import { AuthContext } from './AuthContext';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -177,6 +179,7 @@ const Login = () => {
       localStorage.setItem('token', token);
       localStorage.setItem('username', username);
       localStorage.setItem('userId', userId);
+      
 
       // AuthContext login with all required data
       login(username, token, userId);
@@ -251,7 +254,44 @@ const Login = () => {
           <div className="login-divider">
             <span className="login-divider-text">OR LOGIN WITH</span>
           </div>
-          
+          <div className="google-login-wrapper">
+  <GoogleLogin
+    onSuccess={(credentialResponse) => {
+      const decoded = jwtDecode(credentialResponse.credential);
+      console.log('Decoded Google User:', decoded);
+
+      // Example: you might want to send this token to your backend to create/login the user
+      // For now, let's simulate login directly
+      const username = decoded.name || decoded.email;
+      const userId = decoded.sub; // Google's unique user id
+      const token = credentialResponse.credential;
+
+      // Save to localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('username', username);
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('email', decoded.email || '');   
+      localStorage.setItem('picture', decoded.picture); 
+      // Login via AuthContext
+      login(username, token, userId);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Google Login Successful',
+        text: `Welcome ${username}!`
+      });
+      navigate('/');
+    }}
+    onError={() => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Google Login Failed',
+        text: 'Please try again.'
+      });
+    }}
+  />
+</div>
+
           <p className="login-signup-link">
             Don't have an account? <a href="/signup">Sign up</a>
           </p>

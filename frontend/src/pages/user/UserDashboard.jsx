@@ -33,9 +33,34 @@ const UserDashboard = () => {
 
   useEffect(() => {
     if (userId) {
-      fetchUserData();
+      // Check if userId is too long --> assume it's a Google login user
+      if (String(userId).length > 20) {
+        // Google login: build a simple user object from localStorage
+        setUser({
+          firstName: username.split(' ')[0] || '',
+          lastName: username.split(' ')[1] || '',
+          email: localStorage.getItem('email') || '',
+          profilePicture: localStorage.getItem('picture') || '',
+          phoneNumber: '',
+          address: ''
+        });
+        setEditedUser({
+          firstName: username.split(' ')[0] || '',
+          lastName: username.split(' ')[1] || '',
+          email: localStorage.getItem('email') || '',
+          profilePicture: localStorage.getItem('picture') || '',
+          phoneNumber: '',
+          address: ''
+        });
+        setIsLoading(false);
+        setError(null);
+      } else {
+        // Normal user login: fetch from backend
+        fetchUserData();
+      }
     }
-  }, [userId, fetchUserData]);
+  }, [userId, fetchUserData, username]);
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
