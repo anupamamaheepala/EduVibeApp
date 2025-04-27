@@ -74,7 +74,7 @@ function UserPosts() {
 
   return (
     <div className="page-container">
-      {isLoggedIn ? <UserHeader /> : <Header />}
+      {/* {isLoggedIn ? <UserHeader /> : <Header />} */}
       <div className="user-posts-container">     
         <h2>Your Posts</h2>
         {loading ? (
@@ -175,7 +175,7 @@ function UserPosts() {
           </div>
         )}
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }
