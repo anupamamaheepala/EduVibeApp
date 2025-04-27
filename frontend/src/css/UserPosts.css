@@ -30,8 +30,8 @@ font-size: 1.75rem;
 }
 .user-posts-container {
   max-width: 100rem;
-  margin: 0 15rem;
-  padding: 0 2rem 2rem;
+  /* margin: 0 15rem; */
+  /* padding: 0 2rem 2rem; */
 }
 
 .user-posts-container h2 {
