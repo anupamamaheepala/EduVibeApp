@@ -4,7 +4,7 @@
     border-top: 1px solid #ddd;
     min-height: 100px; 
     max-height: 250px; /* Optional: limit total comment section height */
-   overflow-y: auto;   /* Scroll inside comments if too many */
+     /* Scroll inside comments if too many */
   }
   
   .comment-section h4 {
