@@ -3,7 +3,6 @@ package com.eduvibe.backend.controller;
 import com.eduvibe.backend.model.User;
 import com.eduvibe.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators.Add;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
@@ -11,7 +10,7 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000") // Adjust as needed
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     @Autowired
@@ -27,7 +26,6 @@ public class UserController {
         }
     }
 
-
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
@@ -35,7 +33,7 @@ public class UserController {
 
             Map<String, Object> response = new HashMap<>();
             response.put("username", user.getUsername());
-            response.put("userId", user.getId()); // Ensure this is included
+            response.put("userId", user.getId());
             response.put("token", "your-jwt-token"); // Add your token generation logic
 
             return ResponseEntity.ok(response);
@@ -44,16 +42,11 @@ public class UserController {
         }
     }
 
-
-    // Logout endpoint to clear the session on frontend side
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
-        // If you're using JWT, you don't really need to do anything in the backend, 
-        // since JWT is stateless. Just return a success message.
         return ResponseEntity.ok("Logged out successfully");
     }
 
-    // UserController.java - Add these endpoints
     @GetMapping("/user/{userId}")
     public ResponseEntity<?> getUserById(@PathVariable String userId) {
         try {
@@ -74,7 +67,16 @@ public class UserController {
         }
     }
 
-    // Inner class for login request payload
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable String userId) {
+        try {
+            userService.deleteUser(userId);
+            return ResponseEntity.ok("Profile deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     public static class LoginRequest {
         private String userIdentifier;
         private String password;
