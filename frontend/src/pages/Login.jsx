@@ -65,7 +65,7 @@ const Login = () => {
       });
 
       // Navigate to dashboard and clear form
-      navigate('/dashboard');
+      navigate('/');
       clearForm();
     } catch (error) {
       // Detailed error logging

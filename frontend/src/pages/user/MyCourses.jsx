@@ -2,16 +2,12 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-//import UserHeader from '../UserHeader';
-//import Header from '../Header';
-//import Footer from '../Footer';
 import '../../css/all-courses.css';
 import { AuthContext } from '../AuthContext';
 
 const MyCourses = () => {
   const [courses, setCourses] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchBy, setSearchBy] = useState('name');
   const [message, setMessage] = useState('');
   const { isLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -64,7 +60,6 @@ const MyCourses = () => {
   }, [isLoggedIn, userId, navigate]);
 
   const handleDelete = async (courseId) => {
-    // Show confirmation dialog
     const result = await Swal.fire({
       icon: 'warning',
       title: 'Are you sure?',
@@ -72,19 +67,18 @@ const MyCourses = () => {
       showCancelButton: true,
       confirmButtonText: 'Delete',
       cancelButtonText: 'Cancel',
-      confirmButtonColor: '#ff4d4f', // Match delete button color
+      confirmButtonColor: '#ff4d4f',
     });
-
+  
     if (!result.isConfirmed) return;
-
+  
     try {
       await axios.delete(`http://localhost:8000/api/courses/${courseId}`, {
         headers: { 'X-User-Id': userId },
       });
-
-      // Update courses state to remove deleted course
+  
       setCourses(courses.filter((course) => course.id !== courseId));
-      setMessage('Course deleted successfully');
+      
       Swal.fire({
         icon: 'success',
         title: 'Success!',
@@ -118,37 +112,25 @@ const MyCourses = () => {
   };
 
   const handleUpdate = (courseId) => {
-    // Navigate to the edit course page
     navigate(`/edit-course/${courseId}`);
   };
 
-  const toggleSearchBy = () => {
-    setSearchBy(searchBy === 'name' ? 'author' : 'name');
-    setSearchTerm('');
-  };
-
   const filteredCourses = courses.filter((course) =>
-    searchBy === 'name'
-      ? (course.name || '').toLowerCase().includes(searchTerm.toLowerCase())
-      : (course.username || '').toLowerCase().includes(searchTerm.toLowerCase())
+    (course.name || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div className="all-courses-page">
-     
       <div className="semi-header my-courses-header">
         <div className="search-container">
           <h2>My Courses</h2>
           <div className="search-bar">
             <input
               type="text"
-              placeholder={`Search by ${searchBy}`}
+              placeholder="Search by name"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <button className="toggle-search-btn" onClick={toggleSearchBy}>
-              Search by {searchBy === 'name' ? 'Author' : 'Name'}
-            </button>
             <button className="add-course-btn" onClick={() => navigate('/add-course')}>
               Add New Course
             </button>
@@ -195,7 +177,6 @@ const MyCourses = () => {
           )}
         </div>
       </div>
-      
     </div>
   );
 };
