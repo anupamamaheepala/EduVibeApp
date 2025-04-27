@@ -2,16 +2,16 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import UserHeader from '../UserHeader';
-import Header from '../Header';
-import Footer from '../Footer';
+//import UserHeader from '../UserHeader';
+//import Header from '../Header';
+//import Footer from '../Footer';
 import '../../css/all-courses.css';
 import { AuthContext } from '../AuthContext';
 
 const MyCourses = () => {
+  const [courses, setCourses] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchBy, setSearchBy] = useState('name');
-  const [courses, setCourses] = useState([]);
   const [message, setMessage] = useState('');
   const { isLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -135,7 +135,7 @@ const MyCourses = () => {
 
   return (
     <div className="all-courses-page">
-      {isLoggedIn ? <UserHeader /> : <Header />}
+     
       <div className="semi-header my-courses-header">
         <div className="search-container">
           <h2>My Courses</h2>
@@ -195,7 +195,7 @@ const MyCourses = () => {
           )}
         </div>
       </div>
-      <Footer />
+      
     </div>
   );
 };
