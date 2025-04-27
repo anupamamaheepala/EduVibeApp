@@ -164,7 +164,7 @@ function Posts() {
                   </p>
                 </div>
 
-                {/* 🔽 Comment system component */}
+                {/*Comment system component */}
                 <CommentSection postId={post.id} />
 
               </div>

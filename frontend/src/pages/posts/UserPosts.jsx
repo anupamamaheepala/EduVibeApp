@@ -7,6 +7,7 @@ import Header from '../Header';
 import UserHeader from '../UserHeader';
 import Footer from '../Footer';
 import { AuthContext } from '../AuthContext';
+import CommentSection from '../comments/CommentSection';
 
 function UserPosts() {
   const { isLoggedIn } = useContext(AuthContext);
@@ -170,6 +171,10 @@ function UserPosts() {
                     Posted on {new Date(post.createdAt).toLocaleDateString()}
                   </p>
                 </div>
+                
+                {/*Comment system component */}
+                <CommentSection postId={post.id} />
+
               </div>
             ))}
           </div>
