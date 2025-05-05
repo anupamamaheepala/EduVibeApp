@@ -1,7 +1,10 @@
 .comment-section {
-    margin-top: 20px;
+    margin-top: 10px;
     padding-top: 10px;
     border-top: 1px solid #ddd;
+    min-height: 100px; 
+    max-height: 250px; /* Optional: limit total comment section height */
+     /* Scroll inside comments if too many */
   }
   
   .comment-section h4 {

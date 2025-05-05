@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000") // Adjust as needed
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     @Autowired
@@ -26,37 +26,57 @@ public class UserController {
         }
     }
 
-
     @PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-    try {
-        User user = userService.login(loginRequest.getUserIdentifier(), loginRequest.getPassword());
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            User user = userService.login(loginRequest.getUserIdentifier(), loginRequest.getPassword());
 
-        // Build custom response with only needed fields
-        Map<String, Object> response = new HashMap<>();
-        response.put("username", user.getUsername());
-        response.put("userId", user.getId()); // ✅ This fixes your undefined issue
+            Map<String, Object> response = new HashMap<>();
+            response.put("username", user.getUsername());
+            response.put("userId", user.getId());
+            response.put("token", "your-jwt-token"); // Add your token generation logic
 
-        // Add token here if you have authentication
-        // response.put("token", jwtToken);
-
-        return ResponseEntity.ok(response);
-
-    } catch (Exception e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
-}
 
-
-    // Logout endpoint to clear the session on frontend side
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
-        // If you're using JWT, you don't really need to do anything in the backend, 
-        // since JWT is stateless. Just return a success message.
         return ResponseEntity.ok("Logged out successfully");
     }
 
-    // Inner class for login request payload
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getUserById(@PathVariable String userId) {
+        try {
+            User user = userService.getUserById(userId);
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/user/{userId}")
+    public ResponseEntity<?> updateUser(@PathVariable String userId, @RequestBody User updatedUser) {
+        try {
+            User user = userService.updateUser(userId, updatedUser);
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable String userId) {
+        try {
+            userService.deleteUser(userId);
+            return ResponseEntity.ok("Profile deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     public static class LoginRequest {
         private String userIdentifier;
         private String password;
