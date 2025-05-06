@@ -3,10 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../css/UserPosts.css';
 import DeleteUserPost from './DeleteUserPosts';
-import Header from '../Header';
-import UserHeader from '../UserHeader';
-import Footer from '../Footer';
 import { AuthContext } from '../AuthContext';
+import ShareModal from './PostShareModal';
 
 function UserPosts() {
   const { isLoggedIn } = useContext(AuthContext);
@@ -16,7 +14,7 @@ function UserPosts() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-
+  const [sharingPostId, setSharingPostId] = useState(null);
   const currentUserId = localStorage.getItem('userId'); // ✅ Get logged-in userId
 
   useEffect(() => {
@@ -60,11 +58,8 @@ function UserPosts() {
   };
 
   const handleShare = (postId) => {
-    const postUrl = `${window.location.origin}/posts/${postId}`;
-    navigator.clipboard.writeText(postUrl).then(() => {
-      alert('Post URL copied to clipboard!');
-    });
-    setOpenDropdown(null);
+    setSharingPostId(postId);  // Open the modal
+    setOpenDropdown(null);     // Close the dropdown
   };
 
   const handlePostDeleted = (deletedId) => {
@@ -175,6 +170,12 @@ function UserPosts() {
           </div>
         )}
       </div>
+      {sharingPostId && (
+      <ShareModal
+        postId={sharingPostId}
+        onClose={() => setSharingPostId(null)}
+      />
+    )}
       {/* <Footer /> */}
     </div>
   );
