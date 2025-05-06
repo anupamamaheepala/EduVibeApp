@@ -14,7 +14,12 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    background: linear-gradient(to right, #f0f4ff, #eef1ff); 
+    /* padding: 30px 25px; */
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   }
+  
   
   .post-card {
     background-color: #fff;
@@ -174,5 +179,47 @@
   
   .post-meta strong {
     color: #222;
+  }
+  .image-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  
+  .image-modal-content {
+    position: relative;
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 90%;
+    max-height: 90%;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  }
+  
+  .image-modal-content img {
+    width: 600px;    /* ✅ Fixed width */
+    height: 400px;   /* ✅ Fixed height */
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #f87171;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 16px;
+    padding: 5px 10px;
+    cursor: pointer;
   }
   

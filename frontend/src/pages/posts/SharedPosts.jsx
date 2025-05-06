@@ -7,6 +7,8 @@ const SharedPosts = () => {
   const [sharedData, setSharedData] = useState([]);
   const [loading, setLoading] = useState(true);
   const userId = localStorage.getItem('userId');
+  const [openImage, setOpenImage] = useState(null);
+  const [openVideo, setOpenVideo] = useState(null);
 
   useEffect(() => {
     const fetchSharedPosts = async () => {
@@ -58,6 +60,7 @@ const validPosts = detailedPosts.filter(Boolean).sort(
       ) : sharedData.length === 0 ? (
         <p>No shared posts found.</p>
       ) : (
+        
         <div className="posts-feed">
          {sharedData.map(({ post, fromUserId, fromName, sharedAt, id }) => (
             <div key={id} className="post-card">
@@ -84,11 +87,24 @@ const validPosts = detailedPosts.filter(Boolean).sort(
                     {post.mediaUrls.map((url, index) => {
                       const type = post.mediaTypes?.[index] || (url.endsWith('.mp4') ? 'video' : 'image');
                       return type === 'image' ? (
-                        <img key={index} src={url} alt={`Post media ${index}`} />
+                        <img
+                              key={index}
+                              src={url}
+                              alt={`Post media ${index}`}
+                              onClick={() => setOpenImage(url)}
+                              style={{ cursor: 'pointer' }}
+                            />
+
                       ) : (
-                        <video key={index} controls>
+                       <video
+                          key={index}
+                          onClick={() => setOpenVideo(url)}
+                          style={{ cursor: 'pointer' }}
+                          muted
+                        >
                           <source src={url} type="video/mp4" />
                         </video>
+
                       );
                     })}
                   </div>
@@ -108,6 +124,27 @@ const validPosts = detailedPosts.filter(Boolean).sort(
               </div>
             </div>
           ))}
+          {openImage && (
+                    <div className="image-modal-backdrop" onClick={() => setOpenImage(null)}>
+                      <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <img src={openImage} alt="Full view" />
+                        <button className="close-btn" onClick={() => setOpenImage(null)}>✕</button>
+                      </div>
+                    </div>
+                  )}
+
+                  {openVideo && (
+                    <div className="image-modal-backdrop" onClick={() => setOpenVideo(null)}>
+                      <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <video controls autoPlay style={{ maxWidth: '100%', maxHeight: '80vh' }}>
+                          <source src={openVideo} type="video/mp4" />
+                        </video>
+                        <button className="close-btn" onClick={() => setOpenVideo(null)}>✕</button>
+                      </div>
+                    </div>
+                  )}
+
+
         </div>
       )}
     </div>
