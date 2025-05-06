@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../../css/ViewPosts.css'; // Use same styles as ViewPosts
+import '../../css/SharedPosts.css'; // Use same styles as ViewPosts
 import userLogo from '../../images/user.png';
 
 const SharedPosts = () => {
@@ -14,16 +14,24 @@ const SharedPosts = () => {
         const response = await axios.get(`http://localhost:8000/api/shared-posts/user/${userId}`);
         const sharedPosts = response.data;
 
-        // Fetch full post data for each shared post
         const detailedPosts = await Promise.all(sharedPosts.map(async (shared) => {
-          const postRes = await axios.get(`http://localhost:8000/api/view-posts/${shared.postId}`);
-          return {
-            ...shared,
-            post: postRes.data,
-          };
+          try {
+            const postRes = await axios.get(`http://localhost:8000/api/view-posts/${shared.postId}`);
+            return {
+              ...shared,
+              post: postRes.data,
+            };
+          } catch (err) {
+            console.warn(`Post with ID ${shared.postId} not found`);
+            return null; // skip if not found
+          }
         }));
-
-        setSharedData(detailedPosts);
+        
+const validPosts = detailedPosts.filter(Boolean).sort(
+  (a, b) => new Date(b.sharedAt) - new Date(a.sharedAt)
+);
+        setSharedData(validPosts);
+        
       } catch (err) {
         console.error('Error fetching shared post details:', err);
       } finally {
@@ -44,7 +52,7 @@ const SharedPosts = () => {
 
   return (
     <div className="posts-container">
-      <h2>Posts Shared With You</h2>
+      <h2>Posts Shared With Me</h2>
       {loading ? (
         <p>Loading shared posts...</p>
       ) : sharedData.length === 0 ? (
@@ -90,10 +98,10 @@ const SharedPosts = () => {
               <div className="post-content">
                 <p className="post-caption">{post.content}</p>
                 <p className="post-meta">
-                  Originally posted by <strong>{post.username || post.userId}</strong> on {new Date(post.createdAt).toLocaleDateString()}
+                  Originally posted by <strong>{post.username || post.userId}</strong> on {new Date(post.createdAt).toLocaleString()}
                 </p>
                 <p className="post-meta">
-                  Shared with you by <strong>{fromName}</strong> on {new Date(sharedAt).toLocaleDateString()}
+                  Shared with you by <strong>{fromName}</strong> on {new Date(sharedAt).toLocaleString()}
                 </p>
 
 

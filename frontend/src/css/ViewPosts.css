@@ -8,7 +8,7 @@
 
 .posts-container {
   max-width: 900px;
-  margin: 40px auto;
+  margin: 10px auto;
   padding: 0 20px;
 }
 
@@ -16,8 +16,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
-  padding: 20px;
+  margin-bottom: 10px;
+  padding: 2px;
 }
 
 .posts-header h1 {
@@ -25,7 +25,34 @@
   color: #333;
 }
 
+.posts-container h2 {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.post-card {
+  width: 700px;
+  min-height: 800px;
+  margin: 10px auto;
+  padding: 16px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Important: hide overflow */
+}
+.header-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 🔥 Center children horizontally */
+  margin-bottom: 2rem;
+}
+
 .create-post-button {
+  margin-top: 0.5rem; /* Space between title and button */
   padding: 10px 16px;
   background-color: #4caf50;
   color: white;
@@ -39,13 +66,11 @@
   background-color: #45a047;
 }
 
+
 .posts-feed {
   display: flex;
   flex-direction: column;
   gap: 30px;
-}
-.post-content {
-  margin-top: 15px;
 }
 
 .post-caption {
@@ -113,18 +138,7 @@
   display: block;
   border-radius: 8px;
 }
-.post-card {
-  width: 700px;
-  min-height: 800px;
-  margin: 20px auto;
-  padding: 16px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden; /* Important: hide overflow */
-}
+
 
 /* Unified media container with fixed height */
 .media-gallery {
@@ -210,10 +224,6 @@
 }
 
 
-
-
-
-
 .media-gallery.media-video-only {
   grid-template-columns: 1fr;
 }
@@ -233,18 +243,10 @@
 
 /* Text content below media */
 .post-content {
-  margin-top: 0px; /* Add small margin */
+  margin-top: 15px;
   display: flex;
   flex-direction: column;
   gap: 0px; /* Small gap between caption and meta */
-}
-
-
-
-
-.post-meta {
-  font-size: 12px;
-  color: #888;
 }
 
 /*post header*/
@@ -255,10 +257,6 @@
   margin-bottom: 10px;
 }
 
-.post-time {
-  font-size: 13px;
-  color: #777;
-}
 
 .post-user {
   display: flex;
@@ -277,4 +275,29 @@
   height: 32px;
   border-radius: 50%;
   object-fit: cover;
+}
+.post-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.share-btn {
+  background-color: #6366f1;
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  font-size: 13px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.share-btn:hover {
+  background-color: #4f46e5;
+}
+
+.post-time {
+  font-size: 13px;
+  color: #777;
 }

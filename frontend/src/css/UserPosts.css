@@ -39,6 +39,21 @@ font-size: 1.75rem;
   font-weight: 600;
   color: #1f2937;
   margin-bottom: 1.5rem;
+  text-align: center; 
+}
+
+.create-post-button {
+  padding: 10px 16px;
+  background-color: #4caf50;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.create-post-button:hover {
+  background-color: #45a047;
 }
 
 .loading-spinner {
@@ -264,4 +279,26 @@ font-size: 1.75rem;
   height: 100%;
   object-fit: cover;
   border-radius: 8px;
+}
+.post-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.post-user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.post-username {
+  font-weight: bold;
+}
+
+.post-time {
+  font-size: 0.9em;
+  color: #777;
+  margin-right: 10px;
 }
