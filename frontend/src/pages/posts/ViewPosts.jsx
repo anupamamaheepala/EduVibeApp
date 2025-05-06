@@ -6,6 +6,7 @@ import '../../css/ViewPosts.css';
 import { AuthContext } from '../AuthContext';
 import userLogo from '../../images/user.png';
 import CommentSection from '../comments/CommentSection';
+import ShareModal from './PostShareModal';
 
 
 function Posts() {
@@ -13,7 +14,10 @@ function Posts() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [sharingPostId, setSharingPostId] = useState(null);
 
+ 
+  
   const BACKEND_URL = 'http://localhost:8000/api/view-posts';
 
   useEffect(() => {
@@ -36,6 +40,10 @@ function Posts() {
     fetchPosts();
   }, []);
 
+  const handleShare = (postId) => {
+    setSharingPostId(postId);
+  };
+  
   const getTimeAgo = (timestamp) => {
     const diff = Math.floor((new Date() - new Date(timestamp)) / 1000);
     if (diff < 60) return `${diff} seconds ago`;
@@ -82,7 +90,9 @@ function Posts() {
                     <span className="post-username">{post.username || post.userId}</span>
                   </div>
                   <span className="post-time">{getTimeAgo(post.createdAt)}</span>
+                  
                 </div>
+                <button className="share-btn" onClick={() => handleShare(post.id)}>Share</button>
 
                 {/* Media Section */}
                 {/* {post.mediaUrls && post.mediaUrls.length > 0 && (() => {
@@ -170,6 +180,12 @@ function Posts() {
           </div>
         )}
       </div>
+            {sharingPostId && (
+        <ShareModal
+          postId={sharingPostId}
+          onClose={() => setSharingPostId(null)}
+        />
+      )}
 
       <Footer />
     </div>

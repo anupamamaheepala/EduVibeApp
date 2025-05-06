@@ -1,37 +1,3 @@
-// import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
-
-// const SharedPosts = () => {
-//   const [sharedPosts, setSharedPosts] = useState([]);
-//   const userId = localStorage.getItem('userId');
-
-//   useEffect(() => {
-//     axios.get(`http://localhost:8000/api/shared-posts/user/${userId}`)
-//       .then(res => setSharedPosts(res.data))
-//       .catch(err => console.error('Error fetching shared posts:', err));
-//   }, [userId]);
-
-//   return (
-//     <div className="shared-posts-page">
-//       <h2>Posts Shared With You</h2>
-//       {sharedPosts.length === 0 ? (
-//         <p>No shared posts yet.</p>
-//       ) : (
-//         sharedPosts.map(post => (
-//           <div key={post.id} className="shared-post-card">
-//             <p><strong>Post ID:</strong> {post.postId}</p>
-//             <p><strong>From:</strong> {post.fromUserId}</p>
-//             <p><strong>Shared at:</strong> {new Date(post.sharedAt).toLocaleString()}</p>
-//           </div>
-//         ))
-//       )}
-//     </div>
-//   );
-// };
-
-// export default SharedPosts;
-
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../../css/ViewPosts.css'; // Use same styles as ViewPosts
@@ -85,7 +51,7 @@ const SharedPosts = () => {
         <p>No shared posts found.</p>
       ) : (
         <div className="posts-feed">
-          {sharedData.map(({ post, fromUserId, sharedAt, id }) => (
+         {sharedData.map(({ post, fromUserId, fromName, sharedAt, id }) => (
             <div key={id} className="post-card">
               <div className="post-header">
                 <div className="post-user">
@@ -127,8 +93,10 @@ const SharedPosts = () => {
                   Originally posted by <strong>{post.username || post.userId}</strong> on {new Date(post.createdAt).toLocaleDateString()}
                 </p>
                 <p className="post-meta">
-                  Shared with you by <strong>{fromUserId}</strong> on {new Date(sharedAt).toLocaleDateString()}
+                  Shared with you by <strong>{fromName}</strong> on {new Date(sharedAt).toLocaleDateString()}
                 </p>
+
+
               </div>
             </div>
           ))}

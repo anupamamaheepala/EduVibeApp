@@ -13,6 +13,7 @@ public class SharedPost {
 
     private String postId;
     private String fromUserId;
+    private String fromName;
      private List<String> toUserIds;
     private LocalDateTime sharedAt = LocalDateTime.now();
 
@@ -24,6 +25,9 @@ public class SharedPost {
 
     public String getFromUserId() { return fromUserId; }
     public void setFromUserId(String fromUserId) { this.fromUserId = fromUserId; }
+
+    public String getfromName() { return fromName; }
+    public void setfromName(String fromName) { this.fromName = fromName; }
 
     public List<String> getToUserIds() { return toUserIds; }
     public void setToUserIds(List<String> toUserIds) { this.toUserIds = toUserIds; }
