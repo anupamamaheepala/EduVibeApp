@@ -78,21 +78,18 @@ function Posts() {
 
                 {/* Post Header */}
                 <div className="post-header">
-                 
                   <div className="post-user">
-                    
-                    <img
-                      className="post-user-avatar"
-                      src={userLogo}
-                      alt="User avatar"
-                    />
-                    
+                    <img className="post-user-avatar" src={userLogo} alt="User avatar" />
                     <span className="post-username">{post.username || post.userId}</span>
                   </div>
-                  <span className="post-time">{getTimeAgo(post.createdAt)}</span>
-                  
+
+                  <div className="post-right">
+                    <button className="share-btn" onClick={() => handleShare(post.id)}>Share</button>
+                    <span className="post-time">{getTimeAgo(post.createdAt)}</span>
+                  </div>
                 </div>
-                <button className="share-btn" onClick={() => handleShare(post.id)}>Share</button>
+
+               
 
                 {/* Media Section */}
                 {/* {post.mediaUrls && post.mediaUrls.length > 0 && (() => {
