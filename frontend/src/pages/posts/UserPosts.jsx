@@ -17,7 +17,8 @@ function UserPosts() {
   const navigate = useNavigate();
   const [sharingPostId, setSharingPostId] = useState(null);
   const currentUserId = localStorage.getItem('userId'); // ✅ Get logged-in userId
-
+  const [openImage, setOpenImage] = useState(null);
+  const [openVideo, setOpenVideo] = useState(null);
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -38,7 +39,11 @@ function UserPosts() {
         }
 
         const response = await axios.get(`http://localhost:8000/api/view-posts/user/${currentUserId}`);
-        setPosts(response.data);
+        const sortedPosts = response.data.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+    
+        setPosts(sortedPosts);
       } catch (err) {
         setError('Error fetching posts: ' + err.message);
       } finally {
@@ -75,6 +80,8 @@ function UserPosts() {
     setPosts((prev) => prev.filter((post) => post.id !== deletedId));
     setOpenDropdown(null);
   };
+
+  
 
   return (
     <div className="page-container">
@@ -169,12 +176,26 @@ function UserPosts() {
                         {post.mediaUrls.map((url, index) => {
                           const type = post.mediaTypes?.[index] || (url.endsWith('.mp4') ? 'video' : 'image');
                           return type === 'image' ? (
-                            <img key={index} src={url} alt={`Post media ${index}`} />
+                           
+                            <img
+                                key={index}
+                                src={url}
+                                alt={`Post media ${index}`}
+                                onClick={() => setOpenImage(url)}
+                                style={{ cursor: 'pointer' }}
+                              />
+
                           ) : (
-                            <video key={index} controls aria-label={`Post video ${index}`}>
-                              <source src={url} type="video/mp4" />
-                              Your browser does not support the video tag.
-                            </video>
+                            
+                            <video
+                            key={index}
+                            onClick={() => setOpenVideo(url)}
+                            style={{ cursor: 'pointer' }}
+                            muted
+                          >Your browser does not support the video tag.
+                            <source src={url} type="video/mp4" />
+                          </video>
+                          
                           );
                         })}
                       </div>
@@ -192,6 +213,28 @@ function UserPosts() {
             ))}
           </div>
         )}
+          {/* ✅ PLACE THIS AFTER posts.map, BUT INSIDE THE RETURN */}
+      {openImage && (
+        <div className="image-modal-backdrop" onClick={() => setOpenImage(null)}>
+          <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+            <img src={openImage} alt="Full view" />
+            <button className="close-btn" onClick={() => setOpenImage(null)}>✕</button>
+          </div>
+        </div>
+      )}
+
+      {openVideo && (
+        <div className="image-modal-backdrop" onClick={() => setOpenVideo(null)}>
+          <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+            <video controls autoPlay style={{ maxWidth: '100%', maxHeight: '80vh' }}>
+              <source src={openVideo} type="video/mp4" />
+            </video>
+            <button className="close-btn" onClick={() => setOpenVideo(null)}>✕</button>
+          </div>
+        </div>
+      )}
+
+
       </div>
       {sharingPostId && (
       <ShareModal
