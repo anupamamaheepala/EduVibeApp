@@ -3,7 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 import DashboardLayout from './DashboardLayout';
 import UserDashboard from './UserDashboard';
 import MyCourses from './MyCourses';
-import MYPosts from '../posts/UserPosts'
+import MyPosts from '../posts/UserPosts'
+import SharedWithMe from '../posts/SharedPosts';
 // import LearningPlan from './LearningPlan';
 // import Groups from './Groups';
 // import Settings from './Settings';
@@ -15,7 +16,8 @@ const UserRoutes = () => {
       <Route element={<DashboardLayout />}>
         <Route path="/" element={<UserDashboard />} />
         <Route path="mycourses" element={<MyCourses />} />
-        <Route path="myposts" element={<MYPosts />} />
+        <Route path="MyPosts" element={<MyPosts />} />
+        <Route path="SharedWithMe" element={<SharedWithMe />} />
         {/* <Route path="learning-plan" element={<LearningPlan />} />
         <Route path="groups" element={<Groups />} />
         <Route path="settings" element={<Settings />} /> */}
