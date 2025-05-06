@@ -139,7 +139,7 @@ function EditUserPost() {
         icon: 'success',
         confirmButtonText: 'OK'
       }).then(() => {
-        navigate('/userposts');
+        navigate('/dashboard/MyPosts');
       });
     } catch (err) {
       console.error('Update failed:', err);

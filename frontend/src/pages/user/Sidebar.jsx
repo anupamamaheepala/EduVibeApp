@@ -35,7 +35,7 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/dashboard/myposts" // Absolute path
+              to="/dashboard/MyPosts" // Absolute path
               className={({ isActive }) => 
                 isActive ? 'active' : ''
               }

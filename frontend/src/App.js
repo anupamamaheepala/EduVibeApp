@@ -15,7 +15,7 @@ import CheckImages from './components/CheckImages';
 import CommentSystem from './pages/comments/CommentSystem';
 import AddPost from './pages/posts/AddPosts';
 import ViewPost from './pages/posts/ViewPosts';
-import UserPosts from './pages/posts/UserPosts';
+import MyPosts from './pages/posts/UserPosts';
 import EditUserPosts from './pages/posts/EditUserPosts';
 import DeleteUserPosts from './pages/posts/DeleteUserPosts';
 import UserRoutes from './pages/user/UserRoutes';
@@ -38,7 +38,7 @@ const App = () => {
           <Route path="/comment" element={<CommentSystem />} />
           <Route path="/add-post" element={<AddPost />} />
           <Route path="/posts" element={<ViewPost />} />
-          <Route path="/UserPosts" element={<UserPosts />} />
+          <Route path="/MyPosts" element={<MyPosts />} />
           <Route path="/EditUserPosts/:postId" element={<EditUserPosts />} />
           <Route path="/DeleteUserPosts/:id" element={<DeleteUserPosts />} />
           <Route path="/dashboard/*" element={<UserRoutes />} />
