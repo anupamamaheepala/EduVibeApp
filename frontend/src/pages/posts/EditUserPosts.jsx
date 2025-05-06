@@ -23,6 +23,7 @@ function EditUserPost() {
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [removedIndexes, setRemovedIndexes] = useState([]);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -99,10 +100,10 @@ function EditUserPost() {
     if (!originalPost) return;
     setSaving(true);
     setMessage('');
-
+  
     try {
-      let mediaUrls = [...originalPost.mediaUrls];
-      let mediaTypes = [...originalPost.mediaTypes];
+      let mediaUrls = originalPost.mediaUrls.filter((_, idx) => !removedIndexes.includes(idx));
+      let mediaTypes = originalPost.mediaTypes.filter((_, idx) => !removedIndexes.includes(idx));
 
       if (selectedFiles.length > 0) {
         const uploadedUrls = await Promise.all(
@@ -167,33 +168,47 @@ function EditUserPost() {
             rows="6"
           ></textarea>
 
-          {(originalPost?.mediaUrls?.length > 0 || previews.length > 0) && (
-            <div className="media-preview">
-              {originalPost?.mediaUrls?.map((url, index) => {
-                const type = originalPost.mediaTypes?.[index] || (url.endsWith('.mp4') ? 'video' : 'image');
-                return type === 'image' ? (
-                  <img key={`existing-${index}`} src={url} alt={`Media ${index}`} style={{ width: 150, margin: 5 }} />
-                ) : (
-                  <video key={`existing-${index}`} controls style={{ width: 150, margin: 5 }}>
-                    <source src={url} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                );
-              })}
+{(originalPost?.mediaUrls?.length > 0 || previews.length > 0) && (
+  <div className="media-preview">
+    {originalPost?.mediaUrls?.map((url, index) => {
+      if (removedIndexes.includes(index)) return null; // Skip removed
 
-              {previews.map((src, index) => (
-                <div key={`new-${index}`}>
-                  {selectedFiles[index]?.type.startsWith('image') ? (
-                    <img src={src} alt={`New Media ${index}`} style={{ width: 150, margin: 5 }} />
-                  ) : (
-                    <video controls style={{ width: 150, margin: 5 }}>
-                      <source src={src} />
-                    </video>
-                  )}
-                </div>
-              ))}
-            </div>
+      const type = originalPost.mediaTypes?.[index] || (url.endsWith('.mp4') ? 'video' : 'image');
+      return (
+        <div key={`existing-${index}`} className="media-preview-item">
+          <button className="remove-button" onClick={() => setRemovedIndexes(prev => [...prev, index])}>✖</button>
+          {type === 'image' ? (
+            <img src={url} alt={`Media ${index}`} />
+          ) : (
+            <video controls>
+              <source src={url} type="video/mp4" />
+            </video>
           )}
+        </div>
+      );
+    })}
+
+    {previews.map((src, index) => (
+      <div key={`new-${index}`} className="media-preview-item">
+        <button className="remove-button" onClick={() => {
+          const updatedFiles = [...selectedFiles];
+          const updatedPreviews = [...previews];
+          updatedFiles.splice(index, 1);
+          updatedPreviews.splice(index, 1);
+          setSelectedFiles(updatedFiles);
+          setPreviews(updatedPreviews);
+        }}>✖</button>
+        {selectedFiles[index]?.type.startsWith('image') ? (
+          <img src={src} alt={`New Media ${index}`} />
+        ) : (
+          <video controls>
+            <source src={src} />
+          </video>
+        )}
+      </div>
+    ))}
+  </div>
+)}
 
           <label htmlFor="media">Change Media (Optional):</label>
           <input

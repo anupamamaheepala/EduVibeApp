@@ -139,3 +139,29 @@
     width: 100px;
   }
 }
+
+.media-preview-item {
+  position: relative;
+  display: inline-block;
+  margin: 5px;
+}
+
+.media-preview-item img,
+.media-preview-item video {
+  width: 150px;
+  height: auto;
+  border-radius: 6px;
+}
+
+.remove-button {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #f87171;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 14px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
