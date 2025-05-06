@@ -18,7 +18,9 @@ import ViewPost from './pages/posts/ViewPosts';
 import MyPosts from './pages/posts/UserPosts';
 import EditUserPosts from './pages/posts/EditUserPosts';
 import DeleteUserPosts from './pages/posts/DeleteUserPosts';
+import ShareModal from './pages/posts/PostShareModal';
 import UserRoutes from './pages/user/UserRoutes';
+import SharedWithMe from './pages/posts/SharedPosts';
 
 const App = () => {
   return (
@@ -42,6 +44,8 @@ const App = () => {
           <Route path="/EditUserPosts/:postId" element={<EditUserPosts />} />
           <Route path="/DeleteUserPosts/:id" element={<DeleteUserPosts />} />
           <Route path="/dashboard/*" element={<UserRoutes />} />
+          <Route path="/ShareModal" element={<ShareModal />} />
+          <Route path="/SharedWithMe" element={<SharedWithMe />} />
 
 
         </Routes>

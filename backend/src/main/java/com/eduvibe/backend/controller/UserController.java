@@ -16,6 +16,12 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
+@GetMapping("/users")
+    public ResponseEntity<?> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody User user) {
         try {
