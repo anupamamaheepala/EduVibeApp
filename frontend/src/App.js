@@ -21,6 +21,7 @@ import DeleteUserPosts from './pages/posts/DeleteUserPosts';
 import ShareModal from './pages/posts/PostShareModal';
 import UserRoutes from './pages/user/UserRoutes';
 import SharedWithMe from './pages/posts/SharedPosts';
+import SinglePostView from './pages/posts/SinglePostView';
 
 const App = () => {
   return (
@@ -46,6 +47,7 @@ const App = () => {
           <Route path="/dashboard/*" element={<UserRoutes />} />
           <Route path="/ShareModal" element={<ShareModal />} />
           <Route path="/SharedWithMe" element={<SharedWithMe />} />
+          <Route path="/post/:postId" element={<SinglePostView />} />
 
 
         </Routes>

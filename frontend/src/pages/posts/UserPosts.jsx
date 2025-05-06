@@ -4,6 +4,7 @@ import axios from 'axios';
 import '../../css/UserPosts.css';
 import DeleteUserPost from './DeleteUserPosts';
 import { AuthContext } from '../AuthContext';
+import userLogo from '../../images/user.png';
 import ShareModal from './PostShareModal';
 
 function UserPosts() {
@@ -48,6 +49,14 @@ function UserPosts() {
     fetchUserPosts();
   }, [currentUserId]);
 
+  const getTimeAgo = (timestamp) => {
+    const diff = Math.floor((new Date() - new Date(timestamp)) / 1000);
+    if (diff < 60) return `${diff} seconds ago`;
+    if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
+    return `${Math.floor(diff / 86400)} days ago`;
+  };
+
   const toggleDropdown = (postId) => {
     setOpenDropdown(openDropdown === postId ? null : postId);
   };
@@ -70,8 +79,11 @@ function UserPosts() {
   return (
     <div className="page-container">
       {/* {isLoggedIn ? <UserHeader /> : <Header />} */}
-      <div className="user-posts-container">     
-        <h2>Your Posts</h2>
+      <div className="user-posts-container">  
+      <div className="header-actions">   
+        <h2>My Posts</h2>
+        <a href="/add-post" className="create-post-button">Create Post</a>
+        </div>
         {loading ? (
           <div className="loading-spinner">
             <div className="spinner"></div>
@@ -86,7 +98,18 @@ function UserPosts() {
             {posts.map((post) => (
               <div key={post.id} className="post-card">
                 <div className="post-header">
+                  <div className="post-header">
+                                    <div className="post-user">
+                                      <img className="post-user-avatar" src={userLogo} alt="User avatar" />
+                                      <span className="post-username">{post.username || post.userId}</span>
+                                    </div>
+                  
+                                    <div className="post-right">
+                                     
+                                    </div>
+                                  </div>
                   <div className="dropdown-container">
+                  <span className="post-time">{getTimeAgo(post.createdAt)}</span>
                     <button
                       onClick={() => toggleDropdown(post.id)}
                       className="dropdown-button"
