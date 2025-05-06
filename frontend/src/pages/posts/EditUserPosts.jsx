@@ -43,28 +43,41 @@ function EditUserPost() {
 
   const handleFileChange = (e) => {
     const selected = Array.from(e.target.files);
-    let images = selectedFiles.filter(file => file.type.startsWith('image'));
-    let video = selectedFiles.find(file => file.type.startsWith('video'));
+  
+    const existingImages = originalPost?.mediaUrls
+      .filter((_, idx) => !removedIndexes.includes(idx))
+      .filter((_, idx) => originalPost.mediaTypes?.[idx] === 'image') || [];
+  
+    const existingVideo = originalPost?.mediaUrls
+      .filter((_, idx) => !removedIndexes.includes(idx))
+      .some((_, idx) => originalPost.mediaTypes?.[idx] === 'video');
+  
+    let newImages = selectedFiles.filter(file => file.type.startsWith('image'));
+    let newVideo = selectedFiles.find(file => file.type.startsWith('video'));
+  
+    let totalImages = existingImages.length + newImages.length;
+    let totalVideo = existingVideo ? 1 : newVideo ? 1 : 0;
+  
     let newFiles = [...selectedFiles];
     let newPreviews = [...previews];
-
+  
     for (const file of selected) {
       const type = file.type;
-
+  
       if (type.startsWith('image')) {
-        if (images.length >= 3) {
-          setMessage('You can only upload up to 3 images.');
+        if (totalImages >= 3) {
+          setMessage('You can only upload up to 3 images and video.');
           continue;
         }
-        images.push(file);
         newFiles.push(file);
         newPreviews.push(URL.createObjectURL(file));
+        totalImages++;
       } else if (type.startsWith('video')) {
-        if (video) {
+        if (totalVideo >= 1) {
           setMessage('Only one video is allowed per post.');
           continue;
         }
-
+  
         const videoElement = document.createElement('video');
         videoElement.preload = 'metadata';
         videoElement.onloadedmetadata = () => {
@@ -80,16 +93,16 @@ function EditUserPost() {
           }
         };
         videoElement.src = URL.createObjectURL(file);
-        return;
+        return; // async — exit loop
       } else {
         setMessage('Only images and videos are allowed.');
       }
     }
-
+  
     setSelectedFiles(newFiles);
     setPreviews(newPreviews);
   };
-
+  
   const uploadFileAndGetURL = async (file) => {
     const storageRef = ref(storage, `posts/${file.name + Date.now()}`);
     await uploadBytes(storageRef, file);
@@ -210,13 +223,23 @@ function EditUserPost() {
   </div>
 )}
 
-          <label htmlFor="media">Change Media (Optional):</label>
+        <label htmlFor="media">Change Media (Optional):</label>
+        <div className="file-upload-wrapper">
+          <label htmlFor="media" className="file-upload-label">
+            Choose Files
+          </label>
           <input
             id="media"
             type="file"
             multiple
             onChange={handleFileChange}
           />
+            <span className="file-names">
+              {selectedFiles.length > 0
+                ? selectedFiles.map(file => file.name).join(', ')
+                : 'No file chosen'}
+            </span>
+        </div>
 
           <button onClick={handleUpdate} disabled={saving} className="update-button">
             {saving ? 'Updating...' : 'Update Post'}
