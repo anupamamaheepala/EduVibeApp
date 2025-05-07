@@ -53,7 +53,7 @@ const validPosts = detailedPosts.filter(Boolean).sort(
   };
 
   return (
-    <div className="posts-container">
+    <div className="Share-posts-container">
       <h2>Posts Shared With Me</h2>
       {loading ? (
         <p>Loading shared posts...</p>
@@ -61,9 +61,9 @@ const validPosts = detailedPosts.filter(Boolean).sort(
         <p>No shared posts found.</p>
       ) : (
         
-        <div className="posts-feed">
+        <div className="share-posts-feed">
          {sharedData.map(({ post, fromUserId, fromName, sharedAt, id }) => (
-            <div key={id} className="post-card">
+            <div key={id} className="share-post-card">
               <div className="post-header">
                 <div className="post-user">
                   <img className="post-user-avatar" src={userLogo} alt="User avatar" />
