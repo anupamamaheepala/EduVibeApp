@@ -44,34 +44,8 @@ public class UserService {
         return user;
     }
 
-    // Methods from HEAD
-    public void addCourseToUser(String userId, String courseId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> {
-                    System.out.println("User not found for ID: " + userId);
-                    return new IllegalArgumentException("User not found with ID: " + userId);
-                });
-        user.getCourses().add(courseId);
-        System.out.println("Adding course " + courseId + " to user " + userId);
-        userRepository.save(user);
-        System.out.println("User courses after save: " + user.getCourses());
-    }
-
-    public void removeCourseFromUser(String userId, String courseId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> {
-                    System.out.println("User not found for ID: " + userId);
-                    return new IllegalArgumentException("User not found with ID: " + userId);
-                });
-        user.getCourses().remove(courseId);
-        System.out.println("Removing course " + courseId + " from user " + userId);
-        userRepository.save(user);
-        System.out.println("User courses after save: " + user.getCourses());
-    }
-
-    // Methods from origin/master
     public User handleGoogleLogin(String googleId, String username, String email, String firstName, String lastName,
-            String profilePicture) throws Exception {
+                                 String profilePicture) throws Exception {
         User user = userRepository.findByEmail(email).orElse(new User());
 
         user.setUsername(username);
@@ -164,5 +138,22 @@ public class UserService {
     public List<User> getFollowing(String userId) throws Exception {
         User user = getUserById(userId);
         return userRepository.findAllById(user.getFollowing());
+    }
+
+    // Your methods, adjusted for consistency with master's exception handling
+    public void addCourseToUser(String userId, String courseId) throws Exception {
+        User user = getUserById(userId); // Using getUserById for consistency
+        if (!user.getCourses().contains(courseId)) {
+            user.getCourses().add(courseId);
+            userRepository.save(user);
+        }
+    }
+
+    public void removeCourseFromUser(String userId, String courseId) throws Exception {
+        User user = getUserById(userId); // Using getUserById for consistency
+        if (user.getCourses().contains(courseId)) {
+            user.getCourses().remove(courseId);
+            userRepository.save(user);
+        }
     }
 }

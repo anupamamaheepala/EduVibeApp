@@ -4,7 +4,7 @@ import com.eduvibe.backend.model.Course;
 import com.eduvibe.backend.model.Chapter;
 import com.eduvibe.backend.model.User;
 import com.eduvibe.backend.service.CourseService;
-import com.eduvibe.backend.repository.UserRepository;
+import com.eduvibe.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,25 +23,35 @@ public class CourseController {
     private CourseService courseService;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @PostMapping
-    public ResponseEntity<Course> createCourse(@RequestBody CourseRequest courseRequest) {
-        System.out.println("Creating Course:");
-        System.out.println("UserId: " + courseRequest.getUserId());
-        System.out.println("Username: " + courseRequest.getUsername());
-        System.out.println("Name: " + courseRequest.getName());
-        System.out.println("Description: " + courseRequest.getDescription());
-        System.out.println("Chapters: " + courseRequest.getChapters());
+    public ResponseEntity<?> createCourse(@RequestBody CourseRequest courseRequest) {
+        try {
+            if (courseRequest == null || courseRequest.getUserId() == null || courseRequest.getUserId().trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User ID is required");
+            }
+            if (courseRequest.getName() == null || courseRequest.getName().trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Course name is required");
+            }
+            if (courseRequest.getDescription() == null || courseRequest.getDescription().trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Course description is required");
+            }
+            if (courseRequest.getChapters() == null || courseRequest.getChapters().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("At least one chapter is required");
+            }
 
-        Course course = new Course();
-        course.setName(courseRequest.getName());
-        course.setDescription(courseRequest.getDescription());
-        course.setChapters(courseRequest.getChapters());
-        course.setCreatedBy(courseRequest.getUserId());
+            Course course = new Course();
+            course.setName(courseRequest.getName().trim());
+            course.setDescription(courseRequest.getDescription().trim());
+            course.setChapters(courseRequest.getChapters());
+            course.setCreatedBy(courseRequest.getUserId());
 
-        Course savedCourse = courseService.saveCourse(course, courseRequest.getUserId());
-        return ResponseEntity.ok(savedCourse);
+            Course savedCourse = courseService.saveCourse(course, courseRequest.getUserId());
+            return ResponseEntity.ok(savedCourse);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @GetMapping
@@ -55,44 +65,49 @@ public class CourseController {
             response.setChapters(course.getChapters());
             response.setCreatedAt(course.getCreatedAt());
             response.setCreatedBy(course.getCreatedBy());
-            User user = userRepository.findById(course.getCreatedBy()).orElse(null);
-            response.setUsername(user != null ? user.getUsername() : "Unknown");
+            try {
+                User user = userService.getUserById(course.getCreatedBy());
+                response.setUsername(user.getUsername());
+            } catch (Exception e) {
+                response.setUsername("Unknown");
+            }
             return response;
         }).collect(Collectors.toList());
         return ResponseEntity.ok(courseResponses);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Course> getCourseById(@PathVariable String id) {
-        Course course = courseService.getCourseById(id);
-        return ResponseEntity.ok(course);
+    public ResponseEntity<?> getCourseById(@PathVariable String id) {
+        try {
+            Course course = courseService.getCourseById(id);
+            return ResponseEntity.ok(course);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<CourseResponse>> getCoursesByUser(@PathVariable String userId) {
-        System.out.println("Fetching courses for user ID: " + userId);
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> {
-                    System.out.println("User not found for ID: " + userId);
-                    return new IllegalArgumentException("User not found with ID: " + userId);
-                });
-
-        List<Course> userCourses = courseService.getCoursesByUserId(userId);
-        System.out.println("Found courses: " + userCourses.size());
-
-        List<CourseResponse> courseResponses = userCourses.stream().map(course -> {
-            CourseResponse response = new CourseResponse();
-            response.setId(course.getId());
-            response.setName(course.getName());
-            response.setDescription(course.getDescription());
-            response.setChapters(course.getChapters());
-            response.setCreatedAt(course.getCreatedAt());
-            response.setCreatedBy(course.getCreatedBy());
-            response.setUsername(user.getUsername());
-            return response;
-        }).collect(Collectors.toList());
-
-        return ResponseEntity.ok(courseResponses);
+    public ResponseEntity<?> getCoursesByUser(@PathVariable String userId) {
+        try {
+            if (userId == null || userId.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User ID is required");
+            }
+            User user = userService.getUserById(userId);
+            List<Course> userCourses = courseService.getCoursesByUserId(userId);
+            List<CourseResponse> courseResponses = userCourses.stream().map(course -> {
+                CourseResponse response = new CourseResponse();
+                response.setId(course.getId());
+                response.setName(course.getName());
+                response.setDescription(course.getDescription());
+                response.setChapters(course.getChapters());
+                response.setCreatedAt(course.getCreatedAt());
+                response.setCreatedBy(course.getCreatedBy());
+                response.setUsername(user.getUsername());
+            }).collect(Collectors.toList());
+            return ResponseEntity.ok(courseResponses);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @PutMapping("/{courseId}")
@@ -101,12 +116,23 @@ public class CourseController {
             @RequestBody CourseUpdateRequest updateRequest,
             @RequestHeader("X-User-Id") String userId) {
         try {
+            if (userId == null || userId.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User ID is required");
+            }
+            if (courseId == null || courseId.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Course ID is required");
+            }
             Course updatedCourse = courseService.updateCourse(courseId, updateRequest, userId);
             return ResponseEntity.ok(updatedCourse);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (Exception e) {
+            String message = e.getMessage();
+            if (message.contains("not found")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+            } else if (message.contains("not authorized")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(message);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+            }
         }
     }
 
@@ -115,12 +141,23 @@ public class CourseController {
             @PathVariable String courseId,
             @RequestHeader("X-User-Id") String userId) {
         try {
+            if (userId == null || userId.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User ID is required");
+            }
+            if (courseId == null || courseId.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Course ID is required");
+            }
             courseService.deleteCourse(courseId, userId);
             return ResponseEntity.ok().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (Exception e) {
+            String message = e.getMessage();
+            if (message.contains("not found")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+            } else if (message.contains("not authorized")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(message);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+            }
         }
     }
 
