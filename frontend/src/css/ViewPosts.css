@@ -1,9 +1,14 @@
-.page-container {
+.view-page-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: #fafafa;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-image: linear-gradient(
+    rgba(245, 247, 250, 0.85),
+    rgba(235, 237, 255, 0.85)
+  ),
+  url('../images/background.png');
 }
 
 .posts-container {
@@ -276,6 +281,87 @@
   border-radius: 50%;
   object-fit: cover;
 }
+
+/* Add these styles to your existing ViewPosts.css file */
+
+.post-actions {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  border-top: 1px solid #eee;
+  margin-top: 10px;
+}
+
+.post-action-btn {
+  flex: 1;
+  padding: 8px 0;
+  font-size: 14px;
+  border: none;
+  background: none;
+  color: #555;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.post-action-btn:hover {
+  background-color: #f0f2f5;
+  color: #6d28d9;
+}
+
+.post-action-btn i {
+  font-size: 16px;
+}
+
+.like-btn:hover {
+  color: #1877f2; /* Facebook blue */
+}
+
+.comment-btn:hover {
+  color: #6d28d9; /* Purple */
+}
+
+.share-btn:hover {
+  color: #0da45e; /* Green */
+}
+
+/* For the comment count display */
+.comment-count-display {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #555;
+  font-size: 14px;
+  margin-top: 8px;
+  padding: 4px 0;
+}
+
+.comment-count-display span {
+  font-weight: 500;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .post-actions {
+    flex-direction: row;
+    padding: 8px 0;
+  }
+  
+  .post-action-btn {
+    font-size: 12px;
+    padding: 6px 0;
+  }
+  
+  .post-action-btn i {
+    font-size: 14px;
+  }
+}
+
+
 .post-right {
   display: flex;
   align-items: center;
@@ -344,3 +430,4 @@
   padding: 5px 10px;
   cursor: pointer;
 }
+

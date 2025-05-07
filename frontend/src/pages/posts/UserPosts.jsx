@@ -84,7 +84,7 @@ function UserPosts() {
   
 
   return (
-    <div className="page-container">
+    <div className="user-page-container">
       {/* {isLoggedIn ? <UserHeader /> : <Header />} */}
       <div className="user-posts-container">  
       <div className="header-actions">   
