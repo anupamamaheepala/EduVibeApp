@@ -22,8 +22,26 @@ public class CommentService {
     }
 
     public List<Comment> getCommentsByPostId(String postId) {
-        return commentRepository.findByPostId(postId);
+        List<Comment> comments = commentRepository.findByPostId(postId);
+        for (Comment comment : comments) {
+            if (comment.getCreatedAt() == null) {
+                comment.setCreatedAt(new Date()); // or any default
+                commentRepository.save(comment);
+            }
+        }
+        return comments;
     }
+    
+
+    public Comment updateComment(String id, String newText) {
+        Comment comment = commentRepository.findById(id).orElse(null);
+        if (comment != null) {
+            comment.setText(newText);
+            return commentRepository.save(comment);
+        }
+        return null;
+    }
+    
 
     public void deleteComment(String id) {
         commentRepository.deleteById(id);

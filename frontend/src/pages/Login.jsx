@@ -6,6 +6,8 @@ import '../css/login.css';
 import Header from './Header';
 import Footer from './Footer';
 import { AuthContext } from './AuthContext';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -38,52 +40,69 @@ const Login = () => {
         password: formData.password
       });
 
-      // Log the full response for debugging
-      console.log('Login response:', response.data);
+      const { token, username, userId } = response.data;
 
-      // Extract token, username, and userId
-      const { token, username, id, _id, userId } = response.data;
+      localStorage.setItem('token', token);
+      localStorage.setItem('username', username);
+      localStorage.setItem('userId', userId);
 
-      // Determine userId from possible field names
-      const resolvedUserId = id || _id || userId;
-      if (!resolvedUserId) {
-        throw new Error('User ID not provided in login response. Expected field: id, _id, or userId');
-      }
-
-      // Save user info to localStorage
-      localStorage.setItem('userId', resolvedUserId);
-      localStorage.setItem('username', username || formData.userIdentifier);
-
-      // Update AuthContext with login info
-      login(username || formData.userIdentifier, token, resolvedUserId);
-
-      // Show success notification
+      login(username, token, userId);
+      
       Swal.fire({
         icon: 'success',
         title: 'Login Successful',
         text: 'You have successfully logged in.'
       });
-
-      // Navigate to dashboard and clear form
       navigate('/');
       clearForm();
     } catch (error) {
-      // Detailed error logging
-      console.error('Login error:', {
-        message: error.message,
-        response: error.response,
-        status: error.response?.status,
-        data: error.response?.data
-      });
-
-      // Show error notification
+      console.error('Login error:', error.response?.data || error.message);
       Swal.fire({
         icon: 'error',
         title: 'Login Failed',
-        text: error.message || error.response?.data?.message || 'Invalid username or password. Please try again.'
+        text: error.response?.data?.message || 'Invalid username or password. Please try again.'
+      });
+      clearForm();
+    }
+  };
+
+  const handleGoogleLogin = async (credentialResponse) => {
+    try {
+      const decoded = jwtDecode(credentialResponse.credential);
+      console.log('Decoded Google User:', decoded);
+
+      const response = await axios.post('http://localhost:8000/api/auth/google-login', {
+        googleId: decoded.sub,
+        username: decoded.name || decoded.email,
+        email: decoded.email,
+        firstName: decoded.given_name || '',
+        lastName: decoded.family_name || '',
+        profilePicture: decoded.picture || ''
       });
 
-      clearForm();
+      const { token, username, userId } = response.data;
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('username', username);
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('email', decoded.email || '');
+      localStorage.setItem('picture', decoded.picture || '');
+
+      login(username, token, userId);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Google Login Successful',
+        text: `Welcome ${username}!`
+      });
+      navigate('/');
+    } catch (error) {
+      console.error('Google Login error:', error.response?.data || error.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Google Login Failed',
+        text: error.response?.data?.message || 'Please try again.'
+      });
     }
   };
 
@@ -130,7 +149,7 @@ const Login = () => {
                 <input type="checkbox" id="remember" className="login-checkbox" />
                 <label htmlFor="remember" className="login-checkbox-label">Remember me</label>
               </div>
-              <a href="/forgot-password" className="login BUT-forgot-link">Forgot Password?</a>
+              <a href="/forgot-password" className="login-forgot-link">Forgot Password?</a>
             </div>
             
             <button type="submit" className="login-button">Log In</button>
@@ -139,7 +158,19 @@ const Login = () => {
           <div className="login-divider">
             <span className="login-divider-text">OR LOGIN WITH</span>
           </div>
-          
+          <div className="google-login-wrapper">
+            <GoogleLogin
+              onSuccess={handleGoogleLogin}
+              onError={() => {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Google Login Failed',
+                  text: 'Please try again.'
+                });
+              }}
+            />
+          </div>
+
           <p className="login-signup-link">
             Don't have an account? <a href="/signup">Sign up</a>
           </p>

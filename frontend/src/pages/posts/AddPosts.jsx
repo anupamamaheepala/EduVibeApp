@@ -160,9 +160,9 @@ Swal.fire({
   
 
   return (
-    <div className="page-container">
+    <div className="Add-page-container">
       {isLoggedIn ? <UserHeader /> : <Header />}
-
+      <div className="Add-background-section">
       <div className="add-post-container">
         <div className="add-post-form">
           <h2>Create a Post</h2>
@@ -216,7 +216,7 @@ Swal.fire({
           )}
         </div>
       </div>
-
+      </div>
       <Footer />
     </div>
   );

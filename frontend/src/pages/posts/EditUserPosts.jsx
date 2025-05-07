@@ -1,168 +1,262 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import Header from '../Header';
-import Footer from '../Footer';
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../../firebase';
 import '../../css/EditUserPosts.css';
+import Header from '../Header';
+import UserHeader from '../UserHeader';
+import Footer from '../Footer';
+import { AuthContext } from '../AuthContext';
+import Swal from 'sweetalert2';
 
-function EditPost() {
-  const { id } = useParams(); // Get the post ID from URL
+function EditUserPost() {
+  const { isLoggedIn } = useContext(AuthContext);
+  const { postId } = useParams();
   const navigate = useNavigate();
 
   const [content, setContent] = useState('');
-  const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const [originalPost, setOriginalPost] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [previews, setPreviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [post, setPost] = useState(null);
+  const [removedIndexes, setRemovedIndexes] = useState([]);
 
-  // Fetch the post on component mount
   useEffect(() => {
     const fetchPost = async () => {
-      console.log("Fetching post with ID:", id);
-      console.log("API Endpoint:", `/api/view-posts/${id}`);
-  
       try {
-        const response = await fetch(`/api/view-posts/${id}`);
-        
-        if (!response.ok) {
-          throw new Error(`Failed to fetch post: ${response.status} ${response.statusText}`);
-        }
-  
-        const postData = await response.json();
-        setPost(postData);
-        setContent(postData.content || '');
-        setPreview(postData.mediaUrl || null);
+        const response = await axios.get(`http://localhost:8000/api/edit-post/${postId}`);
+        setOriginalPost(response.data);
+        setContent(response.data.content);
       } catch (err) {
-        console.error("Fetch error:", err);
-        setMessage('Error fetching post: ' + err.message);
+        setError('Failed to load post: ' + err.message);
+      } finally {
+        setLoading(false);
       }
     };
-  
+
     fetchPost();
-  }, [id]);
+  }, [postId]);
 
   const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (!selectedFile) return;
-
-    const fileType = selectedFile.type;
-    if (!fileType.startsWith('image') && !fileType.startsWith('video')) {
-      setMessage('Please upload an image or video.');
-      setFile(null);
-      setPreview(null);
-      return;
+    const selected = Array.from(e.target.files);
+  
+    const existingImages = originalPost?.mediaUrls
+      .filter((_, idx) => !removedIndexes.includes(idx))
+      .filter((_, idx) => originalPost.mediaTypes?.[idx] === 'image') || [];
+  
+    const existingVideo = originalPost?.mediaUrls
+      .filter((_, idx) => !removedIndexes.includes(idx))
+      .some((_, idx) => originalPost.mediaTypes?.[idx] === 'video');
+  
+    let newImages = selectedFiles.filter(file => file.type.startsWith('image'));
+    let newVideo = selectedFiles.find(file => file.type.startsWith('video'));
+  
+    let totalImages = existingImages.length + newImages.length;
+    let totalVideo = existingVideo ? 1 : newVideo ? 1 : 0;
+  
+    let newFiles = [...selectedFiles];
+    let newPreviews = [...previews];
+  
+    for (const file of selected) {
+      const type = file.type;
+  
+      if (type.startsWith('image')) {
+        if (totalImages >= 3) {
+          setMessage('You can only upload up to 3 images and video.');
+          continue;
+        }
+        newFiles.push(file);
+        newPreviews.push(URL.createObjectURL(file));
+        totalImages++;
+      } else if (type.startsWith('video')) {
+        if (totalVideo >= 1) {
+          setMessage('Only one video is allowed per post.');
+          continue;
+        }
+  
+        const videoElement = document.createElement('video');
+        videoElement.preload = 'metadata';
+        videoElement.onloadedmetadata = () => {
+          window.URL.revokeObjectURL(videoElement.src);
+          if (videoElement.duration > 30) {
+            setMessage('Video must be 30 seconds or less.');
+          } else {
+            newFiles.push(file);
+            newPreviews.push(URL.createObjectURL(file));
+            setSelectedFiles([...newFiles]);
+            setPreviews([...newPreviews]);
+            setMessage('');
+          }
+        };
+        videoElement.src = URL.createObjectURL(file);
+        return; // async — exit loop
+      } else {
+        setMessage('Only images and videos are allowed.');
+      }
     }
-
-    setFile(selectedFile);
-    setPreview(URL.createObjectURL(selectedFile));
-    setMessage('');
+  
+    setSelectedFiles(newFiles);
+    setPreviews(newPreviews);
+  };
+  
+  const uploadFileAndGetURL = async (file) => {
+    const storageRef = ref(storage, `posts/${file.name + Date.now()}`);
+    await uploadBytes(storageRef, file);
+    return await getDownloadURL(storageRef);
   };
 
-  const handleSubmit = async () => {
-    if (!content && !file && !post?.mediaUrl) {
-      setMessage('Please add a caption or media.');
-      return;
-    }
-
-    setLoading(true);
+  const handleUpdate = async () => {
+    if (!originalPost) return;
+    setSaving(true);
     setMessage('');
-
+  
     try {
+      let mediaUrls = originalPost.mediaUrls.filter((_, idx) => !removedIndexes.includes(idx));
+      let mediaTypes = originalPost.mediaTypes.filter((_, idx) => !removedIndexes.includes(idx));
+
+      if (selectedFiles.length > 0) {
+        const uploadedUrls = await Promise.all(
+          selectedFiles.map(async (file) => {
+            const url = await uploadFileAndGetURL(file);
+            return url;
+          })
+        );
+
+        const uploadedTypes = selectedFiles.map((file) =>
+          file.type.startsWith('image') ? 'image' : 'video'
+        );
+
+        mediaUrls = [...mediaUrls, ...uploadedUrls];
+        mediaTypes = [...mediaTypes, ...uploadedTypes];
+      }
+
       const updatedPost = {
-        userId: post.userId,
         content,
-        mediaUrl: file ? 'mock-url' : post.mediaUrl,
-        mediaType: file
-          ? file.type.startsWith('image') ? 'image' : 'video'
-          : post.mediaType,
-        createdAt: post.createdAt,
+        mediaUrls,
+        mediaTypes,
       };
 
-      const response = await fetch(`/api/edit-posts/${id}`, {
-        method: 'PUT',
+      await axios.put(`http://localhost:8000/api/edit-post/${postId}`, updatedPost, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedPost),
       });
+      
 
-      if (response.ok) {
-        setMessage('Post updated successfully!');
-        setTimeout(() => navigate('/profile'), 1500);
-      } else {
-        setMessage('Failed to update post.');
-      }
+      Swal.fire({
+        title: 'Success!',
+        text: 'Post updated successfully!',
+        icon: 'success',
+        confirmButtonText: 'OK'
+      }).then(() => {
+        navigate('/dashboard/MyPosts');
+      });
     } catch (err) {
-      setMessage('Error: ' + err.message);
+      console.error('Update failed:', err);
+      setError('Failed to update post: ' + err.message);
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
+  if (error) {
+    return <p className="error-message">Error: {error}</p>;
+  }
+
   return (
-    <div className="page-container">
-      <Header />
-
+    <div className="Edit-page-container">
+      {isLoggedIn ? <UserHeader /> : <Header />}
+      <div className="Edit-background-section">
       <div className="edit-post-container">
+        <h2>Edit Post</h2>
         <div className="edit-post-form">
-          <h2>Edit Post</h2>
+          <label htmlFor="content">Post Content:</label>
+          <textarea
+            id="content"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            rows="6"
+          ></textarea>
 
-          {/* Preview */}
-          {preview && (
-            <div className="media-preview">
-              {post?.mediaType === 'image' || (file && file.type?.startsWith('image')) ? (
-                <img src={preview} alt="Preview" />
-              ) : (
-                <video controls>
-                  <source src={preview} type={file?.type || post?.mediaType} />
-                  Your browser does not support the video tag.
-                </video>
-              )}
-            </div>
+{(originalPost?.mediaUrls?.length > 0 || previews.length > 0) && (
+  <div className="media-preview">
+    {originalPost?.mediaUrls?.map((url, index) => {
+      if (removedIndexes.includes(index)) return null; // Skip removed
+
+      const type = originalPost.mediaTypes?.[index] || (url.endsWith('.mp4') ? 'video' : 'image');
+      return (
+        <div key={`existing-${index}`} className="media-preview-item">
+          <button className="remove-button" onClick={() => setRemovedIndexes(prev => [...prev, index])}>✖</button>
+          {type === 'image' ? (
+            <img src={url} alt={`Media ${index}`} />
+          ) : (
+            <video controls>
+              <source src={url} type="video/mp4" />
+            </video>
           )}
+        </div>
+      );
+    })}
 
-          {/* File Upload */}
-          <div className="file-input-container">
-            <label>Update Image or Video (Optional)</label>
-            <input type="file" accept="image/*,video/*" onChange={handleFileChange} />
-          </div>
+    {previews.map((src, index) => (
+      <div key={`new-${index}`} className="media-preview-item">
+        <button className="remove-button" onClick={() => {
+          const updatedFiles = [...selectedFiles];
+          const updatedPreviews = [...previews];
+          updatedFiles.splice(index, 1);
+          updatedPreviews.splice(index, 1);
+          setSelectedFiles(updatedFiles);
+          setPreviews(updatedPreviews);
+        }}>✖</button>
+        {selectedFiles[index]?.type.startsWith('image') ? (
+          <img src={src} alt={`New Media ${index}`} />
+        ) : (
+          <video controls>
+            <source src={src} />
+          </video>
+        )}
+      </div>
+    ))}
+  </div>
+)}
 
-          {/* Caption */}
-          <div className="caption-container">
-            <label>Caption</label>
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Share your thoughts..."
-              rows={4}
-            />
-          </div>
+        <label htmlFor="media">Change Media (Optional):</label>
+        <div className="file-upload-wrapper">
+          <label htmlFor="media" className="file-upload-label">
+            Choose Files
+          </label>
+          <input
+            id="media"
+            type="file"
+            multiple
+            onChange={handleFileChange}
+          />
+            <span className="file-names">
+              {selectedFiles.length > 0
+                ? selectedFiles.map(file => file.name).join(', ')
+                : 'No file chosen'}
+            </span>
+        </div>
 
-          {/* Submit Button */}
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="submit-button"
-          >
-            {loading ? 'Updating...' : 'Update Post'}
+          <button onClick={handleUpdate} disabled={saving} className="update-button">
+            {saving ? 'Updating...' : 'Update Post'}
           </button>
-
-          {/* Feedback Message */}
           {message && (
-            <p
-              className={`feedback-message ${
-                message.includes('successfully') ? 'success' : 'error'
-              }`}
-            >
+            <p className={`feedback-message ${message.includes('successfully') ? 'success' : 'error'}`}>
               {message}
             </p>
           )}
         </div>
       </div>
-
+      </div>
       <Footer />
     </div>
+    
   );
 }
 
-export default EditPost;
+export default EditUserPost;

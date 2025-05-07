@@ -25,6 +25,17 @@ public class CommentController {
     public ResponseEntity<List<Comment>> getCommentsByPost(@PathVariable String postId) {
         return ResponseEntity.ok(commentService.getCommentsByPostId(postId));
     }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<Comment> updateComment(@PathVariable String id, @RequestBody Comment updatedComment) {
+        Comment comment = commentService.updateComment(id, updatedComment.getText());
+        if (comment != null) {
+            return ResponseEntity.ok(comment);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
 
     @DeleteMapping("/{id}")
     public void deleteComment(@PathVariable String id) {

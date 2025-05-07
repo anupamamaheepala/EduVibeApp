@@ -1,7 +1,9 @@
 package com.eduvibe.backend.service;
-
-import com.eduvibe.backend.model.AddPost;
 import com.eduvibe.backend.repository.AddPostRepository;
+
+import com.eduvibe.backend.model.EditPostRequest;
+import com.eduvibe.backend.model.AddPost;
+//import com.eduvibe.backend.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,25 +12,25 @@ import java.util.Optional;
 @Service
 public class EditPostService {
 
-    @Autowired
-    private AddPostRepository addPostRepository;
+@Autowired
+private AddPostRepository postRepository;
 
-    public AddPost updatePost(String id, AddPost updatedPost) {
-        Optional<AddPost> existingPostOptional = addPostRepository.findById(id);
-        if (existingPostOptional.isPresent()) {
-            AddPost existingPost = existingPostOptional.get();
 
-            // Update fields
-            existingPost.setContent(updatedPost.getContent());
-            // existingPost.setMediaUrl(updatedPost.getMediaUrl());
-            // existingPost.setMediaType(updatedPost.getMediaType());
-            existingPost.setMediaUrls(updatedPost.getMediaUrls()); 
-            existingPost.setMediaTypes(updatedPost.getMediaTypes()); 
-            existingPost.setCreatedAt(updatedPost.getCreatedAt()); // Optional: consider keeping original timestamp
+    public AddPost updatePost(String id, EditPostRequest editPostRequest) {
+        Optional<AddPost> optionalPost = postRepository.findById(id);
 
-            return addPostRepository.save(existingPost);
-        } else {
-            return null;
+        if (optionalPost.isPresent()) {
+            AddPost post = optionalPost.get();
+            post.setContent(editPostRequest.getContent());
+            post.setMediaUrls(editPostRequest.getMediaUrls());
+            post.setMediaTypes(editPostRequest.getMediaTypes());
+
+            return postRepository.save(post);
         }
+        return null;
+    }
+
+    public AddPost getPostById(String id) {
+        return postRepository.findById(id).orElse(null);
     }
 }
