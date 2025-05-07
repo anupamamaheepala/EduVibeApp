@@ -42,6 +42,22 @@ public class UserService {
         return user;
     }
 
+    public User handleGoogleLogin(String googleId, String username, String email, String firstName, String lastName, String profilePicture) throws Exception {
+        User user = userRepository.findByEmail(email).orElse(new User());
+        
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setProfilePicture(profilePicture);
+        // Set a random password for Google users (not used for login)
+        if (user.getPassword() == null) {
+            user.setPassword(passwordEncoder.encode("google_" + googleId));
+        }
+        
+        return userRepository.save(user);
+    }
+
     public User getUserById(String userId) throws Exception {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new Exception("User not found"));
@@ -50,13 +66,17 @@ public class UserService {
     public User updateUser(String userId, User updatedUser) throws Exception {
         User existingUser = getUserById(userId);
         
-        if (updatedUser.getFirstName() != null) {
+        if (updatedUser.getFirstName() != null && !updatedUser.getFirstName().isEmpty()) {
             existingUser.setFirstName(updatedUser.getFirstName());
         }
-        if (updatedUser.getLastName() != null) {
+        if (updatedUser.getLastName() != null && !updatedUser.getLastName().isEmpty()) {
             existingUser.setLastName(updatedUser.getLastName());
         }
-        if (updatedUser.getEmail() != null) {
+        if (updatedUser.getEmail() != null && !updatedUser.getEmail().isEmpty()) {
+            if (userRepository.findByEmail(updatedUser.getEmail()).isPresent() &&
+                !updatedUser.getEmail().equals(existingUser.getEmail())) {
+                throw new Exception("Email already exists");
+            }
             existingUser.setEmail(updatedUser.getEmail());
         }
         if (updatedUser.getPhoneNumber() != null) {
@@ -65,7 +85,7 @@ public class UserService {
         if (updatedUser.getAddress() != null) {
             existingUser.setAddress(updatedUser.getAddress());
         }
-        if (updatedUser.getProfilePicture() != null) {
+        if (updatedUser.getProfilePicture() != null && !updatedUser.getProfilePicture().isEmpty()) {
             existingUser.setProfilePicture(updatedUser.getProfilePicture());
         }
         
@@ -73,7 +93,7 @@ public class UserService {
     }
 
     public void deleteUser(String userId) throws Exception {
-        User user = getUserById(userId); // Verify user exists
+        User user = getUserById(userId);
         userRepository.delete(user);
     }
 }
