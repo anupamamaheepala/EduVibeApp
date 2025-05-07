@@ -5,6 +5,7 @@ import com.eduvibe.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -15,10 +16,11 @@ public class UserService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-    
+
     public List<User> getAllUsers() {
-    return userRepository.findAll();
-}
+        return userRepository.findAll();
+    }
+
     public User signup(User user) throws Exception {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new Exception("Username already exists");
@@ -42,19 +44,19 @@ public class UserService {
         return user;
     }
 
-    public User handleGoogleLogin(String googleId, String username, String email, String firstName, String lastName, String profilePicture) throws Exception {
+    public User handleGoogleLogin(String googleId, String username, String email, String firstName, String lastName,
+            String profilePicture) throws Exception {
         User user = userRepository.findByEmail(email).orElse(new User());
-        
+
         user.setUsername(username);
         user.setEmail(email);
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setProfilePicture(profilePicture);
-        // Set a random password for Google users (not used for login)
         if (user.getPassword() == null) {
             user.setPassword(passwordEncoder.encode("google_" + googleId));
         }
-        
+
         return userRepository.save(user);
     }
 
@@ -65,7 +67,7 @@ public class UserService {
 
     public User updateUser(String userId, User updatedUser) throws Exception {
         User existingUser = getUserById(userId);
-        
+
         if (updatedUser.getFirstName() != null && !updatedUser.getFirstName().isEmpty()) {
             existingUser.setFirstName(updatedUser.getFirstName());
         }
@@ -74,7 +76,7 @@ public class UserService {
         }
         if (updatedUser.getEmail() != null && !updatedUser.getEmail().isEmpty()) {
             if (userRepository.findByEmail(updatedUser.getEmail()).isPresent() &&
-                !updatedUser.getEmail().equals(existingUser.getEmail())) {
+                    !updatedUser.getEmail().equals(existingUser.getEmail())) {
                 throw new Exception("Email already exists");
             }
             existingUser.setEmail(updatedUser.getEmail());
@@ -88,12 +90,53 @@ public class UserService {
         if (updatedUser.getProfilePicture() != null && !updatedUser.getProfilePicture().isEmpty()) {
             existingUser.setProfilePicture(updatedUser.getProfilePicture());
         }
-        
+
         return userRepository.save(existingUser);
     }
 
     public void deleteUser(String userId) throws Exception {
         User user = getUserById(userId);
         userRepository.delete(user);
+    }
+
+    public void followUser(String userId, String targetUserId) throws Exception {
+        if (userId.equals(targetUserId)) {
+            throw new Exception("Cannot follow yourself");
+        }
+        User user = getUserById(userId);
+        User targetUser = getUserById(targetUserId);
+
+        if (!user.getFollowing().contains(targetUserId)) {
+            user.getFollowing().add(targetUserId);
+            targetUser.getFollowers().add(userId);
+            userRepository.save(user);
+            userRepository.save(targetUser);
+        }
+    }
+
+    public void unfollowUser(String userId, String targetUserId) throws Exception {
+        User user = getUserById(userId);
+        User targetUser = getUserById(targetUserId);
+
+        if (user.getFollowing().contains(targetUserId)) {
+            user.getFollowing().remove(targetUserId);
+            targetUser.getFollowers().remove(userId);
+            userRepository.save(user);
+            userRepository.save(targetUser);
+        }
+    }
+
+    public List<User> searchUsersByUsername(String username) {
+        return userRepository.findByUsernameContainingIgnoreCase(username);
+    }
+
+    public List<User> getFollowers(String userId) throws Exception {
+        User user = getUserById(userId);
+        return userRepository.findAllById(user.getFollowers());
+    }
+
+    public List<User> getFollowing(String userId) throws Exception {
+        User user = getUserById(userId);
+        return userRepository.findAllById(user.getFollowing());
     }
 }
