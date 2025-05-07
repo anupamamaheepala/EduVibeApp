@@ -5,7 +5,12 @@ import Footer from '../Footer';
 import '../../css/ViewPosts.css';
 import { AuthContext } from '../AuthContext';
 import userLogo from '../../images/user.png';
+
 import CommentPopup from '../comments/CommentPopup';
+
+import CommentSection from '../comments/CommentSection';
+import ShareModal from './PostShareModal';
+
 
 
 function Posts() {
@@ -17,6 +22,13 @@ function Posts() {
   const [activeCommentPostId, setActiveCommentPostId] = useState(null);
   const [commentCounts, setCommentCounts] = useState({});
 
+
+
+  const [sharingPostId, setSharingPostId] = useState(null);
+  const [openImage, setOpenImage] = useState(null);
+  const [openVideo, setOpenVideo] = useState(null);
+ 
+  
 
   const BACKEND_URL = 'http://localhost:8000/api/view-posts';
 
@@ -40,6 +52,7 @@ function Posts() {
     fetchPosts();
   }, []);
 
+
   const fetchCommentCounts = async (postsData) => {
     try {
       const counts = {};
@@ -56,6 +69,12 @@ function Posts() {
     }
   };
 
+
+
+  const handleShare = (postId) => {
+    setSharingPostId(postId);
+  };
+  
 
   const getTimeAgo = (timestamp) => {
     const diff = Math.floor((new Date() - new Date(timestamp)) / 1000);
@@ -84,7 +103,7 @@ function Posts() {
 
 
   return (
-    <div className="page-container">
+    <div className="view-page-container">
       {isLoggedIn ? <UserHeader /> : <Header />}
 
       <div className="posts-container">
@@ -109,56 +128,20 @@ function Posts() {
 
                 {/* Post Header */}
                 <div className="post-header">
-                 
                   <div className="post-user">
-                    
-                    <img
-                      className="post-user-avatar"
-                      src={userLogo}
-                      alt="User avatar"
-                    />
-                    
+                    <img className="post-user-avatar" src={userLogo} alt="User avatar" />
                     <span className="post-username">{post.username || post.userId}</span>
                   </div>
-                  <span className="post-time">{getTimeAgo(post.createdAt)}</span>
+
+                  <div className="post-right">
+                    <button className="share-btn" onClick={() => handleShare(post.id)}>Share</button>
+                    <span className="post-time">{getTimeAgo(post.createdAt)}</span>
+                  </div>
                 </div>
+           
+               
 
-                {/* Media Section */}
-                {/* {post.mediaUrls && post.mediaUrls.length > 0 && (() => {
-                  const mediaCount = post.mediaUrls.length;
-                  const hasVideo = post.mediaUrls.some((url, idx) =>
-                    (post.mediaTypes?.[idx] || url.endsWith('.mp4')) === 'video'
-                  );
-
-                  let mediaClass = 'media-gallery';
-
-                  if (hasVideo && mediaCount === 1) {
-                    mediaClass += ' media-video-only';
-                  } else if (mediaCount === 4) {
-                    mediaClass += ' media-4'; // new class for 4 media items
-                  } else if (hasVideo) {
-                    mediaClass += ' media-video-image';
-                  } else {
-                    mediaClass += ` media-${mediaCount}`;
-                  }
-                  
-
-                  return (
-                    <div className={mediaClass}>
-                      {post.mediaUrls.map((url, index) => {
-                        const type = post.mediaTypes?.[index] || (url.endsWith('.mp4') ? 'video' : 'image');
-                        return type === 'image' ? (
-                          <img key={index} src={url} alt={`Post media ${index}`} />
-                        ) : (
-                          <video key={index} controls aria-label={`Post video ${index}`}>
-                            <source src={url} type="video/mp4" />
-                            Your browser does not support the video tag.
-                          </video>
-                        );
-                      })}
-                    </div>
-                  );
-                })()} */
+                {
                   post.mediaUrls && post.mediaUrls.length > 0 && (() => {
   const mediaCount = post.mediaUrls.length;
 
@@ -178,12 +161,24 @@ function Posts() {
       {post.mediaUrls.map((url, index) => {
         const type = post.mediaTypes?.[index] || (url.endsWith('.mp4') ? 'video' : 'image');
         return type === 'image' ? (
-          <img key={index} src={url} alt={`Post media ${index}`} />
+                <img
+                    key={index}
+                    src={url}
+                    alt={`Post media ${index}`}
+                    onClick={() => setOpenImage(url)}
+                    style={{ cursor: 'pointer' }}
+                  />
+
         ) : (
-          <video key={index} controls aria-label={`Post video ${index}`}>
-            <source src={url} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          <video
+          key={index}
+          onClick={() => setOpenVideo(url)}
+          style={{ cursor: 'pointer' }}
+          muted
+        >Your browser does not support the video tag.
+          <source src={url} type="video/mp4" />
+        </video>
+        
         );
       })}
     </div>
@@ -220,7 +215,33 @@ function Posts() {
             ))}
           </div>
         )}
+             {openImage && (
+        <div className="image-modal-backdrop" onClick={() => setOpenImage(null)}>
+          <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+            <img src={openImage} alt="Full view" />
+            <button className="close-btn" onClick={() => setOpenImage(null)}>✕</button>
+          </div>
+        </div>
+      )}
+
+        {openVideo && (
+          <div className="image-modal-backdrop" onClick={() => setOpenVideo(null)}>
+            <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+              <video controls autoPlay style={{ maxWidth: '100%', maxHeight: '80vh' }}>
+                <source src={openVideo} type="video/mp4" />
+              </video>
+              <button className="close-btn" onClick={() => setOpenVideo(null)}>✕</button>
+            </div>
+          </div>
+        )}
+
       </div>
+            {sharingPostId && (
+        <ShareModal
+          postId={sharingPostId}
+          onClose={() => setSharingPostId(null)}
+        />
+      )}
 
       {/* Comment Popup */}
       {activeCommentPostId && (

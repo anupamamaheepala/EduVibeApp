@@ -118,6 +118,11 @@
   background-color: var(--gray);
 }
 
+.detail-value.editable {
+  background-color: var(--white);
+  border-color: var(--primary);
+}
+
 .edit-button {
   background-color: var(--primary);
   color: var(--white);
@@ -128,12 +133,34 @@
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s;
-  align-self: center;
-  margin-top: 20px;
 }
 
 .edit-button:hover {
   background-color: var(--primary-dark);
+}
+
+.cancel-button {
+  background-color: var(--error-color);
+}
+
+.cancel-button:hover {
+  background-color: #c0392b;
+}
+
+.delete-button {
+  background-color: var(--error-color);
+}
+
+.delete-button:hover {
+  background-color: #c0392b;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap; /* Allow buttons to wrap if needed */
 }
 
 /* Responsive styles */
@@ -163,5 +190,10 @@
   
   .dashboard-title {
     font-size: 1.5rem;
+  }
+  
+  .button-container {
+    flex-direction: column;
+    align-items: center;
   }
 }

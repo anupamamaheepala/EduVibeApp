@@ -1,0 +1,225 @@
+.posts-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px 15px;
+  }
+  
+  .posts-container h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .posts-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: linear-gradient(to right, #f0f4ff, #eef1ff); 
+    /* padding: 30px 25px; */
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  
+  .post-card {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s;
+  }
+  
+  .post-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+  
+  .post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  .post-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .post-user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .post-username {
+    font-weight: 600;
+    font-size: 14px;
+    color: #222;
+  }
+  
+  .post-time {
+    font-size: 12px;
+    color: #666;
+  }
+  
+  .media-gallery {
+    /* 60% of the card height for media */
+   display: grid;
+   width: 100%;
+   gap: 6px;
+   border-radius: 10px;
+   overflow: hidden;
+ }
+ 
+ /* Grid layout changes dynamically */
+ .media-gallery.media-1 {
+   grid-template-columns: 1fr;
+ }
+ 
+ .media-gallery.media-2 {
+   grid-template-columns: repeat(2, 1fr);
+   grid-template-rows: 1fr;
+ }
+ 
+ .media-gallery.media-3 {
+   display: grid;
+   grid-template-columns: repeat(2, 1fr);
+   grid-template-rows: 150px 150px; /* Explicitly define each row as 150px */
+   height: 300px; /* Ensure the total height matches: 150px * 2 */
+   gap: 6px;
+   overflow: hidden; /* Prevent overflow from affecting layout */
+ }
+ 
+ /* Ensure media items fit the grid cells exactly */
+ .media-gallery.media-3 img,
+ .media-gallery.media-3 video {
+   width: 100%;
+   height: 150px; /* Match the row height */
+   object-fit: cover;
+   display: block; /* Remove any default inline-block spacing */
+ }
+ 
+ /* The third item spans both columns in the second row */
+ .media-gallery.media-3 img:nth-child(3),
+ .media-gallery.media-3 video:nth-child(3) {
+   grid-column: 1 / 3; /* Span both columns */
+   grid-row: 2 / 3; /* Second row */
+   width: 100%;
+   height: 150px; /* Match the row height */
+   object-fit: cover;
+ }
+ /* .media-gallery.media-3 {
+   grid-template-columns: 1fr 1fr;
+   grid-template-rows: 1fr 1fr;
+ } */
+ 
+ 
+ .media-gallery.media-4 {
+   display: grid;
+   grid-template-columns: repeat(2, 1fr); /* 2 columns */
+   grid-template-rows: repeat(2, 1fr);
+   grid-template-rows: 150px 150px; /* Explicitly define each row as 150px */
+   height: 300px; /* Ensure the total height matches: 150px * 2 */
+   gap: 6px;
+   overflow: hidden; /* Prevent overflow from affecting layout */
+ }
+ 
+ /* Ensure media items fit the grid cells exactly */
+ .media-gallery.media-4 img,
+ .media-gallery.media-4 video {
+   width: 100%;
+   height: 150px; /* Match the row height */
+   object-fit: cover;
+   display: block; /* Remove any default inline-block spacing */
+ }
+ 
+ /* The third item spans both columns in the second row */
+ .media-gallery.media-4 img:nth-child(4),
+ .media-gallery.media-4 video:nth-child(4) {
+   grid-column: 1 / 4; /* Span both columns */
+   grid-row: 1 / 2; 
+   /* Second row */
+   width: 100%;
+   height: 150px; /* Match the row height */
+   object-fit: cover;
+ }
+ 
+ 
+ .media-gallery.media-video-only {
+   grid-template-columns: 1fr;
+ }
+ 
+ .media-gallery.media-video-image {
+   grid-template-columns: 2fr 1fr;
+ }
+ 
+  .media-gallery img,
+  .media-gallery video {
+    width: 100%;
+    border-radius: 6px;
+    object-fit: cover;
+  }
+  
+  .post-content {
+    margin-top: 10px;
+  }
+  
+  .post-caption {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .post-meta {
+    font-size: 13px;
+    color: #777;
+  }
+  
+  .post-meta strong {
+    color: #222;
+  }
+  .image-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  
+  .image-modal-content {
+    position: relative;
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 90%;
+    max-height: 90%;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  }
+  
+  .image-modal-content img {
+    width: 600px;    /* ✅ Fixed width */
+    height: 400px;   /* ✅ Fixed height */
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #f87171;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 16px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  

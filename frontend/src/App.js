@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google'; 
+
 // import { AuthProvider, AuthContext } from './pages/context/AuthContext';
 import { AuthProvider } from './pages/AuthContext';
 
@@ -13,14 +15,18 @@ import CheckImages from './components/CheckImages';
 import CommentSystem from './pages/comments/CommentSystem';
 import AddPost from './pages/posts/AddPosts';
 import ViewPost from './pages/posts/ViewPosts';
-import UserPosts from './pages/posts/UserPosts';
+import MyPosts from './pages/posts/UserPosts';
 import EditUserPosts from './pages/posts/EditUserPosts';
 import DeleteUserPosts from './pages/posts/DeleteUserPosts';
+import ShareModal from './pages/posts/PostShareModal';
 import UserRoutes from './pages/user/UserRoutes';
+import SharedWithMe from './pages/posts/SharedPosts';
+import SinglePostView from './pages/posts/SinglePostView';
 
 const App = () => {
   return (
-    <AuthProvider>
+  <AuthProvider>
+    <GoogleOAuthProvider clientId="672064114622-86o0ke8k6adn1gcdptcutc2l5439kbkq.apps.googleusercontent.com">
       <Router>
         <Routes>
           {/* Public Routes */}
@@ -35,14 +41,18 @@ const App = () => {
           <Route path="/comment" element={<CommentSystem />} />
           <Route path="/add-post" element={<AddPost />} />
           <Route path="/posts" element={<ViewPost />} />
-          <Route path="/UserPosts" element={<UserPosts />} />
+          <Route path="/MyPosts" element={<MyPosts />} />
           <Route path="/EditUserPosts/:postId" element={<EditUserPosts />} />
           <Route path="/DeleteUserPosts/:id" element={<DeleteUserPosts />} />
           <Route path="/dashboard/*" element={<UserRoutes />} />
+          <Route path="/ShareModal" element={<ShareModal />} />
+          <Route path="/SharedWithMe" element={<SharedWithMe />} />
+          <Route path="/post/:postId" element={<SinglePostView />} />
 
 
         </Routes>
       </Router>
+      </GoogleOAuthProvider>
     </AuthProvider>
   );
 };

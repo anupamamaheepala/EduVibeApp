@@ -5,6 +5,7 @@ import com.eduvibe.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -14,9 +15,11 @@ public class UserService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-
+    
+    public List<User> getAllUsers() {
+    return userRepository.findAll();
+}
     public User signup(User user) throws Exception {
-        // Check if username or email already exists
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new Exception("Username already exists");
         }
@@ -24,17 +27,14 @@ public class UserService {
             throw new Exception("Email already exists");
         }
 
-        // Encode password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
     public User login(String userIdentifier, String password) throws Exception {
-        // Find user by username or email
         User user = userRepository.findByUsernameOrEmail(userIdentifier, userIdentifier)
                 .orElseThrow(() -> new Exception("User not found"));
 
-        // Verify password
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new Exception("Invalid password");
         }
@@ -42,7 +42,22 @@ public class UserService {
         return user;
     }
 
-    // UserService.java - Add these methods
+    public User handleGoogleLogin(String googleId, String username, String email, String firstName, String lastName, String profilePicture) throws Exception {
+        User user = userRepository.findByEmail(email).orElse(new User());
+        
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setProfilePicture(profilePicture);
+        // Set a random password for Google users (not used for login)
+        if (user.getPassword() == null) {
+            user.setPassword(passwordEncoder.encode("google_" + googleId));
+        }
+        
+        return userRepository.save(user);
+    }
+
     public User getUserById(String userId) throws Exception {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new Exception("User not found"));
@@ -51,15 +66,17 @@ public class UserService {
     public User updateUser(String userId, User updatedUser) throws Exception {
         User existingUser = getUserById(userId);
         
-        // Update fields if they're provided
-        if (updatedUser.getFirstName() != null) {
+        if (updatedUser.getFirstName() != null && !updatedUser.getFirstName().isEmpty()) {
             existingUser.setFirstName(updatedUser.getFirstName());
         }
-        if (updatedUser.getLastName() != null) {
+        if (updatedUser.getLastName() != null && !updatedUser.getLastName().isEmpty()) {
             existingUser.setLastName(updatedUser.getLastName());
         }
-        if (updatedUser.getEmail() != null) {
-            // Add email validation if needed
+        if (updatedUser.getEmail() != null && !updatedUser.getEmail().isEmpty()) {
+            if (userRepository.findByEmail(updatedUser.getEmail()).isPresent() &&
+                !updatedUser.getEmail().equals(existingUser.getEmail())) {
+                throw new Exception("Email already exists");
+            }
             existingUser.setEmail(updatedUser.getEmail());
         }
         if (updatedUser.getPhoneNumber() != null) {
@@ -68,10 +85,15 @@ public class UserService {
         if (updatedUser.getAddress() != null) {
             existingUser.setAddress(updatedUser.getAddress());
         }
-        if (updatedUser.getProfilePicture() != null) {
+        if (updatedUser.getProfilePicture() != null && !updatedUser.getProfilePicture().isEmpty()) {
             existingUser.setProfilePicture(updatedUser.getProfilePicture());
         }
         
         return userRepository.save(existingUser);
+    }
+
+    public void deleteUser(String userId) throws Exception {
+        User user = getUserById(userId);
+        userRepository.delete(user);
     }
 }
