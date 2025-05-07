@@ -9,15 +9,29 @@
     rgba(235, 237, 255, 0.85)
   ),
   url('../images/background.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
 }
 
-.posts-container {
+.View-posts-container {
   max-width: 900px;
   margin: 10px auto;
-  padding: 0 20px;
+  padding: 80px 20px;
+  background-image: linear-gradient(
+    rgba(255, 230, 250, 0.7),
+    rgba(230, 240, 255, 0.7)
+  ),
+  url('../images/background.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+
 }
 
-.posts-header {
+.View-posts-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -25,31 +39,33 @@
   padding: 2px;
 }
 
-.posts-header h1 {
-  font-size: 28px;
+.View-posts-header h1 {
+  font-size: 40px;
+  font-weight:bolder;
   color: #333;
+  text-align: center;
 }
 
-.posts-container h2 {
+.View-posts-container h2 {
   text-align: center;
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
 }
 
-.post-card {
+.View-post-card {
   width: 700px;
   min-height: 800px;
   margin: 10px auto;
   padding: 16px;
-  background: #fff;
+  /* background: #fff; */
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   overflow: hidden; /* Important: hide overflow */
 }
-.header-actions {
+.View-header-actions {
   display: flex;
   flex-direction: column;
   align-items: center; /* 🔥 Center children horizontally */
@@ -59,7 +75,7 @@
 .create-post-button {
   margin-top: 0.5rem; /* Space between title and button */
   padding: 10px 16px;
-  background-color: #4caf50;
+  background-color: purple;
   color: white;
   text-decoration: none;
   border-radius: 6px;
@@ -72,7 +88,8 @@
 }
 
 
-.posts-feed {
+.View-posts-feed {
+  background: linear-gradient(to right, #f0f4ff, #eef1ff);
   display: flex;
   flex-direction: column;
   gap: 30px;

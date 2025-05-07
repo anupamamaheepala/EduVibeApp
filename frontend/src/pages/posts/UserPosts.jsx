@@ -88,7 +88,7 @@ function UserPosts() {
       {/* {isLoggedIn ? <UserHeader /> : <Header />} */}
       <div className="user-posts-container">  
       <div className="header-actions">   
-        <h2>My Posts</h2>
+      <h2 style={{ color: ' #301934' }}>My Posts</h2>
         <a href="/add-post" className="create-post-button">Create Post</a>
         </div>
         {loading ? (

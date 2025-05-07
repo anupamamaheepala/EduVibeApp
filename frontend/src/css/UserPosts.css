@@ -24,6 +24,13 @@ font-size: 1.75rem;
   
 }
 
+.header-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 🔥 Center children horizontally */
+  margin-bottom: 2rem;
+}
+
 .posts-container {
   flex: 1;
   background: linear-gradient(135deg, #f5f7fa 0%, #ebedff 100%);
@@ -36,7 +43,7 @@ font-size: 1.75rem;
 }
 
 .user-posts-container h2 {
-  font-size: 1.5rem;
+  font-size: 40px;
   font-weight: 600;
   color: #1f2937;
   margin-bottom: 1.5rem;
@@ -45,12 +52,13 @@ font-size: 1.75rem;
 
 .create-post-button {
   padding: 10px 16px;
-  background-color: #4caf50;
+  background-color: purple;
   color: white;
   text-decoration: none;
   border-radius: 6px;
   font-weight: 500;
   transition: background-color 0.3s ease;
+  
 }
 
 .create-post-button:hover {
