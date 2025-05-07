@@ -54,7 +54,7 @@ function Posts() {
   };
 
   return (
-    <div className="page-container">
+    <div className="view-page-container">
       {isLoggedIn ? <UserHeader /> : <Header />}
 
       <div className="posts-container">
