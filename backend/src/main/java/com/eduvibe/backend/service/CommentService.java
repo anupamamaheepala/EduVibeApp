@@ -1,7 +1,9 @@
 package com.eduvibe.backend.service;
 
 import com.eduvibe.backend.model.Comment;
+import com.eduvibe.backend.model.Reply;
 import com.eduvibe.backend.repository.CommentRepository;
+import com.eduvibe.backend.repository.ReplyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,9 @@ public class CommentService {
     @Autowired
     private CommentRepository commentRepository;
 
+    @Autowired
+    private ReplyRepository replyRepository;
+
     public Comment saveComment(Comment comment) {
         if (comment.getCreatedAt() == null) {
             comment.setCreatedAt(new Date());
@@ -25,13 +30,15 @@ public class CommentService {
         List<Comment> comments = commentRepository.findByPostId(postId);
         for (Comment comment : comments) {
             if (comment.getCreatedAt() == null) {
-                comment.setCreatedAt(new Date()); // or any default
+                comment.setCreatedAt(new Date());
                 commentRepository.save(comment);
             }
+            // Fetch replies for each comment
+            List<Reply> replies = replyRepository.findByParentCommentId(comment.getId());
+            comment.setReplies(replies);
         }
         return comments;
     }
-    
 
     public Comment updateComment(String id, String newText) {
         Comment comment = commentRepository.findById(id).orElse(null);
@@ -41,9 +48,12 @@ public class CommentService {
         }
         return null;
     }
-    
 
     public void deleteComment(String id) {
+        // Delete associated replies
+        List<Reply> replies = replyRepository.findByParentCommentId(id);
+        replyRepository.deleteAll(replies);
+        // Delete the comment
         commentRepository.deleteById(id);
     }
 }

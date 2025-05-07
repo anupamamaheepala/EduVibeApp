@@ -4,36 +4,31 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
-import java.util.List;
 
-@Document(collection = "comments")
-public class Comment {
+@Document(collection = "replies")
+public class Reply {
 
     @Id
     private String id;
-    private String postId;
     private String userId;
     private String username;
     private String text;
     private Date createdAt;
-    private List<Reply> replies;
+    private String parentCommentId;
 
-    public Comment() {}
+    public Reply() {}
 
-    public Comment(String postId, String userId, String username, String text, Date createdAt) {
-        this.postId = postId;
+    public Reply(String userId, String username, String text, Date createdAt, String parentCommentId) {
         this.userId = userId;
         this.username = username;
         this.text = text;
         this.createdAt = createdAt;
+        this.parentCommentId = parentCommentId;
     }
 
     // Getters & Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
-
-    public String getPostId() { return postId; }
-    public void setPostId(String postId) { this.postId = postId; }
 
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
@@ -47,6 +42,6 @@ public class Comment {
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
 
-    public List<Reply> getReplies() { return replies; }
-    public void setReplies(List<Reply> replies) { this.replies = replies; }
+    public String getParentCommentId() { return parentCommentId; }
+    public void setParentCommentId(String parentCommentId) { this.parentCommentId = parentCommentId; }
 }
