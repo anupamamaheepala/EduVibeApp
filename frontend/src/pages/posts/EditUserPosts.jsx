@@ -168,10 +168,11 @@ function EditUserPost() {
   }
 
   return (
-    <div className="page-container">
+    <div className="Edit-page-container">
       {isLoggedIn ? <UserHeader /> : <Header />}
+      <div className="Edit-background-section">
       <div className="edit-post-container">
-        <h2>Edit Your Post</h2>
+        <h2>Edit Post</h2>
         <div className="edit-post-form">
           <label htmlFor="content">Post Content:</label>
           <textarea
@@ -251,8 +252,10 @@ function EditUserPost() {
           )}
         </div>
       </div>
+      </div>
       <Footer />
     </div>
+    
   );
 }
 
