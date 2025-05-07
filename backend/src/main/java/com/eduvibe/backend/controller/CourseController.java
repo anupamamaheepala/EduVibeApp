@@ -71,7 +71,7 @@ public class CourseController {
             } catch (Exception e) {
                 response.setUsername("Unknown");
             }
-            return response;
+            return response; // Added explicit return statement
         }).collect(Collectors.toList());
         return ResponseEntity.ok(courseResponses);
     }
@@ -103,6 +103,7 @@ public class CourseController {
                 response.setCreatedAt(course.getCreatedAt());
                 response.setCreatedBy(course.getCreatedBy());
                 response.setUsername(user.getUsername());
+                return response; // Explicit return statement
             }).collect(Collectors.toList());
             return ResponseEntity.ok(courseResponses);
         } catch (Exception e) {
