@@ -1,4 +1,4 @@
-/* UserDashboard.css */
+/* Enhanced UserDashboard.css - Preserving original aesthetic */
 :root {
   --primary: #773beb;
   --primary-light: #f8f5ff;
@@ -30,9 +30,10 @@
   width: 100%;
   max-width: 800px;
   background-color: var(--white);
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
   padding: 40px;
+  transition: all 0.3s ease;
 }
 
 .dashboard-title {
@@ -41,6 +42,20 @@
   font-weight: 600;
   text-align: center;
   margin-bottom: 30px;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.dashboard-title:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background-color: var(--primary);
+  border-radius: 3px;
 }
 
 .user-profile {
@@ -57,14 +72,26 @@
   border-radius: 50%;
   overflow: hidden;
   background-color: var(--gray);
-  border: 3px solid var(--primary-light);
+  border: 4px solid var(--primary-light);
+  box-shadow: 0 5px 15px rgba(119, 59, 235, 0.2);
   cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.profile-picture-container:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(119, 59, 235, 0.3);
 }
 
 .profile-picture {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: filter 0.3s;
+}
+
+.profile-picture-container:hover .profile-picture {
+  filter: brightness(0.9);
 }
 
 .profile-picture-edit {
@@ -72,13 +99,14 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(119, 59, 235, 0.7);
+  background-color: rgba(119, 59, 235, 0.8);
   color: white;
   text-align: center;
-  padding: 8px;
+  padding: 10px;
   font-size: 0.9rem;
+  font-weight: 500;
   transform: translateY(100%);
-  transition: transform 0.3s;
+  transition: transform 0.3s ease;
 }
 
 .profile-picture-container:hover .profile-picture-edit {
@@ -89,12 +117,18 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .detail-row {
   display: flex;
-  gap: 20px;
+  gap: 24px;
 }
 
 .detail-group {
@@ -104,66 +138,171 @@
 }
 
 .detail-label {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 500;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   color: var(--dark-gray);
+  transition: color 0.3s;
+}
+
+.detail-group:focus-within .detail-label {
+  color: var(--primary);
 }
 
 .detail-value {
-  padding: 12px 16px;
+  padding: 14px 16px;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 1rem;
   background-color: var(--gray);
+  transition: all 0.3s ease;
+}
+
+.detail-value:not(.editable):hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .detail-value.editable {
   background-color: var(--white);
   border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(119, 59, 235, 0.2);
+}
+
+.detail-value.editable:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(119, 59, 235, 0.3);
+}
+
+textarea.detail-value {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.edit-button, .cancel-button, .delete-button {
+  border: none;
+  border-radius: 8px;
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .edit-button {
   background-color: var(--primary);
   color: var(--white);
-  border: none;
-  border-radius: 6px;
-  padding: 12px 24px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s;
+  box-shadow: 0 4px 10px rgba(119, 59, 235, 0.2);
 }
 
 .edit-button:hover {
   background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(119, 59, 235, 0.3);
+}
+
+.edit-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(119, 59, 235, 0.2);
 }
 
 .cancel-button {
   background-color: var(--error-color);
+  color: var(--white);
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.2);
 }
 
 .cancel-button:hover {
   background-color: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(231, 76, 60, 0.3);
 }
 
 .delete-button {
   background-color: var(--error-color);
+  color: var(--white);
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.2);
 }
 
 .delete-button:hover {
   background-color: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(231, 76, 60, 0.3);
 }
 
 .button-container {
   display: flex;
-  gap: 10px;
+  gap: 16px;
   justify-content: center;
-  margin-top: 20px;
-  flex-wrap: wrap; /* Allow buttons to wrap if needed */
+  margin-top: 30px;
 }
 
-/* Responsive styles */
+/* Loading State */
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--primary-light);
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-spinner p {
+  color: var(--primary);
+  font-weight: 500;
+}
+
+/* Error State */
+.error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  text-align: center;
+  padding: 30px;
+}
+
+.error-message p {
+  color: var(--error-color);
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.error-message button {
+  background-color: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.error-message button:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+/* Responsive styles with improvements */
 @media (max-width: 768px) {
   .detail-row {
     flex-direction: column;
@@ -171,29 +310,77 @@
   }
   
   .dashboard-content {
-    padding: 30px 20px;
+    padding: 30px 25px;
+    border-radius: 10px;
   }
   
   .dashboard-title {
     font-size: 1.8rem;
   }
+  
+  .profile-picture-container {
+    width: 130px;
+    height: 130px;
+  }
 }
 
 @media (max-width: 480px) {
   .dashboard-container {
-    padding: 90px 15px 30px;
+    padding: 80px 15px 30px;
   }
   
   .dashboard-content {
-    padding: 25px 15px;
+    padding: 25px 20px;
+    border-radius: 8px;
   }
   
   .dashboard-title {
     font-size: 1.5rem;
+    margin-bottom: 25px;
+  }
+  
+  .profile-picture-container {
+    width: 120px;
+    height: 120px;
   }
   
   .button-container {
     flex-direction: column;
-    align-items: center;
+    width: 100%;
   }
+  
+  .edit-button, .cancel-button, .delete-button {
+    width: 100%;
+  }
+}
+
+/* Accessibility improvements */
+input:focus, textarea:focus, button:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Optional animation for better visual feedback */
+.detail-value.editable {
+  animation: highlight 1s ease;
+}
+
+@keyframes highlight {
+  0% { background-color: var(--primary-light); }
+  100% { background-color: var(--white); }
+}
+
+/* Better visibility for form elements */
+input::placeholder, textarea::placeholder {
+  color: #aaa;
+}
+
+input:disabled, textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Address value special styling */
+.address-value {
+  white-space: pre-line;
 }
