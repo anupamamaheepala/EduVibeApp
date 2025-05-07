@@ -1,6 +1,7 @@
 package com.eduvibe.backend.controller;
 
 import com.eduvibe.backend.model.Course;
+import com.eduvibe.backend.model.CourseProgress;
 import com.eduvibe.backend.model.Chapter;
 import com.eduvibe.backend.model.User;
 import com.eduvibe.backend.service.CourseService;
@@ -11,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -71,16 +74,27 @@ public class CourseController {
             } catch (Exception e) {
                 response.setUsername("Unknown");
             }
-            return response; // Added explicit return statement
+            return response;
         }).collect(Collectors.toList());
         return ResponseEntity.ok(courseResponses);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCourseById(@PathVariable String id) {
+    public ResponseEntity<?> getCourseById(@PathVariable String id, @RequestHeader("X-User-Id") String userId) {
         try {
             Course course = courseService.getCourseById(id);
-            return ResponseEntity.ok(course);
+            CourseProgress progress = null;
+            try {
+                progress = courseService.getCourseProgress(userId, id);
+            } catch (Exception e) {
+                // Progress may not exist if user hasn't started the course
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("course", course);
+            response.put("progress", progress);
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -103,7 +117,13 @@ public class CourseController {
                 response.setCreatedAt(course.getCreatedAt());
                 response.setCreatedBy(course.getCreatedBy());
                 response.setUsername(user.getUsername());
-                return response; // Explicit return statement
+                try {
+                    CourseProgress progress = courseService.getCourseProgress(userId, course.getId());
+                    response.setProgress(progress);
+                } catch (Exception e) {
+                    response.setProgress(null);
+                }
+                return response;
             }).collect(Collectors.toList());
             return ResponseEntity.ok(courseResponses);
         } catch (Exception e) {
@@ -162,6 +182,61 @@ public class CourseController {
         }
     }
 
+    @PostMapping("/{courseId}/start")
+    public ResponseEntity<?> startCourse(
+            @PathVariable String courseId,
+            @RequestHeader("X-User-Id") String userId) {
+        try {
+            if (userId == null || userId.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User ID is required");
+            }
+            if (courseId == null || courseId.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Course ID is required");
+            }
+            CourseProgress progress = courseService.startCourse(userId, courseId);
+            return ResponseEntity.ok(progress);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/{courseId}/complete-chapter/{chapterIndex}")
+    public ResponseEntity<?> markChapterCompleted(
+            @PathVariable String courseId,
+            @PathVariable int chapterIndex,
+            @RequestHeader("X-User-Id") String userId) {
+        try {
+            if (userId == null || userId.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User ID is required");
+            }
+            if (courseId == null || courseId.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Course ID is required");
+            }
+            CourseProgress progress = courseService.markChapterCompleted(userId, courseId, chapterIndex);
+            return ResponseEntity.ok(progress);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{courseId}/progress")
+    public ResponseEntity<?> getCourseProgress(
+            @PathVariable String courseId,
+            @RequestHeader("X-User-Id") String userId) {
+        try {
+            if (userId == null || userId.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User ID is required");
+            }
+            if (courseId == null || courseId.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Course ID is required");
+            }
+            CourseProgress progress = courseService.getCourseProgress(userId, courseId);
+            return ResponseEntity.ok(progress);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
     // Inner class for course creation request payload
     public static class CourseRequest {
         private String userId;
@@ -196,7 +271,7 @@ public class CourseController {
         public void setChapters(List<Chapter> chapters) { this.chapters = chapters; }
     }
 
-    // Inner class for course response to include username
+    // Inner class for course response to include username and progress
     public static class CourseResponse {
         private String id;
         private String name;
@@ -205,6 +280,7 @@ public class CourseController {
         private Date createdAt;
         private String createdBy;
         private String username;
+        private CourseProgress progress;
 
         public String getId() { return id; }
         public void setId(String id) { this.id = id; }
@@ -220,5 +296,7 @@ public class CourseController {
         public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
         public String getUsername() { return username; }
         public void setUsername(String username) { this.username = username; }
+        public CourseProgress getProgress() { return progress; }
+        public void setProgress(CourseProgress progress) { this.progress = progress; }
     }
 }

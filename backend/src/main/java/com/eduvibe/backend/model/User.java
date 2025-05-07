@@ -18,7 +18,8 @@ public class User {
     private String address;
     private String password;
     private String profilePicture;
-    private List<String> courses = new ArrayList<>();
+    private List<String> courses = new ArrayList<>(); // Courses created by the user
+    private List<String> enrolledCourses = new ArrayList<>(); // Courses the user is learning
     private List<String> followers = new ArrayList<>();
     private List<String> following = new ArrayList<>();
 
@@ -34,6 +35,7 @@ public class User {
         this.address = address;
         this.password = password;
         this.courses = new ArrayList<>();
+        this.enrolledCourses = new ArrayList<>();
         this.followers = new ArrayList<>();
         this.following = new ArrayList<>();
     }
@@ -68,6 +70,9 @@ public class User {
 
     public List<String> getCourses() { return courses; }
     public void setCourses(List<String> courses) { this.courses = courses; }
+
+    public List<String> getEnrolledCourses() { return enrolledCourses; }
+    public void setEnrolledCourses(List<String> enrolledCourses) { this.enrolledCourses = enrolledCourses; }
 
     public List<String> getFollowers() { return followers; }
     public void setFollowers(List<String> followers) { this.followers = followers; }

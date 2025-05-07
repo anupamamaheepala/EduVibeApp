@@ -140,9 +140,8 @@ public class UserService {
         return userRepository.findAllById(user.getFollowing());
     }
 
-    // Your methods, adjusted for consistency with master's exception handling
     public void addCourseToUser(String userId, String courseId) throws Exception {
-        User user = getUserById(userId); // Using getUserById for consistency
+        User user = getUserById(userId);
         if (!user.getCourses().contains(courseId)) {
             user.getCourses().add(courseId);
             userRepository.save(user);
@@ -150,10 +149,23 @@ public class UserService {
     }
 
     public void removeCourseFromUser(String userId, String courseId) throws Exception {
-        User user = getUserById(userId); // Using getUserById for consistency
+        User user = getUserById(userId);
         if (user.getCourses().contains(courseId)) {
             user.getCourses().remove(courseId);
             userRepository.save(user);
         }
+    }
+
+    public void enrollInCourse(String userId, String courseId) throws Exception {
+        User user = getUserById(userId);
+        if (!user.getEnrolledCourses().contains(courseId)) {
+            user.getEnrolledCourses().add(courseId);
+            userRepository.save(user);
+        }
+    }
+
+    public List<String> getEnrolledCourses(String userId) throws Exception {
+        User user = getUserById(userId);
+        return user.getEnrolledCourses();
     }
 }

@@ -32,6 +32,7 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/courses" element={<AllCourses />} />
             <Route path="/add-course" element={<AddCourseForm />} />
+            
             <Route path="/edit-course/:courseId" element={<AddCourseForm />} />
 
             {/* Posts and Comments */}

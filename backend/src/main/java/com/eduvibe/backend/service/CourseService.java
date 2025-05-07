@@ -2,12 +2,15 @@ package com.eduvibe.backend.service;
 
 import com.eduvibe.backend.controller.CourseController;
 import com.eduvibe.backend.model.Course;
+import com.eduvibe.backend.model.CourseProgress;
+import com.eduvibe.backend.repository.CourseProgressRepository;
 import com.eduvibe.backend.repository.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CourseService {
@@ -16,13 +19,15 @@ public class CourseService {
     private CourseRepository courseRepository;
 
     @Autowired
+    private CourseProgressRepository courseProgressRepository;
+
+    @Autowired
     private UserService userService;
 
     public Course saveCourse(Course course, String userId) throws Exception {
         if (userId == null || userId.trim().isEmpty()) {
             throw new Exception("User ID is required");
         }
-        // Validate user existence
         userService.getUserById(userId);
         
         if (course.getName() == null || course.getName().trim().isEmpty()) {
@@ -57,7 +62,6 @@ public class CourseService {
         if (userId == null || userId.trim().isEmpty()) {
             throw new Exception("User ID is required");
         }
-        // Validate user existence
         userService.getUserById(userId);
         return courseRepository.findByCreatedBy(userId);
     }
@@ -70,7 +74,6 @@ public class CourseService {
             throw new Exception("Course ID is required");
         }
 
-        // Validate user and course existence
         userService.getUserById(userId);
         Course course = getCourseById(courseId);
 
@@ -78,7 +81,6 @@ public class CourseService {
             throw new Exception("You are not authorized to update this course");
         }
 
-        // Update course fields
         if (updateRequest.getName() != null && !updateRequest.getName().trim().isEmpty()) {
             course.setName(updateRequest.getName().trim());
         }
@@ -100,7 +102,6 @@ public class CourseService {
             throw new Exception("Course ID is required");
         }
 
-        // Validate user and course existence
         userService.getUserById(userId);
         Course course = getCourseById(courseId);
 
@@ -110,5 +111,48 @@ public class CourseService {
 
         courseRepository.deleteById(courseId);
         userService.removeCourseFromUser(userId, courseId);
+    }
+
+    public CourseProgress startCourse(String userId, String courseId) throws Exception {
+        userService.getUserById(userId);
+        Course course = getCourseById(courseId);
+
+        Optional<CourseProgress> existingProgress = courseProgressRepository.findByUserIdAndCourseId(userId, courseId);
+        if (existingProgress.isPresent()) {
+            return existingProgress.get();
+        }
+
+        CourseProgress progress = new CourseProgress(userId, courseId);
+        userService.enrollInCourse(userId, courseId);
+        return courseProgressRepository.save(progress);
+    }
+
+    public CourseProgress markChapterCompleted(String userId, String courseId, int chapterIndex) throws Exception {
+        userService.getUserById(userId);
+        Course course = getCourseById(courseId);
+
+        if (chapterIndex < 0 || chapterIndex >= course.getChapters().size()) {
+            throw new Exception("Invalid chapter index");
+        }
+
+        Optional<CourseProgress> progressOpt = courseProgressRepository.findByUserIdAndCourseId(userId, courseId);
+        CourseProgress progress = progressOpt.orElse(new CourseProgress(userId, courseId));
+
+        if (!progress.getCompletedChapterIndices().contains(chapterIndex)) {
+            progress.getCompletedChapterIndices().add(chapterIndex);
+        }
+
+        double completionPercentage = ((double) progress.getCompletedChapterIndices().size() / course.getChapters().size()) * 100;
+        progress.setCompletionPercentage(completionPercentage);
+
+        return courseProgressRepository.save(progress);
+    }
+
+    public CourseProgress getCourseProgress(String userId, String courseId) throws Exception {
+        Optional<CourseProgress> progress = courseProgressRepository.findByUserIdAndCourseId(userId, courseId);
+        if (progress.isEmpty()) {
+            throw new Exception("No progress found for this course");
+        }
+        return progress.get();
     }
 }
