@@ -1,10 +1,19 @@
-// src/components/DeleteUserPost.jsx
 import React from 'react';
+import Swal from 'sweetalert2';
 
 function DeleteUserPost({ postId, onDelete }) {
   const handleDelete = async () => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this post?");
-    if (!confirmDelete) return;
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'This post will be permanently deleted.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       const response = await fetch(`/api/delete-posts/${postId}`, {
@@ -15,10 +24,21 @@ function DeleteUserPost({ postId, onDelete }) {
         throw new Error('Failed to delete post');
       }
 
-      alert('Post deleted successfully.');
+      Swal.fire({
+        title: 'Deleted!',
+        text: 'Your post has been deleted.',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
       onDelete(postId); // Inform parent component
     } catch (error) {
-      alert('Error deleting post: ' + error.message);
+      Swal.fire({
+        title: 'Error!',
+        text: 'Error deleting post: ' + error.message,
+        icon: 'error',
+      });
     }
   };
 

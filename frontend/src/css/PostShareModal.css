@@ -1,0 +1,132 @@
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* dimmed background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modal {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 1rem;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  .user-select-button {
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: #f9f9f9;
+    text-align: left;
+  }
+  
+  .user-select-button:hover {
+    background-color: #e0f2fe;
+  }
+  
+  .user-select-button.selected {
+    background-color: #2563eb;
+    color: white;
+    font-weight: bold;
+    border-color: #1d4ed8;
+  }
+  
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 1.5rem;
+  }
+  
+  .modal-actions button {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  /* Share Button */
+  .modal-actions button:first-child {
+    background-color: #2563eb;
+    color: white;
+  }
+  
+  .modal-actions button:first-child:hover {
+    background-color: #1e40af;
+  }
+  
+  /* Cancel Button */
+  .modal-actions button:last-child {
+    background-color: #e5e7eb;
+    color: #374151;
+  }
+  
+  .modal-actions button:last-child:hover {
+    background-color: #d1d5db;
+  }
+  
+  .external-share {
+    margin-top: 16px;
+    text-align: center;
+  }
+  
+  .external-share p {
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 8px;
+  }
+  
+  .share-icons a {
+    margin: 0 10px;
+    display: inline-block;
+  }
+  
+  .share-icons img {
+    width: 32px;
+    height: 32px;
+    transition: transform 0.2s ease;
+  }
+  
+  .share-icons img:hover {
+    transform: scale(1.1);
+  }
+  .copy-link-section {
+    margin-top: 12px;
+    text-align: center;
+  }
+  
+  .copy-link-button {
+    background-color: #10b981; /* teal */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .copy-link-button:hover {
+    background-color: #059669;
+  }
+  
