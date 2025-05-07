@@ -26,4 +26,20 @@ public class ReplyController {
     public ResponseEntity<List<Reply>> getRepliesByComment(@PathVariable String parentCommentId) {
         return ResponseEntity.ok(replyService.getRepliesByParentCommentId(parentCommentId));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Reply> updateReply(@PathVariable String id, @RequestBody Reply updatedReply) {
+        Reply reply = replyService.updateReply(id, updatedReply.getText());
+        if (reply != null) {
+            return ResponseEntity.ok(reply);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteReply(@PathVariable String id) {
+        replyService.deleteReply(id);
+        return ResponseEntity.ok().build();
+    }
 }

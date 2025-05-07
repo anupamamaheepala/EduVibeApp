@@ -24,4 +24,17 @@ public class ReplyService {
     public List<Reply> getRepliesByParentCommentId(String parentCommentId) {
         return replyRepository.findByParentCommentId(parentCommentId);
     }
+
+    public Reply updateReply(String id, String newText) {
+        Reply reply = replyRepository.findById(id).orElse(null);
+        if (reply != null) {
+            reply.setText(newText);
+            return replyRepository.save(reply);
+        }
+        return null;
+    }
+
+    public void deleteReply(String id) {
+        replyRepository.deleteById(id);
+    }
 }
