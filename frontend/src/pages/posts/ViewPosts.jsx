@@ -5,7 +5,7 @@ import Footer from '../Footer';
 import '../../css/ViewPosts.css';
 import { AuthContext } from '../AuthContext';
 import userLogo from '../../images/user.png';
-import CommentSection from '../comments/CommentSection';
+import CommentPopup from '../comments/CommentPopup';
 
 
 function Posts() {
@@ -13,6 +13,10 @@ function Posts() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const [activeCommentPostId, setActiveCommentPostId] = useState(null);
+  const [commentCounts, setCommentCounts] = useState({});
+
 
   const BACKEND_URL = 'http://localhost:8000/api/view-posts';
 
@@ -36,6 +40,23 @@ function Posts() {
     fetchPosts();
   }, []);
 
+  const fetchCommentCounts = async (postsData) => {
+    try {
+      const counts = {};
+      for (const post of postsData) {
+        const response = await fetch(`http://localhost:8000/api/comments/post/${post.id}`);
+        if (response.ok) {
+          const comments = await response.json();
+          counts[post.id] = comments.length;
+        }
+      }
+      setCommentCounts(counts);
+    } catch (err) {
+      console.error('Error fetching comment counts:', err);
+    }
+  };
+
+
   const getTimeAgo = (timestamp) => {
     const diff = Math.floor((new Date() - new Date(timestamp)) / 1000);
     if (diff < 60) return `${diff} seconds ago`;
@@ -43,6 +64,24 @@ function Posts() {
     if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
     return `${Math.floor(diff / 86400)} days ago`;
   };
+
+  const openComments = (postId) => {
+    setActiveCommentPostId(postId);
+  };
+  
+  const closeComments = () => {
+    setActiveCommentPostId(null);
+    // Refresh comment counts after closing
+    fetchCommentCounts(posts);
+  };
+  
+  const getCommentCount = (postId) => {
+    return commentCounts[postId] || 0;
+  };
+
+  
+
+
 
   return (
     <div className="page-container">
@@ -162,14 +201,35 @@ function Posts() {
                   </p>
                 </div>
 
-                {/* 🔽 Comment system component */}
-               <CommentSection postId={post.id} /> 
-
+                {/* Post Actions - Like, Comment, etc. */}
+                <div className="post-actions">
+                  <button className="post-action-btn like-btn">
+                    <i className="far fa-thumbs-up"></i> Like
+                  </button>
+                  <button 
+                    className="post-action-btn comment-btn"
+                    onClick={() => openComments(post.id)}
+                  >
+                    <i className="far fa-comment"></i> Comment ({getCommentCount(post.id)})
+                  </button>
+                  <button className="post-action-btn share-btn">
+                    <i className="far fa-share-square"></i> Share
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Comment Popup */}
+      {activeCommentPostId && (
+        <CommentPopup 
+          postId={activeCommentPostId} 
+          isOpen={activeCommentPostId !== null} 
+          onClose={closeComments} 
+        />
+      )}
 
       <Footer />
     </div>
