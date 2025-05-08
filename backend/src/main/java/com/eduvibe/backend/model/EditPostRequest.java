@@ -1,4 +1,4 @@
-package com.eduvibe.backend.dto;
+package com.eduvibe.backend.model;
 
 import java.util.List;
 

@@ -45,7 +45,7 @@ public class UserService {
     }
 
     public User handleGoogleLogin(String googleId, String username, String email, String firstName, String lastName,
-            String profilePicture) throws Exception {
+                                 String profilePicture) throws Exception {
         User user = userRepository.findByEmail(email).orElse(new User());
 
         user.setUsername(username);
@@ -138,5 +138,34 @@ public class UserService {
     public List<User> getFollowing(String userId) throws Exception {
         User user = getUserById(userId);
         return userRepository.findAllById(user.getFollowing());
+    }
+
+    public void addCourseToUser(String userId, String courseId) throws Exception {
+        User user = getUserById(userId);
+        if (!user.getCourses().contains(courseId)) {
+            user.getCourses().add(courseId);
+            userRepository.save(user);
+        }
+    }
+
+    public void removeCourseFromUser(String userId, String courseId) throws Exception {
+        User user = getUserById(userId);
+        if (user.getCourses().contains(courseId)) {
+            user.getCourses().remove(courseId);
+            userRepository.save(user);
+        }
+    }
+
+    public void enrollInCourse(String userId, String courseId) throws Exception {
+        User user = getUserById(userId);
+        if (!user.getEnrolledCourses().contains(courseId)) {
+            user.getEnrolledCourses().add(courseId);
+            userRepository.save(user);
+        }
+    }
+
+    public List<String> getEnrolledCourses(String userId) throws Exception {
+        User user = getUserById(userId);
+        return user.getEnrolledCourses();
     }
 }

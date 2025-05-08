@@ -1,16 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { GoogleOAuthProvider } from '@react-oauth/google'; 
-
-// import { AuthProvider, AuthContext } from './pages/context/AuthContext';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider } from './pages/AuthContext';
 
 import Home from './pages/Home';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
-import CourseForm from './pages/courses/AddCourseForm';
+import AddCourseForm from './pages/courses/AddCourseForm';
 import AllCourses from './pages/courses/AllCourses';
-
 import CheckImages from './components/CheckImages';
 import CommentSystem from './pages/comments/CommentSystem';
 import AddPost from './pages/posts/AddPosts';
@@ -25,33 +22,35 @@ import SinglePostView from './pages/posts/SinglePostView';
 
 const App = () => {
   return (
-  <AuthProvider>
-    <GoogleOAuthProvider clientId="672064114622-86o0ke8k6adn1gcdptcutc2l5439kbkq.apps.googleusercontent.com">
-      <Router>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/courses" element={<AllCourses />} />
-          <Route path="/add-course" element={<CourseForm />} />
+    <AuthProvider>
+      <GoogleOAuthProvider clientId="672064114622-86o0ke8k6adn1gcdptcutc2l5439kbkq.apps.googleusercontent.com">
+        <Router>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/courses" element={<AllCourses />} />
+            <Route path="/add-course" element={<AddCourseForm />} />
+            
+            <Route path="/edit-course/:courseId" element={<AddCourseForm />} />
 
-          {/* Posts and Comments */}
-          <Route path="/check-images" element={<CheckImages />} />
-          <Route path="/comment" element={<CommentSystem />} />
-          <Route path="/add-post" element={<AddPost />} />
-          <Route path="/posts" element={<ViewPost />} />
-          <Route path="/MyPosts" element={<MyPosts />} />
-          <Route path="/EditUserPosts/:postId" element={<EditUserPosts />} />
-          <Route path="/DeleteUserPosts/:id" element={<DeleteUserPosts />} />
-          <Route path="/dashboard/*" element={<UserRoutes />} />
-          <Route path="/ShareModal" element={<ShareModal />} />
-          <Route path="/SharedWithMe" element={<SharedWithMe />} />
-          <Route path="/post/:postId" element={<SinglePostView />} />
+            {/* Posts and Comments */}
+            <Route path="/check-images" element={<CheckImages />} />
+            <Route path="/comment" element={<CommentSystem />} />
+            <Route path="/add-post" element={<AddPost />} />
+            <Route path="/posts" element={<ViewPost />} />
+            <Route path="/MyPosts" element={<MyPosts />} />
+            <Route path="/EditUserPosts/:postId" element={<EditUserPosts />} />
+            <Route path="/DeleteUserPosts/:id" element={<DeleteUserPosts />} />
+            <Route path="/ShareModal" element={<ShareModal />} />
+            <Route path="/SharedWithMe" element={<SharedWithMe />} />
+            <Route path="/post/:postId" element={<SinglePostView />} />
 
-
-        </Routes>
-      </Router>
+            {/* Dashboard Routes */}
+            <Route path="/dashboard/*" element={<UserRoutes />} />
+          </Routes>
+        </Router>
       </GoogleOAuthProvider>
     </AuthProvider>
   );
