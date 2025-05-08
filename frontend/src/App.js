@@ -8,6 +8,7 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import AddCourseForm from './pages/courses/AddCourseForm';
 import AllCourses from './pages/courses/AllCourses';
+import ViewCourse from './pages/user/CourseView';
 import CheckImages from './components/CheckImages';
 import CommentSystem from './pages/comments/CommentSystem';
 import AddPost from './pages/posts/AddPosts';
@@ -32,7 +33,6 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/courses" element={<AllCourses />} />
             <Route path="/add-course" element={<AddCourseForm />} />
-            
             <Route path="/edit-course/:courseId" element={<AddCourseForm />} />
 
             {/* Posts and Comments */}

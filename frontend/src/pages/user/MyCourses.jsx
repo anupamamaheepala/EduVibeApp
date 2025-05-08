@@ -153,7 +153,7 @@ const MyCourses = () => {
                 <div className="course-actions">
                   <button
                     className="view-btn"
-                    onClick={() => navigate(`/course/${course.id}`)}
+                    onClick={() => navigate(`/dashboard/course/${course.id}`)}
                   >
                     View Course
                   </button>
