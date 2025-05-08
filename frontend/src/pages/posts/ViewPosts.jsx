@@ -5,9 +5,7 @@ import Footer from '../Footer';
 import '../../css/ViewPosts.css';
 import { AuthContext } from '../AuthContext';
 import userLogo from '../../images/user.png';
-
 import CommentPopup from '../comments/CommentPopup';
-
 import CommentSection from '../comments/CommentSection';
 import ShareModal from './PostShareModal';
 
@@ -18,12 +16,8 @@ function Posts() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
   const [activeCommentPostId, setActiveCommentPostId] = useState(null);
   const [commentCounts, setCommentCounts] = useState({});
-
-
-
   const [sharingPostId, setSharingPostId] = useState(null);
   const [openImage, setOpenImage] = useState(null);
   const [openVideo, setOpenVideo] = useState(null);
@@ -97,10 +91,6 @@ function Posts() {
   const getCommentCount = (postId) => {
     return commentCounts[postId] || 0;
   };
-
-  
-
-
 
   return (
     <div className="view-page-container">
@@ -213,14 +203,15 @@ function Posts() {
             ))}
           </div>
         )}
-             {openImage && (
-        <div className="image-modal-backdrop" onClick={() => setOpenImage(null)}>
-          <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
-            <img src={openImage} alt="Full view" />
-            <button className="close-btn" onClick={() => setOpenImage(null)}>✕</button>
+          
+        {openImage && (
+          <div className="image-modal-backdrop" onClick={() => setOpenImage(null)}>
+            <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+              <img src={openImage} alt="Full view" />
+              <button className="close-btn" onClick={() => setOpenImage(null)}>✕</button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
         {openVideo && (
           <div className="image-modal-backdrop" onClick={() => setOpenVideo(null)}>
