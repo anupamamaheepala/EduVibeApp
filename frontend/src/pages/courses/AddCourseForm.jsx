@@ -1,14 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 import Header from '../Header';
+import UserHeader from '../UserHeader';
 import Footer from '../Footer';
 import '../../css/course-form.css';
+import { AuthContext } from '../AuthContext';
 
 const CourseForm = () => {
+  const { isLoggedIn } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const { courseId } = useParams(); // Get courseId from URL for edit mode
+  const isEditMode = !!courseId; // True if courseId exists (edit mode)
+
   const [course, setCourse] = useState({
     name: '',
     description: '',
     chapters: [{ title: '', description: '', youtubeUrl: '' }],
   });
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const userId = localStorage.getItem('userId');
+  const username = localStorage.getItem('username');
+
+  // Fetch course data for edit mode
+  useEffect(() => {
+    if (isEditMode && isLoggedIn && userId) {
+      const fetchCourse = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8000/api/courses/${courseId}`, {
+            headers: {
+              'X-User-Id': userId,
+            },
+          });
+          setCourse({
+            name: response.data.name || '',
+            description: response.data.description || '',
+            chapters: response.data.chapters.length > 0
+              ? response.data.chapters
+              : [{ title: '', description: '', youtubeUrl: '' }],
+          });
+        } catch (error) {
+          setMessage('Error: Failed to load course data. Please try again.');
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.response?.data?.message || 'Failed to load course data.',
+          });
+        }
+      };
+      fetchCourse();
+    }
+  }, [isEditMode, courseId, isLoggedIn, userId]);
 
   const handleCourseChange = (e) => {
     const { name, value } = e.target;
@@ -36,18 +81,115 @@ const CourseForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Course Data:', course);
-    // Add your submit logic here (e.g., API call)
+
+    if (!isLoggedIn || !userId) {
+      setMessage('You must be logged in to save a course.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Not Logged In',
+        text: 'Please log in to continue.',
+      }).then(() => navigate('/login'));
+      return;
+    }
+
+    if (!course.name || !course.description || course.chapters.length === 0) {
+      setMessage('Please fill in all required fields.');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Incomplete Form',
+        text: 'Please fill in all required fields.',
+      });
+      return;
+    }
+
+    setLoading(true);
+    setMessage('');
+
+    try {
+      if (isEditMode) {
+        // Update course (PUT request)
+        const response = await axios.put(
+          `http://localhost:8000/api/courses/${courseId}`,
+          {
+            name: course.name,
+            description: course.description,
+            chapters: course.chapters,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'X-User-Id': userId,
+            },
+          }
+        );
+
+        Swal.fire({
+          title: 'Success!',
+          text: 'Course updated successfully!',
+          icon: 'success',
+          confirmButtonText: 'View Courses',
+        }).then(() => {
+          navigate('/dashboard/mycourses');
+        });
+      } else {
+        // Create course (POST request)
+        const courseData = {
+          userId,
+          username,
+          name: course.name,
+          description: course.description,
+          chapters: course.chapters,
+        };
+
+        const response = await axios.post('http://localhost:8000/api/courses', courseData, {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-User-Id': userId,
+          },
+        });
+
+        Swal.fire({
+          title: 'Success!',
+          text: 'Course created successfully!',
+          icon: 'success',
+          confirmButtonText: 'View Courses',
+        }).then(() => {
+          navigate('/dashboard/mycourses');
+        });
+      }
+
+      setCourse({
+        name: '',
+        description: '',
+        chapters: [{ title: '', description: '', youtubeUrl: '' }],
+      });
+    } catch (error) {
+      console.error(`${isEditMode ? 'Course update' : 'Course creation'} failed:`, error);
+      const errorMessage =
+        error.response?.status === 403
+          ? 'You are not authorized to perform this action.'
+          : error.response?.status === 404
+          ? 'Course not found.'
+          : error.response?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} course. Please try again.`;
+      setMessage(`Error: ${errorMessage}`);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: errorMessage,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="course-form-page">
-      <Header />
+      {isLoggedIn ? <UserHeader /> : <Header />}
       <div className="form-section">
         <div className="form-container">
-          <h1 className="form-title">Add New Course</h1>
+          <h1 className="form-title">{isEditMode ? 'Edit Course' : 'Add New Course'}</h1>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="name">Course Name</label>
@@ -127,10 +269,15 @@ const CourseForm = () => {
               Add Another Chapter
             </button>
             <div className="form-actions">
-              <button type="submit" className="submit-btn">
-                Create Course
+              <button type="submit" className="submit-btn" disabled={loading}>
+                {loading ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Course' : 'Create Course')}
               </button>
             </div>
+            {message && (
+              <p className={`feedback-message ${message.includes('successfully') ? 'success' : 'error'}`}>
+                {message}
+              </p>
+            )}
           </form>
         </div>
       </div>

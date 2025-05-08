@@ -1,0 +1,128 @@
+.comment-section {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+    min-height: 100px; 
+    max-height: 250px; /* Optional: limit total comment section height */
+     /* Scroll inside comments if too many */
+  }
+  
+  .comment-section h4 {
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 1.1rem;
+  }
+  
+  .comments-list {
+    max-height: 100px;
+    overflow-y: auto;
+    padding-right: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .comment {
+    padding: 10px;
+    font-size: 14px;
+    line-height: 1.4;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .comment-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .comment-username {
+    font-weight: bold;
+    color: #333;
+    font-size: 0.95rem;
+  }
+  
+  .comment-text {
+    color: #444;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  
+  .comment-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  
+  .comment-actions button {
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: none;
+    background-color: #6d28d9; 
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+  
+  .comment-actions button:hover {
+    background-color: #5b21b6; 
+  }
+  
+  
+  .comment-edit-input {
+    width: 100%;
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-top: 4px;
+  }
+  
+  .comment-input-box {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  
+  .comment-input-box input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  
+  .comment-input-box button {
+    padding: 8px 14px;
+    background-color: #6d28d9;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 0.9rem;
+  }
+  
+  .comment-input-box button:hover {
+    background-color: #5b21b6;
+  }
+  
+  .comment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8rem;
+    color: #777;
+  }
+  
+  .comment-time {
+    font-size: 0.75rem;
+    color: #999;
+  }
+  
