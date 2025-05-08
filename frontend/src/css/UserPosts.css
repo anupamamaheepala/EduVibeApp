@@ -218,7 +218,7 @@ font-size: 1.75rem;
   height: 500px; /* Reduced to optimize space */
   margin: 20px auto;
   padding: 16px;
-  background: #fff;
+  background: linear-gradient(to right, lightblue, #eef1ff);
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   display: flex;

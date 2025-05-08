@@ -207,9 +207,7 @@ function Posts() {
                   >
                     <i className="far fa-comment"></i> Comment ({getCommentCount(post.id)})
                   </button>
-                  <button className="post-action-btn share-btn">
-                    <i className="far fa-share-square"></i> Share
-                  </button>
+                 
                 </div>
               </div>
             ))}

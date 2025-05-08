@@ -14,7 +14,8 @@
   }
   
   .comments-list {
-    max-height: 100px;
+    min-height: 200px;
+    max-height: 300px;
     overflow-y: auto;
     padding-right: 6px;
     display: flex;
