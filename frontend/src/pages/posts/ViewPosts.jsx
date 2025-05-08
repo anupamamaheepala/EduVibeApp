@@ -106,11 +106,11 @@ function Posts() {
     <div className="view-page-container">
       {isLoggedIn ? <UserHeader /> : <Header />}
 
-      <div className="posts-container">
-        <div className="posts-header">
-          <h1>Community Posts</h1>
-          <a href="/add-post" className="create-post-button">Create Post</a>
-        </div>
+      <div className="View-posts-container">
+      <div className="View-header-actions">
+        <h1 className="community-title">Community Posts</h1>
+        <a href="/add-post" className="create-post-button">Create Post</a>
+      </div>
 
         {loading ? (
           <div className="loading-spinner">
@@ -122,9 +122,9 @@ function Posts() {
         ) : posts.length === 0 ? (
           <p className="no-posts">No posts available. Be the first to create one!</p>
         ) : (
-          <div className="posts-feed">
+          <div className="View-posts-feed">
             {posts.map((post) => (
-              <div key={post.id} className="post-card">
+              <div key={post.id} className="View-post-card">
 
                 {/* Post Header */}
                 <div className="post-header">
@@ -207,9 +207,7 @@ function Posts() {
                   >
                     <i className="far fa-comment"></i> Comment ({getCommentCount(post.id)})
                   </button>
-                  <button className="post-action-btn share-btn">
-                    <i className="far fa-share-square"></i> Share
-                  </button>
+                 
                 </div>
               </div>
             ))}

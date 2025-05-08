@@ -24,6 +24,16 @@
   display: flex;
   padding: 100px 20px 50px;
   justify-content: center;
+
+  background-image: linear-gradient(
+    rgba(245, 247, 250, 0.85),
+    rgba(235, 237, 255, 0.85)
+  ),
+  url('../../images/background.png'); /* Update path to match your project structure */
+background-size: cover;
+background-repeat: no-repeat;
+background-position: center;
+background-attachment: fixed;
 }
 
 .dashboard-content {
@@ -33,7 +43,19 @@
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
   padding: 40px;
-  transition: all 0.3s ease;
+
+  background-image: linear-gradient(
+    rgba(255, 230, 250, 0.7),
+    rgba(230, 240, 255, 0.7)
+  ),
+  url('../../images/background.png');
+
+background-size: cover;
+background-repeat: no-repeat;
+background-position: center;
+background-attachment: fixed;
+transition: all 0.3s ease;
+
 }
 
 .dashboard-title {
