@@ -7,7 +7,7 @@ import CourseView from './CourseView';
 import MyPosts from '../posts/UserPosts'
 import SharedWithMe from '../posts/SharedPosts';
 // import LearningPlan from './LearningPlan';
-// import Groups from './Groups';
+import Groups from './Groups';
 // import Settings from './Settings';
 
 const UserRoutes = () => {
@@ -19,9 +19,12 @@ const UserRoutes = () => {
         <Route path="mycourses" element={<MyCourses />} />
         <Route path="MyPosts" element={<MyPosts />} />
         <Route path="SharedWithMe" element={<SharedWithMe />} />
+
+        <Route path="Groups" element={<Groups />} />
+
         <Route path="course/:courseId" element={<CourseView />} />
+
         {/* <Route path="learning-plan" element={<LearningPlan />} />
-        <Route path="groups" element={<Groups />} />
         <Route path="settings" element={<Settings />} /> */}
       </Route>
     </Routes>
