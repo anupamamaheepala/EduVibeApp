@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,12 +26,12 @@ public class GroupController {
             @RequestHeader("Authorization") String authHeader) {
         try {
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return ResponseEntity.status(401).body("Unauthorized");
+                return ResponseEntity.status(401).body(Map.of("message", "Unauthorized"));
             }
             Group group = groupService.createGroup(request.getUserId(), request.getGroupName());
             return ResponseEntity.ok(group);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
@@ -41,12 +42,12 @@ public class GroupController {
             @RequestHeader("Authorization") String authHeader) {
         try {
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return ResponseEntity.status(401).body("Unauthorized");
+                return ResponseEntity.status(401).body(Map.of("message", "Unauthorized"));
             }
             groupService.addMember(request.get("userId"), groupId, request.get("memberId"));
-            return ResponseEntity.ok("Member added successfully");
+            return ResponseEntity.ok(Map.of("message", "Member added successfully"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
@@ -57,12 +58,28 @@ public class GroupController {
             @RequestHeader("Authorization") String authHeader) {
         try {
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return ResponseEntity.status(401).body("Unauthorized");
+                return ResponseEntity.status(401).body(Map.of("message", "Unauthorized"));
             }
             groupService.removeMember(request.get("userId"), groupId, request.get("memberId"));
-            return ResponseEntity.ok("Member removed successfully");
+            return ResponseEntity.ok(Map.of("message", "Member removed successfully"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/{groupId}/delete")
+    public ResponseEntity<?> deleteGroup(
+            @PathVariable String groupId,
+            @RequestBody Map<String, String> request,
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(401).body(Map.of("message", "Unauthorized"));
+            }
+            groupService.deleteGroup(request.get("userId"), groupId);
+            return ResponseEntity.ok(Map.of("message", "Group deleted successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
@@ -72,12 +89,12 @@ public class GroupController {
             @RequestHeader("Authorization") String authHeader) {
         try {
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return ResponseEntity.status(401).body("Unauthorized");
+                return ResponseEntity.status(401).body(Map.of("message", "Unauthorized"));
             }
             List<Group> groups = groupService.getUserGroups(userId);
             return ResponseEntity.ok(groups);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
@@ -87,12 +104,12 @@ public class GroupController {
             @RequestHeader("Authorization") String authHeader) {
         try {
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return ResponseEntity.status(401).body("Unauthorized");
+                return ResponseEntity.status(401).body(Map.of("message", "Unauthorized"));
             }
             List<User> members = groupService.getGroupMembers(groupId);
             return ResponseEntity.ok(members);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
@@ -103,12 +120,12 @@ public class GroupController {
             @RequestHeader("Authorization") String authHeader) {
         try {
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return ResponseEntity.status(401).body("Unauthorized");
+                return ResponseEntity.status(401).body(Map.of("message", "Unauthorized"));
             }
             Message message = groupService.sendMessage(request.get("userId"), groupId, request.get("content"));
             return ResponseEntity.ok(message);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
@@ -119,12 +136,12 @@ public class GroupController {
             @RequestHeader("Authorization") String authHeader) {
         try {
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return ResponseEntity.status(401).body("Unauthorized");
+                return ResponseEntity.status(401).body(Map.of("message", "Unauthorized"));
             }
             Message message = groupService.editMessage(request.get("userId"), messageId, request.get("content"));
             return ResponseEntity.ok(message);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
@@ -135,12 +152,12 @@ public class GroupController {
             @RequestHeader("Authorization") String authHeader) {
         try {
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return ResponseEntity.status(401).body("Unauthorized");
+                return ResponseEntity.status(401).body(Map.of("message", "Unauthorized"));
             }
             groupService.deleteMessage(request.get("userId"), messageId);
-            return ResponseEntity.ok("Message deleted successfully");
+            return ResponseEntity.ok(Map.of("message", "Message deleted successfully"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
@@ -150,12 +167,12 @@ public class GroupController {
             @RequestHeader("Authorization") String authHeader) {
         try {
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return ResponseEntity.status(401).body("Unauthorized");
+                return ResponseEntity.status(401).body(Map.of("message", "Unauthorized"));
             }
             List<Message> messages = groupService.getGroupMessages(groupId);
             return ResponseEntity.ok(messages);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
