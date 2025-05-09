@@ -66,9 +66,20 @@ public class AddPostService {
     }
 
 
+    // public List<AddPost> getAllPosts() {
+    //     return addPostRepository.findAll();
+    // }
     public List<AddPost> getAllPosts() {
-        return addPostRepository.findAll();
+    List<AddPost> posts = addPostRepository.findAll();
+
+    for (AddPost post : posts) {
+        if (post.getRepostOfPostId() != null) {
+            addPostRepository.findById(post.getRepostOfPostId()).ifPresent(post::setRepostOfPost);
+        }
     }
+
+    return posts;
+}
 
     public void deletePost(String id) {
         addPostRepository.deleteById(id);

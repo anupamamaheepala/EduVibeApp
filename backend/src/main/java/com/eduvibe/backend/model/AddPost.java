@@ -1,9 +1,9 @@
 package com.eduvibe.backend.model;
 import java.util.List;
-
 import java.util.Date; // ✅ Required
 import org.springframework.data.annotation.Id; // ✅ Required
 import org.springframework.data.mongodb.core.mapping.Document; // ✅ Required
+import org.springframework.data.annotation.Transient;
 
 @Document(collection = "posts")
 public class AddPost {
@@ -31,7 +31,8 @@ public class AddPost {
         this.mediaTypes = mediaTypes;
         this.createdAt = createdAt;
     }
-
+@Transient
+private AddPost repostOfPost;
     // Getters & Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
@@ -56,4 +57,7 @@ public class AddPost {
 
     public String getRepostOfPostId() {return repostOfPostId;}
     public void setRepostOfPostId(String repostOfPostId) {this.repostOfPostId = repostOfPostId;}
+
+    public AddPost getRepostOfPost() {return repostOfPost;}
+    public void setRepostOfPost(AddPost repostOfPost) {this.repostOfPost = repostOfPost;}
 }

@@ -219,11 +219,14 @@ function Posts() {
                 
                 {/*<PostWithComments post={post} />*/}
                 {/* Post Content */}
-                <div className="post-content">
-                  <p className="post-caption">{post.content}</p>
-                  <p className="post-meta">
+                <div className="View-post-content">
+                  <p className="View-post-caption">{post.content}</p>
+                  <p className="View-post-meta">
                     Posted by {post.username || post.userId} on {new Date(post.createdAt).toLocaleDateString()}
                   </p>
+                  {post.repostOfPostId && post.username && (
+                    <p className="repost-tag">Reposted from {post.username}</p>
+                  )}
                 </div>
 
                 {/* Post Actions - Like, Comment, etc. */}
