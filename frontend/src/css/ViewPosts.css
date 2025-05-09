@@ -96,13 +96,14 @@
   gap: 30px;
 }
 
-.post-caption {
+.View-post-caption {
+  font-weight: bold;
   font-size: 16px;
   margin-bottom: 8px;
-  color: #444;
+  color: #e40808;
 }
 
-.post-meta {
+.View-post-meta {
   font-size: 13px;
   color: #888;
 }
@@ -258,7 +259,7 @@
   border-radius: 8px;
 }
 
-.post-content {
+.View-post-content {
   margin-top: 15px;
   display: flex;
   flex-direction: column;
@@ -436,3 +437,16 @@
   padding: 5px 10px;
   cursor: pointer;
 }
+.repost-btn {
+  margin-left: 8px;
+  padding: 6px 12px;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.repost-btn:hover {
+  background-color: #d9d9d9;
+}
+
