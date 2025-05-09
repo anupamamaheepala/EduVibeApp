@@ -13,7 +13,7 @@
   
   .contact-container {
     max-width: 600px;
-    margin: 40px auto;
+    margin: 80px auto;
     padding: 20px;
     background-color: var(--white);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);

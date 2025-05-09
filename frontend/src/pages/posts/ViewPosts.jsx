@@ -6,16 +6,8 @@ import '../../css/ViewPosts.css';
 import { AuthContext } from '../AuthContext';
 import userLogo from '../../images/user.png';
 import CommentPopup from '../comments/CommentPopup';
-
-import CommentSection from '../comments/CommentSection';
 import ShareModal from './PostShareModal';
 import Swal from 'sweetalert2';
-
-
-
-
-import CommentSection from '../comments/CommentSection';
-import ShareModal from './PostShareModal';
 
 function Posts() {
   const { isLoggedIn, user } = useContext(AuthContext);
@@ -24,11 +16,8 @@ function Posts() {
   const [error, setError] = useState('');
   const [activeCommentPostId, setActiveCommentPostId] = useState(null);
   const [commentCounts, setCommentCounts] = useState({});
-
   const [likeCounts, setLikeCounts] = useState({});
   const [likedPosts, setLikedPosts] = useState({});
-
-
   const [sharingPostId, setSharingPostId] = useState(null);
   const [openImage, setOpenImage] = useState(null);
   const [openVideo, setOpenVideo] = useState(null);
@@ -55,7 +44,6 @@ function Posts() {
     };
 
     fetchPosts();
-    // Re-run effect when user or login state changes to refresh like data
   }, [user, isLoggedIn]);
 
   const fetchCommentCounts = async (postsData) => {
@@ -79,12 +67,10 @@ function Posts() {
       const likeCountsTemp = {};
       const likedPostsTemp = {};
       for (const post of postsData) {
-        // Fetch like count
         const countResponse = await fetch(`http://localhost:8000/api/likes/count/${post.id}`);
         if (countResponse.ok) {
           likeCountsTemp[post.id] = await countResponse.json();
         }
-        // Fetch like status for current user
         const userId = user?.id || localStorage.getItem('userId');
         if (userId) {
           const isLikedResponse = await fetch(
@@ -138,43 +124,42 @@ function Posts() {
     setSharingPostId(postId);
   };
 
-  
   const handleRepost = async (postId) => {
-  const result = await Swal.fire({
-    title: 'Are you sure?',
-    text: 'Do you want to repost this content to your profile?',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonText: 'Yes, repost it!',
-    cancelButtonText: 'Cancel',
-  });
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to repost this content to your profile?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, repost it!',
+      cancelButtonText: 'Cancel',
+    });
 
-  if (result.isConfirmed) {
-    try {
-      const response = await fetch(`http://localhost:8000/api/add-post/repost/${postId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: localStorage.getItem("userId"),
-          username: localStorage.getItem("username")
-        }),
-      });
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch(`http://localhost:8000/api/add-post/repost/${postId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: localStorage.getItem("userId"),
+            username: localStorage.getItem("username")
+          }),
+        });
 
-      if (!response.ok) {
-        throw new Error("Failed to repost");
+        if (!response.ok) {
+          throw new Error("Failed to repost");
+        }
+
+        const newPost = await response.json();
+        setPosts((prev) => [newPost, ...prev]);
+
+        Swal.fire('Reposted!', 'The post has been added to your profile.', 'success');
+      } catch (error) {
+        Swal.fire('Error', 'Repost failed: ' + error.message, 'error');
       }
-
-      const newPost = await response.json();
-      setPosts((prev) => [newPost, ...prev]);
-
-      Swal.fire('Reposted!', 'The post has been added to your profile.', 'success');
-    } catch (error) {
-      Swal.fire('Error', 'Repost failed: ' + error.message, 'error');
     }
-  }
-};
+  };
 
   const getTimeAgo = (timestamp) => {
     const diff = Math.floor((new Date() - new Date(timestamp)) / 1000);
@@ -230,61 +215,6 @@ function Posts() {
                   </div>
                 </div>
 
-           
-               
-
-                {
-                  post.mediaUrls && post.mediaUrls.length > 0 && (() => {
-  const mediaCount = post.mediaUrls.length;
-
-  let mediaClass = 'media-gallery';
-  if (mediaCount === 1) {
-    mediaClass += ' media-1';
-  } else if (mediaCount === 2) {
-    mediaClass += ' media-2';
-  } else if (mediaCount === 3) {
-    mediaClass += ' media-3';
-  } else if (mediaCount === 4) {
-    mediaClass += ' media-4';
-  }
-
-  return (
-    <div className={mediaClass}>
-      {post.mediaUrls.map((url, index) => {
-        const type = post.mediaTypes?.[index] || (url.endsWith('.mp4') ? 'video' : 'image');
-        return type === 'image' ? (
-                <img
-                    key={index}
-                    src={url}
-                    alt={`Post media ${index}`}
-                    onClick={() => setOpenImage(url)}
-                    style={{ cursor: 'pointer' }}
-                  />
-
-        ) : (
-          <video
-          key={index}
-          onClick={() => setOpenVideo(url)}
-          style={{ cursor: 'pointer' }}
-          muted
-        >Your browser does not support the video tag.
-          <source src={url} type="video/mp4" />
-        </video>
-        
-        );
-      })}
-    </div>
-  );
-})()}
-
-                  
-                
-                {/*<PostWithComments post={post} />*/}
-                {/* Post Content */}
-                <div className="View-post-content">
-                  <p className="View-post-caption">{post.content}</p>
-                  <p className="View-post-meta">
-
                 {post.mediaUrls && post.mediaUrls.length > 0 && (() => {
                   const mediaCount = post.mediaUrls.length;
                   let mediaClass = 'media-gallery';
@@ -292,6 +222,7 @@ function Posts() {
                   else if (mediaCount === 2) mediaClass += ' media-2';
                   else if (mediaCount === 3) mediaClass += ' media-3';
                   else if (mediaCount === 4) mediaClass += ' media-4';
+
                   return (
                     <div className={mediaClass}>
                       {post.mediaUrls.map((url, index) => {
@@ -319,29 +250,31 @@ function Posts() {
                     </div>
                   );
                 })()}
-                <div className="post-content">
-                  <p className="post-caption">{post.content}</p>
-                  <p className="post-meta">
 
-                    Posted by {post.username || post.userId} on {new Date(post.createdAt).toLocaleDateString()}
-                  </p>
-                  {post.repostOfPostId && post.username && (
-                    <p className="repost-tag">Reposted from {post.username}</p>
-                  )}
-                </div>
-                <div className="post-actions">
-                  <button
-                    className={`post-action-btn like-btn ${likedPosts[post.id] ? 'liked' : ''}`}
-                    onClick={() => handleLike(post.id)}
-                  >
-                    <i className={`far fa-thumbs-up ${likedPosts[post.id] ? 'fas' : ''}`}></i> Like ({likeCounts[post.id] || 0})
-                  </button>
-                  <button
-                    className="post-action-btn comment-btn"
-                    onClick={() => openComments(post.id)}
-                  >
-                    <i className="far fa-comment"></i> Comment ({getCommentCount(post.id)})
-                  </button>
+                <div className="View-post-content">
+                  <p className="View-post-caption">{post.content}</p>
+                  <div className="post-content">
+                    <p className="post-meta">
+                      Posted by {post.username || post.userId} on {new Date(post.createdAt).toLocaleDateString()}
+                    </p>
+                    {post.repostOfPostId && post.username && (
+                      <p className="repost-tag">Reposted from {post.username}</p>
+                    )}
+                  </div>
+                  <div className="post-actions">
+                    <button
+                      className={`post-action-btn like-btn ${likedPosts[post.id] ? 'liked' : ''}`}
+                      onClick={() => handleLike(post.id)}
+                    >
+                      <i className={`far fa-thumbs-up ${likedPosts[post.id] ? 'fas' : ''}`}></i> Like ({likeCounts[post.id] || 0})
+                    </button>
+                    <button
+                      className="post-action-btn comment-btn"
+                      onClick={() => openComments(post.id)}
+                    >
+                      <i className="far fa-comment"></i> Comment ({getCommentCount(post.id)})
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -355,7 +288,6 @@ function Posts() {
             </div>
           </div>
         )}
-
         {openVideo && (
           <div className="image-modal-backdrop" onClick={() => setOpenVideo(null)}>
             <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
