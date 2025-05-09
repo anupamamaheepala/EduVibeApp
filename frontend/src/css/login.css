@@ -24,6 +24,15 @@
     justify-content: center;
     align-items: center;
     padding: 100px 20px 50px;
+    background-image: linear-gradient(
+      rgba(245, 247, 250, 0.85),
+      rgba(235, 237, 255, 0.85)
+    ),
+    url('../images/background.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
   }
   
   .login-form-wrapper {

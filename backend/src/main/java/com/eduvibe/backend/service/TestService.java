@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class TestService {
 
     @Autowired
-    private TestRepository testRepository;
+    private TestRepository testRepository  ;
 
     public String testConnection() {
         return "Backend is connected!";

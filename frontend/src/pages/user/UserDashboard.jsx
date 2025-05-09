@@ -17,6 +17,12 @@ const UserDashboard = () => {
   const [profilePicPreview, setProfilePicPreview] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [showFollowing, setShowFollowing] = useState(false);
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
 
   const fetchUserData = useCallback(async () => {
@@ -43,6 +49,116 @@ const UserDashboard = () => {
       setIsLoading(false);
     }
   }, [userId]);
+
+  const fetchFollowers = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/api/auth/user/${userId}/followers`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setFollowers(response.data);
+    } catch (err) {
+      console.error('Failed to fetch followers:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to load followers.'
+      });
+    }
+  }, [userId]);
+
+  const fetchFollowing = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/api/auth/user/${userId}/following`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setFollowing(response.data);
+    } catch (err) {
+      console.error('Failed to fetch following:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to load following.'
+      });
+    }
+  }, [userId]);
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://localhost:8000/api/auth/search?username=${searchQuery}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setSearchResults(response.data.filter(u => u.id !== userId));
+    } catch (err) {
+      console.error('Failed to search users:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to search users.'
+      });
+    }
+  };
+
+  const handleFollow = async (targetUserId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`http://localhost:8000/api/auth/user/${userId}/follow/${targetUserId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      await fetchUserData();
+      await fetchFollowing();
+      handleSearch();
+      Swal.fire({
+        icon: 'success',
+        title: 'Followed',
+        text: 'You are now following this user.'
+      });
+    } catch (err) {
+      console.error('Failed to follow user:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.response?.data || 'Failed to follow user.'
+      });
+    }
+  };
+
+  const handleUnfollow = async (targetUserId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`http://localhost:8000/api/auth/user/${userId}/unfollow/${targetUserId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      await fetchUserData();
+      await fetchFollowing();
+      handleSearch();
+      Swal.fire({
+        icon: 'success',
+        title: 'Unfollowed',
+        text: 'You have unfollowed this user.'
+      });
+    } catch (err) {
+      console.error('Failed to unfollow user:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.response?.data || 'Failed to unfollow user.'
+      });
+    }
+  };
 
   useEffect(() => {
     fetchUserData();
@@ -198,7 +314,7 @@ const UserDashboard = () => {
 
   return (
     <div className="user-dashboard">
-      <div className="dashboard-container">
+      <div >
         <div className="dashboard-content">
           <h1 className="dashboard-title">Your Profile</h1>
 
@@ -220,6 +336,102 @@ const UserDashboard = () => {
                 <div className="profile-picture-edit">Change Photo</div>
               )}
             </label>
+
+            <div className="follow-stats">
+              <div className="follow-stat" onClick={() => { setShowFollowers(true); fetchFollowers(); }}>
+                <span className="count">{user.followers?.length || 0}</span>
+                <span>Followers</span>
+              </div>
+              <div className="follow-stat" onClick={() => { setShowFollowing(true); fetchFollowing(); }}>
+                <span className="count">{user.following?.length || 0}</span>
+                <span>Following</span>
+              </div>
+            </div>
+
+            <div className="search-container">
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Search users by username"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button className="search-button" onClick={handleSearch}>Search</button>
+            </div>
+
+            {searchResults.length > 0 && (
+              <div className="user-list">
+                {searchResults.map((u) => (
+                  <div key={u.id} className="user-item">
+                    <img src={u.profilePicture || defaultProfilePic} alt={u.username} />
+                    <span>{u.username}</span>
+                    {user.following?.includes(u.id) ? (
+                      <button
+                        className="unfollow-button"
+                        onClick={() => handleUnfollow(u.id)}
+                      >
+                        Unfollow
+                      </button>
+                    ) : (
+                      <button
+                        className="follow-button"
+                        onClick={() => handleFollow(u.id)}
+                      >
+                        Follow
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {showFollowers && (
+              <div className="popup-overlay">
+                <div className="popup-content">
+                  <span className="popup-close" onClick={() => setShowFollowers(false)}>&times;</span>
+                  <h2 className="popup-title">Followers</h2>
+                  <div className="user-list">
+                    {followers.length > 0 ? (
+                      followers.map((u) => (
+                        <div key={u.id} className="user-item">
+                          <img src={u.profilePicture || defaultProfilePic} alt={u.username} />
+                          <span>{u.username}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <p>No followers yet.</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {showFollowing && (
+              <div className="popup-overlay">
+                <div className="popup-content">
+                  <span className="popup-close" onClick={() => setShowFollowing(false)}>&times;</span>
+                  <h2 className="popup-title">Following</h2>
+                  <div className="user-list">
+                    {following.length > 0 ? (
+                      following.map((u) => (
+                        <div key={u.id} className="user-item">
+                          <img src={u.profilePicture || defaultProfilePic} alt={u.username} />
+                          <span>{u.username}</span>
+                          <button
+                            className="unfollow-button"
+                            onClick={() => handleUnfollow(u.id)}
+                          >
+                            Unfollow
+                          </button>
+                        </div>
+                      ))
+                    ) : (
+                      <p>Not following anyone yet.</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="profile-details">
               <div className="detail-row">

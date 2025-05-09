@@ -12,25 +12,38 @@
   }
   
   .share-posts-feed {
+    width: 650px;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    background: linear-gradient(to right, #f0f4ff, #eef1ff); 
-    /* padding: 30px 25px; */
+    /* background: linear-gradient(to right, #f0f4ff, #eef1ff);  */
+    background-image: linear-gradient(
+    rgba(255, 255, 255, 0.4),
+    rgba(255, 255, 255, 0.4)
+  ),
+  url('../images/background.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+  
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   }
   
   
   .share-post-card {
-    /* background-color: #fff; */
+    width: 600px;
+    margin-top: 10px;
+    margin-left: 20px;
+    background: linear-gradient(to right, #CBC3E3, #eef1ff);
     border-radius: 10px;
     padding: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     transition: box-shadow 0.3s;
   }
   
-  .post-card:hover {
+  .share-post-card:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
   

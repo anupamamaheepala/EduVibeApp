@@ -2,7 +2,7 @@ package com.eduvibe.backend.controller;
 
 import com.eduvibe.backend.model.AddPost;
 import com.eduvibe.backend.service.EditPostService;
-import com.eduvibe.backend.dto.EditPostRequest;
+import com.eduvibe.backend.model.EditPostRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

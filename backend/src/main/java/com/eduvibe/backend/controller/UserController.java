@@ -5,8 +5,10 @@ import com.eduvibe.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.Map;
+
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -16,8 +18,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-
-@GetMapping("/users")
+    @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
@@ -79,7 +80,6 @@ public class UserController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<?> getUserById(@PathVariable String userId, @RequestHeader("Authorization") String authHeader) {
         try {
-            // Validate JWT token (placeholder; implement actual validation)
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return ResponseEntity.status(401).body("Unauthorized");
             }
@@ -93,7 +93,6 @@ public class UserController {
     @PutMapping("/user/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable String userId, @RequestBody User updatedUser, @RequestHeader("Authorization") String authHeader) {
         try {
-            // Validate JWT token (placeholder; implement actual validation)
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return ResponseEntity.status(401).body("Unauthorized");
             }
@@ -107,12 +106,89 @@ public class UserController {
     @DeleteMapping("/user/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable String userId, @RequestHeader("Authorization") String authHeader) {
         try {
-            // Validate JWT token (placeholder; implement actual validation)
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return ResponseEntity.status(401).body("Unauthorized");
             }
             userService.deleteUser(userId);
             return ResponseEntity.ok("Profile deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/user/{userId}/follow/{targetUserId}")
+    public ResponseEntity<?> followUser(@PathVariable String userId, @PathVariable String targetUserId, @RequestHeader("Authorization") String authHeader) {
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(401).body("Unauthorized");
+            }
+            userService.followUser(userId, targetUserId);
+            return ResponseEntity.ok("Successfully followed user");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/user/{userId}/unfollow/{targetUserId}")
+    public ResponseEntity<?> unfollowUser(@PathVariable String userId, @PathVariable String targetUserId, @RequestHeader("Authorization") String authHeader) {
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(401).body("Unauthorized");
+            }
+            userService.unfollowUser(userId, targetUserId);
+            return ResponseEntity.ok("Successfully unfollowed user");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchUsers(@RequestParam String username, @RequestHeader("Authorization") String authHeader) {
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(401).body("Unauthorized");
+            }
+            List<User> users = userService.searchUsersByUsername(username);
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/user/{userId}/followers")
+    public ResponseEntity<?> getFollowers(@PathVariable String userId, @RequestHeader("Authorization") String authHeader) {
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(401).body("Unauthorized");
+            }
+            List<User> followers = userService.getFollowers(userId);
+            return ResponseEntity.ok(followers);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/user/{userId}/following")
+    public ResponseEntity<?> getFollowing(@PathVariable String userId, @RequestHeader("Authorization") String authHeader) {
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(401).body("Unauthorized");
+            }
+            List<User> following = userService.getFollowing(userId);
+            return ResponseEntity.ok(following);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/user/{userId}/enrolled-courses")
+    public ResponseEntity<?> getEnrolledCourses(@PathVariable String userId, @RequestHeader("Authorization") String authHeader) {
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(401).body("Unauthorized");
+            }
+            List<String> enrolledCourses = userService.getEnrolledCourses(userId);
+            return ResponseEntity.ok(enrolledCourses);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

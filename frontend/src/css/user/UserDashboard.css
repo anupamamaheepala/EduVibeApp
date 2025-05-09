@@ -40,7 +40,6 @@ background-attachment: fixed;
   width: 100%;
   max-width: 800px;
   background-color: var(--white);
-  border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
   padding: 40px;
 
@@ -133,6 +132,178 @@ transition: all 0.3s ease;
 
 .profile-picture-container:hover .profile-picture-edit {
   transform: translateY(0);
+}
+
+.follow-stats {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.follow-stat {
+  text-align: center;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.follow-stat:hover {
+  color: var(--primary);
+}
+
+.follow-stat span {
+  display: block;
+  font-weight: 600;
+  color: var(--dark-gray);
+}
+
+.follow-stat .count {
+  font-size: 1.2rem;
+  color: var(--primary);
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background-color: var(--white);
+  border-radius: 12px;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.popup-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--dark-gray);
+  transition: color 0.3s;
+}
+
+.popup-close:hover {
+  color: var(--primary);
+}
+
+.popup-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.user-item:hover {
+  background-color: var(--primary-light);
+}
+
+.user-item img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-item span {
+  flex: 1;
+  font-weight: 500;
+  color: var(--dark-gray);
+}
+
+.follow-button, .unfollow-button {
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.follow-button {
+  background-color: var(--primary);
+  color: var(--white);
+}
+
+.follow-button:hover {
+  background-color: var(--primary-dark);
+}
+
+.unfollow-button {
+  background-color: var(--error-color);
+  color: var(--white);
+}
+
+.unfollow-button:hover {
+  background-color: #c0392b;
+}
+
+.search-container {
+  margin: 20px 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.search-input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.search-button {
+  background-color: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.search-button:hover {
+  background-color: var(--primary-dark);
 }
 
 .profile-details {
@@ -373,6 +544,11 @@ textarea.detail-value {
   
   .edit-button, .cancel-button, .delete-button {
     width: 100%;
+  }
+  
+  .follow-stats {
+    flex-direction: column;
+    gap: 10px;
   }
 }
 

@@ -5,11 +5,10 @@ import Footer from '../Footer';
 import '../../css/ViewPosts.css';
 import { AuthContext } from '../AuthContext';
 import userLogo from '../../images/user.png';
-
 import CommentPopup from '../comments/CommentPopup';
-
 import CommentSection from '../comments/CommentSection';
 import ShareModal from './PostShareModal';
+import Swal from 'sweetalert2';
 
 
 
@@ -18,12 +17,8 @@ function Posts() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
   const [activeCommentPostId, setActiveCommentPostId] = useState(null);
   const [commentCounts, setCommentCounts] = useState({});
-
-
-
   const [sharingPostId, setSharingPostId] = useState(null);
   const [openImage, setOpenImage] = useState(null);
   const [openVideo, setOpenVideo] = useState(null);
@@ -75,6 +70,44 @@ function Posts() {
     setSharingPostId(postId);
   };
   
+  const handleRepost = async (postId) => {
+  const result = await Swal.fire({
+    title: 'Are you sure?',
+    text: 'Do you want to repost this content to your profile?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, repost it!',
+    cancelButtonText: 'Cancel',
+  });
+
+  if (result.isConfirmed) {
+    try {
+      const response = await fetch(`http://localhost:8000/api/add-post/repost/${postId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: localStorage.getItem("userId"),
+          username: localStorage.getItem("username")
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to repost");
+      }
+
+      const newPost = await response.json();
+      setPosts((prev) => [newPost, ...prev]);
+
+      Swal.fire('Reposted!', 'The post has been added to your profile.', 'success');
+    } catch (error) {
+      Swal.fire('Error', 'Repost failed: ' + error.message, 'error');
+    }
+  }
+};
+
+
 
   const getTimeAgo = (timestamp) => {
     const diff = Math.floor((new Date() - new Date(timestamp)) / 1000);
@@ -97,10 +130,6 @@ function Posts() {
   const getCommentCount = (postId) => {
     return commentCounts[postId] || 0;
   };
-
-  
-
-
 
   return (
     <div className="view-page-container">
@@ -135,6 +164,7 @@ function Posts() {
 
                   <div className="post-right">
                     <button className="share-btn" onClick={() => handleShare(post.id)}>Share</button>
+                    <button className="repost-btn" onClick={() => handleRepost(post.id)}>Repost</button>
                     <span className="post-time">{getTimeAgo(post.createdAt)}</span>
                   </div>
                 </div>
@@ -189,11 +219,14 @@ function Posts() {
                 
                 {/*<PostWithComments post={post} />*/}
                 {/* Post Content */}
-                <div className="post-content">
-                  <p className="post-caption">{post.content}</p>
-                  <p className="post-meta">
+                <div className="View-post-content">
+                  <p className="View-post-caption">{post.content}</p>
+                  <p className="View-post-meta">
                     Posted by {post.username || post.userId} on {new Date(post.createdAt).toLocaleDateString()}
                   </p>
+                  {post.repostOfPostId && post.username && (
+                    <p className="repost-tag">Reposted from {post.username}</p>
+                  )}
                 </div>
 
                 {/* Post Actions - Like, Comment, etc. */}
@@ -207,22 +240,21 @@ function Posts() {
                   >
                     <i className="far fa-comment"></i> Comment ({getCommentCount(post.id)})
                   </button>
-                  <button className="post-action-btn share-btn">
-                    <i className="far fa-share-square"></i> Share
-                  </button>
+                 
                 </div>
               </div>
             ))}
           </div>
         )}
-             {openImage && (
-        <div className="image-modal-backdrop" onClick={() => setOpenImage(null)}>
-          <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
-            <img src={openImage} alt="Full view" />
-            <button className="close-btn" onClick={() => setOpenImage(null)}>✕</button>
+          
+        {openImage && (
+          <div className="image-modal-backdrop" onClick={() => setOpenImage(null)}>
+            <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+              <img src={openImage} alt="Full view" />
+              <button className="close-btn" onClick={() => setOpenImage(null)}>✕</button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
         {openVideo && (
           <div className="image-modal-backdrop" onClick={() => setOpenVideo(null)}>
