@@ -3,7 +3,6 @@ import { Bell, Settings, CheckCircle, MessageCircle, Heart, BookOpen, User, Filt
 import '../../css/notification.css';
 
 export default function NotificationSystem() {
-  // State for notifications
   const [notifications, setNotifications] = useState([]);
   const [filter, setFilter] = useState('all');
   const [showSettings, setShowSettings] = useState(false);
@@ -16,6 +15,48 @@ export default function NotificationSystem() {
     allMobile: true
   });
 
+  const username = localStorage.getItem('username') || 'Anonymous';
+
+  // Fetch notifications from backend
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await fetch(`http://localhost:8000/api/notifications/${encodeURIComponent(username)}`);
+        if (!res.ok) {
+          throw new Error('Failed to fetch notifications');
+        }
+        const data = await res.json();
+        setNotifications(data.map(notification => ({
+          id: notification.id,
+          type: notification.type,
+          content: notification.content,
+          time: formatTime(notification.createdAt),
+          read: notification.read,
+          user: {
+            name: notification.commenterUsername,
+            avatar: '/api/placeholder/40/40'
+          }
+        })));
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    };
+
+    fetchNotifications();
+  }, [username]);
+
+  // Helper function to format time
+  const formatTime = (timestamp) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+
+    if (diffInSeconds < 60) return 'just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    return `${Math.floor(diffInSeconds / 86400)} days ago`;
+  };
+
   // Helper function to get user initials
   const getInitials = (name) => {
     return name
@@ -25,69 +66,35 @@ export default function NotificationSystem() {
       .toUpperCase();
   };
 
-  // Fetch notifications (simulated)
-  useEffect(() => {
-    // This would be an API call in a real application
-    const mockNotifications = [
-      {
-        id: 1,
-        type: 'like',
-        content: 'liked your post "Introducing our new feature"',
-        time: '2 hours ago',
-        read: false,
-        user: {
-          name: 'Sarah Johnson',
-          avatar: '/api/placeholder/40/40'
-        }
-      },
-      {
-        id: 2,
-        type: 'comment',
-        content: 'commented on your post "Best practices for React components"',
-        time: '5 hours ago',
-        read: false,
-        user: {
-          name: 'Michael Brown',
-          avatar: '/api/placeholder/40/40'
-        }
-      },
-      {
-        id: 3,
-        type: 'mention',
-        content: 'mentioned you in a comment',
-        time: '1 day ago',
-        read: true,
-        user: {
-          name: 'Alex Wilson',
-          avatar: '/api/placeholder/40/40'
-        }
-      },
-      {
-        id: 4,
-        type: 'course',
-        content: 'Continue your course "Advanced React Patterns". You haven\'t made progress in a week!',
-        time: '2 days ago',
-        read: false,
-        course: {
-          name: 'Advanced React Patterns',
-          progress: 60
-        }
-      },
-      {
-        id: 5,
-        type: 'like',
-        content: 'and 5 others liked your comment',
-        time: '3 days ago',
-        read: true,
-        user: {
-          name: 'Jennifer Lee',
-          avatar: '/api/placeholder/40/40'
-        }
+  // Mark notification as read
+  const markAsRead = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:8000/api/notifications/mark-read/${id}`, {
+        method: 'PUT',
+      });
+      if (res.ok) {
+        setNotifications(notifications.map(notification =>
+          notification.id === id ? { ...notification, read: true } : notification
+        ));
       }
-    ];
-    
-    setNotifications(mockNotifications);
-  }, []);
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  };
+
+  // Mark all as read
+  const markAllAsRead = async () => {
+    try {
+      const res = await fetch(`http://localhost:8000/api/notifications/mark-all-read/${encodeURIComponent(username)}`, {
+        method: 'PUT',
+      });
+      if (res.ok) {
+        setNotifications(notifications.map(notification => ({ ...notification, read: true })));
+      }
+    } catch (error) {
+      console.error('Error marking all notifications as read:', error);
+    }
+  };
 
   // Filter notifications
   const filteredNotifications = notifications.filter(notification => {
@@ -95,18 +102,6 @@ export default function NotificationSystem() {
     if (filter === 'unread') return !notification.read;
     return notification.type === filter;
   });
-
-  // Mark notification as read
-  const markAsRead = (id) => {
-    setNotifications(notifications.map(notification => 
-      notification.id === id ? {...notification, read: true} : notification
-    ));
-  };
-
-  // Mark all as read
-  const markAllAsRead = () => {
-    setNotifications(notifications.map(notification => ({...notification, read: true})));
-  };
 
   // Get notification icon based on type
   const getNotificationIcon = (type) => {
@@ -214,19 +209,6 @@ export default function NotificationSystem() {
                       {notification.user && <strong>{notification.user.name}</strong>} {notification.content}
                     </p>
                     <p className="text-xs">{notification.time}</p>
-                    {notification.type === 'course' && (
-                      <div className="mt-2">
-                        <div className="progress-bar">
-                          <div 
-                            className="progress-value" 
-                            style={{ width: `${notification.course.progress}%` }}
-                          ></div>
-                        </div>
-                        <p className="text-xs">
-                          {notification.course.progress}% complete
-                        </p>
-                      </div>
-                    )}
                   </div>
                   <div className="flex items-center">
                     {!notification.read && (
@@ -287,9 +269,62 @@ export default function NotificationSystem() {
                   </label>
                 </div>
                 
-                {/* Other toggle switches remain the same */}
-                {/* ... */}
-                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <MessageCircle size={16} className="text-purple-500 mr-2" />
+                    <span className="text-sm text-gray-800">Comments on your posts</span>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      className="sr-only peer"
+                      checked={notificationSettings.comments}
+                      onChange={() => setNotificationSettings({
+                        ...notificationSettings,
+                        comments: !notificationSettings.comments
+                      })}
+                    />
+                    <div className="toggle-switch-bg w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                  </label>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <User size={16} className="text-purple-600 mr-2" />
+                    <span className="text-sm text-gray-800">Mentions in comments</span>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      className="sr-only peer"
+                      checked={notificationSettings.mentions}
+                      onChange={() => setNotificationSettings({
+                        ...notificationSettings,
+                        mentions: !notificationSettings.mentions
+                      })}
+                    />
+                    <div className="toggle-switch-bg w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                  </label>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <BookOpen size={16} className="text-green-500 mr-2" />
+                    <span className="text-sm text-gray-800">Course reminders</span>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      className="sr-only peer"
+                      checked={notificationSettings.courseReminders}
+                      onChange={() => setNotificationSettings({
+                        ...notificationSettings,
+                        courseReminders: !notificationSettings.courseReminders
+                      })}
+                    />
+                    <div className="toggle-switch-bg w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                  </label>
+                </div>
               </div>
               
               <div className="mt-6 flex justify-end space-x-3">

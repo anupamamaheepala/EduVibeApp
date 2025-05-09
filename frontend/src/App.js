@@ -47,7 +47,7 @@ const App = () => {
             <Route path="/ShareModal" element={<ShareModal />} />
             <Route path="/SharedWithMe" element={<SharedWithMe />} />
             <Route path="/post/:postId" element={<SinglePostView />} />
-            <Route path="/Notification" element={<NotificationSystem/>}/>
+            <Route path="/notifications" element={<NotificationSystem />} />
 
             {/* Dashboard Routes */}
             <Route path="/dashboard/*" element={<UserRoutes />} />
