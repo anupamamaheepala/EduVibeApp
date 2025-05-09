@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext }  from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import '../../css/SinglePostView.css'; // reuse your existing styles
 import userLogo from '../../images/user.png';
 import CommentPopup from '../comments/CommentPopup';
 import CommentSection from '../comments/CommentSection';
+import { AuthContext } from '../AuthContext';
+import Login from '../LoginSingleView'; // Use as popup
+import Header from '../HeaderSinglePost';
+import Footer from '../Footer';
 
 const SinglePostView = () => {
   const { postId } = useParams();
@@ -13,6 +17,8 @@ const SinglePostView = () => {
   const [error, setError] = useState('');
   const [activeCommentPostId, setActiveCommentPostId] = useState(null);
   const [commentCounts, setCommentCounts] = useState({});
+    const { isAuthenticated } = useContext(AuthContext); // 👈 check auth
+  const [showLoginPopup, setShowLoginPopup] = useState(!isAuthenticated); // 👈 popup control
 
   useEffect(() => {
     axios.get(`http://localhost:8000/api/view-posts/${postId}`)
@@ -72,6 +78,7 @@ const SinglePostView = () => {
 
   return (
   <div className="Single-page-container">
+    <Header />
     <div className="Single-posts-container">
       <div className="Single-posts-feed">
         <div className="Single-post-card">
@@ -139,6 +146,15 @@ const SinglePostView = () => {
           onClose={closeComments} 
         />
       )}
+        {!isAuthenticated && showLoginPopup && (
+        <div className="login-popup-overlay">
+          <div className="login-popup-content">
+             <Login onClose={() => setShowLoginPopup(false)} /> 
+          </div>
+        </div>
+      )}
+
+      <Footer />
     </div>
   );
 };
