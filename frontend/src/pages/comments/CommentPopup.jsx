@@ -73,6 +73,10 @@ const CommentPopup = ({ postId, isOpen, onClose }) => {
         body: JSON.stringify(commentData),
       });
 
+      if (!res.ok) {
+        throw new Error('Failed to post comment');
+      }
+
       const addedComment = await res.json();
       setComments(prev => [...prev, addedComment]);
       setNewComment('');
