@@ -8,9 +8,9 @@ import com.eduvibe.backend.repository.MessageRepository;
 import com.eduvibe.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
 
 import java.util.List;
+import java.time.LocalDateTime;
 
 @Service
 public class GroupService {
@@ -85,6 +85,28 @@ public class GroupService {
         User member = userRepository.findById(memberId).orElseThrow();
         member.getGroups().remove(groupId);
         userRepository.save(member);
+    }
+
+    public void deleteGroup(String userId, String groupId) throws Exception {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new Exception("Group not found"));
+        if (!group.getCreatorId().equals(userId)) {
+            throw new Exception("Only the creator can delete the group");
+        }
+
+        // Remove group from all members' groups list
+        List<User> members = userRepository.findAllById(group.getMemberIds());
+        for (User member : members) {
+            member.getGroups().remove(groupId);
+            userRepository.save(member);
+        }
+
+        // Delete all messages associated with the group
+        List<Message> messages = messageRepository.findByGroupIdOrderByTimestampAsc(groupId);
+        messageRepository.deleteAll(messages);
+
+        // Delete the group
+        groupRepository.delete(group);
     }
 
     public List<Group> getUserGroups(String userId) {

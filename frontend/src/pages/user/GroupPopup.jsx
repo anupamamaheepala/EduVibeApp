@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import '../../css/user/Groups.css';
 
-const GroupPopup = ({ group, userId, following, onClose }) => {
+const GroupPopup = ({ group, userId, following, onClose, onGroupDeleted }) => {
   const [view, setView] = useState('chat'); // 'chat' or 'members'
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -29,7 +29,7 @@ const GroupPopup = ({ group, userId, following, onClose }) => {
       );
       setMessages(messagesWithUsers);
     } catch (err) {
-      setError(err.response?.data || 'Failed to fetch messages');
+      setError(err.response?.data?.message || 'Failed to fetch messages');
     }
   }, [group.id, userId]);
 
@@ -41,7 +41,7 @@ const GroupPopup = ({ group, userId, following, onClose }) => {
       });
       setMembers(response.data);
     } catch (err) {
-      setError(err.response?.data || 'Failed to fetch members');
+      setError(err.response?.data?.message || 'Failed to fetch members');
     }
   }, [group.id]);
 
@@ -78,7 +78,7 @@ const GroupPopup = ({ group, userId, following, onClose }) => {
       setMessages([...messages, { ...response.data, username: user.data.username }]);
       setNewMessage('');
     } catch (err) {
-      setError(err.response?.data || 'Failed to send message');
+      setError(err.response?.data?.message || 'Failed to send message');
     }
   };
 
@@ -99,7 +99,7 @@ const GroupPopup = ({ group, userId, following, onClose }) => {
       setEditMessageId(null);
       setEditContent('');
     } catch (err) {
-      setError(err.response?.data || 'Failed to edit message');
+      setError(err.response?.data?.message || 'Failed to edit message');
     }
   };
 
@@ -112,7 +112,7 @@ const GroupPopup = ({ group, userId, following, onClose }) => {
       });
       setMessages(messages.filter(msg => msg.id !== messageId));
     } catch (err) {
-      setError(err.response?.data || 'Failed to delete message');
+      setError(err.response?.data?.message || 'Failed to delete message');
     }
   };
 
@@ -126,7 +126,7 @@ const GroupPopup = ({ group, userId, following, onClose }) => {
       );
       fetchMembers();
     } catch (err) {
-      setError(err.response?.data || 'Failed to add member');
+      setError(err.response?.data?.message || 'Failed to add member');
     }
   };
 
@@ -140,7 +140,23 @@ const GroupPopup = ({ group, userId, following, onClose }) => {
       );
       fetchMembers();
     } catch (err) {
-      setError(err.response?.data || 'Failed to remove member');
+      setError(err.response?.data?.message || 'Failed to remove member');
+    }
+  };
+
+  const handleDeleteGroup = async () => {
+    if (!window.confirm('Are you sure you want to delete this group? This action cannot be undone.')) {
+      return;
+    }
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://localhost:8000/api/groups/${group.id}/delete`, {
+        headers: { Authorization: `Bearer ${token}` },
+        data: { userId },
+      });
+      onGroupDeleted(group.id);
+    } catch (err) {
+      setError(err.response?.data?.message || err.response?.data?.error || 'Failed to delete group');
     }
   };
 
@@ -164,6 +180,14 @@ const GroupPopup = ({ group, userId, following, onClose }) => {
           >
             Members
           </button>
+          {group.creatorId === userId && (
+            <button
+              className="group-delete-button"
+              onClick={handleDeleteGroup}
+            >
+              Delete Group
+            </button>
+          )}
         </div>
         {error && <div className="error-message">{error}</div>}
         {view === 'chat' ? (
