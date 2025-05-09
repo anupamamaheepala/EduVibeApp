@@ -5,30 +5,21 @@ import Footer from '../Footer';
 import '../../css/ViewPosts.css';
 import { AuthContext } from '../AuthContext';
 import userLogo from '../../images/user.png';
-
 import CommentPopup from '../comments/CommentPopup';
-
-import CommentSection from '../comments/CommentSection';
 import ShareModal from './PostShareModal';
 
-
-
 function Posts() {
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, user } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
   const [activeCommentPostId, setActiveCommentPostId] = useState(null);
   const [commentCounts, setCommentCounts] = useState({});
-
-
-
+  const [likeCounts, setLikeCounts] = useState({});
+  const [likedPosts, setLikedPosts] = useState({});
   const [sharingPostId, setSharingPostId] = useState(null);
   const [openImage, setOpenImage] = useState(null);
   const [openVideo, setOpenVideo] = useState(null);
- 
-  
 
   const BACKEND_URL = 'http://localhost:8000/api/view-posts';
 
@@ -42,6 +33,8 @@ function Posts() {
         const data = await response.json();
         const sortedPosts = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setPosts(sortedPosts);
+        fetchCommentCounts(sortedPosts);
+        fetchLikeData(sortedPosts);
       } catch (err) {
         setError('Error fetching posts: ' + err.message);
       } finally {
@@ -50,8 +43,8 @@ function Posts() {
     };
 
     fetchPosts();
-  }, []);
-
+    // Re-run effect when user or login state changes to refresh like data
+  }, [user, isLoggedIn]);
 
   const fetchCommentCounts = async (postsData) => {
     try {
@@ -69,12 +62,69 @@ function Posts() {
     }
   };
 
+  const fetchLikeData = async (postsData) => {
+    try {
+      const likeCountsTemp = {};
+      const likedPostsTemp = {};
+      for (const post of postsData) {
+        // Fetch like count
+        const countResponse = await fetch(`http://localhost:8000/api/likes/count/${post.id}`);
+        if (countResponse.ok) {
+          likeCountsTemp[post.id] = await countResponse.json();
+        }
+        // Fetch like status for current user
+        const userId = user?.id || localStorage.getItem('userId');
+        if (userId) {
+          const isLikedResponse = await fetch(
+            `http://localhost:8000/api/likes/is-liked?postId=${post.id}&userId=${userId}`
+          );
+          if (isLikedResponse.ok) {
+            likedPostsTemp[post.id] = await isLikedResponse.json();
+          }
+        }
+      }
+      setLikeCounts(likeCountsTemp);
+      setLikedPosts(likedPostsTemp);
+    } catch (err) {
+      console.error('Error fetching like data:', err);
+    }
+  };
 
+  const handleLike = async (postId) => {
+    const userId = user?.id || localStorage.getItem('userId');
+    if (!userId) {
+      alert('Please log in for liking posts');
+      return;
+    }
+    const username = localStorage.getItem('username') || 'Unknown';
+    try {
+      const response = await fetch('http://localhost:8000/api/likes/toggle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          postId,
+          userId,
+          username,
+        }),
+      });
+      if (response.ok) {
+        setLikedPosts((prev) => ({
+          ...prev,
+          [postId]: response.status === 200,
+        }));
+        setLikeCounts((prev) => ({
+          ...prev,
+          [postId]: response.status === 200 ? (prev[postId] || 0) + 1 : (prev[postId] || 1) - 1,
+        }));
+      }
+    } catch (err) {
+      console.error('Error toggling like:', err);
+    }
+  };
 
   const handleShare = (postId) => {
     setSharingPostId(postId);
   };
-  
 
   const getTimeAgo = (timestamp) => {
     const diff = Math.floor((new Date() - new Date(timestamp)) / 1000);
@@ -87,31 +137,24 @@ function Posts() {
   const openComments = (postId) => {
     setActiveCommentPostId(postId);
   };
-  
+
   const closeComments = () => {
     setActiveCommentPostId(null);
-    // Refresh comment counts after closing
     fetchCommentCounts(posts);
   };
-  
+
   const getCommentCount = (postId) => {
     return commentCounts[postId] || 0;
   };
 
-  
-
-
-
   return (
     <div className="view-page-container">
       {isLoggedIn ? <UserHeader /> : <Header />}
-
       <div className="View-posts-container">
-      <div className="View-header-actions">
-        <h1 className="community-title">Community Posts</h1>
-        <a href="/add-post" className="create-post-button">Create Post</a>
-      </div>
-
+        <div className="View-header-actions">
+          <h1 className="community-title">Community Posts</h1>
+          <a href="/add-post" className="create-post-button">Create Post</a>
+        </div>
         {loading ? (
           <div className="loading-spinner">
             <div className="spinner"></div>
@@ -125,103 +168,82 @@ function Posts() {
           <div className="View-posts-feed">
             {posts.map((post) => (
               <div key={post.id} className="View-post-card">
-
-                {/* Post Header */}
                 <div className="post-header">
                   <div className="post-user">
                     <img className="post-user-avatar" src={userLogo} alt="User avatar" />
                     <span className="post-username">{post.username || post.userId}</span>
                   </div>
-
                   <div className="post-right">
                     <button className="share-btn" onClick={() => handleShare(post.id)}>Share</button>
                     <span className="post-time">{getTimeAgo(post.createdAt)}</span>
                   </div>
                 </div>
-           
-               
-
-                {
-                  post.mediaUrls && post.mediaUrls.length > 0 && (() => {
-  const mediaCount = post.mediaUrls.length;
-
-  let mediaClass = 'media-gallery';
-  if (mediaCount === 1) {
-    mediaClass += ' media-1';
-  } else if (mediaCount === 2) {
-    mediaClass += ' media-2';
-  } else if (mediaCount === 3) {
-    mediaClass += ' media-3';
-  } else if (mediaCount === 4) {
-    mediaClass += ' media-4';
-  }
-
-  return (
-    <div className={mediaClass}>
-      {post.mediaUrls.map((url, index) => {
-        const type = post.mediaTypes?.[index] || (url.endsWith('.mp4') ? 'video' : 'image');
-        return type === 'image' ? (
-                <img
-                    key={index}
-                    src={url}
-                    alt={`Post media ${index}`}
-                    onClick={() => setOpenImage(url)}
-                    style={{ cursor: 'pointer' }}
-                  />
-
-        ) : (
-          <video
-          key={index}
-          onClick={() => setOpenVideo(url)}
-          style={{ cursor: 'pointer' }}
-          muted
-        >Your browser does not support the video tag.
-          <source src={url} type="video/mp4" />
-        </video>
-        
-        );
-      })}
-    </div>
-  );
-})()}
-
-                  
-                
-                {/*<PostWithComments post={post} />*/}
-                {/* Post Content */}
+                {post.mediaUrls && post.mediaUrls.length > 0 && (() => {
+                  const mediaCount = post.mediaUrls.length;
+                  let mediaClass = 'media-gallery';
+                  if (mediaCount === 1) mediaClass += ' media-1';
+                  else if (mediaCount === 2) mediaClass += ' media-2';
+                  else if (mediaCount === 3) mediaClass += ' media-3';
+                  else if (mediaCount === 4) mediaClass += ' media-4';
+                  return (
+                    <div className={mediaClass}>
+                      {post.mediaUrls.map((url, index) => {
+                        const type = post.mediaTypes?.[index] || (url.endsWith('.mp4') ? 'video' : 'image');
+                        return type === 'image' ? (
+                          <img
+                            key={index}
+                            src={url}
+                            alt={`Post media ${index}`}
+                            onClick={() => setOpenImage(url)}
+                            style={{ cursor: 'pointer' }}
+                          />
+                        ) : (
+                          <video
+                            key={index}
+                            onClick={() => setOpenVideo(url)}
+                            style={{ cursor: 'pointer' }}
+                            muted
+                          >
+                            <source src={url} type="video/mp4" />
+                            Your browser does not support the video tag.
+                          </video>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
                 <div className="post-content">
                   <p className="post-caption">{post.content}</p>
                   <p className="post-meta">
                     Posted by {post.username || post.userId} on {new Date(post.createdAt).toLocaleDateString()}
                   </p>
                 </div>
-
-                {/* Post Actions - Like, Comment, etc. */}
                 <div className="post-actions">
-                  <button className="post-action-btn like-btn">
-                    <i className="far fa-thumbs-up"></i> Like
+                  <button
+                    className={`post-action-btn like-btn ${likedPosts[post.id] ? 'liked' : ''}`}
+                    onClick={() => handleLike(post.id)}
+                  >
+                    <i className={`far fa-thumbs-up ${likedPosts[post.id] ? 'fas' : ''}`}></i> Like ({likeCounts[post.id] || 0})
                   </button>
-                  <button 
+                  <button
                     className="post-action-btn comment-btn"
                     onClick={() => openComments(post.id)}
                   >
                     <i className="far fa-comment"></i> Comment ({getCommentCount(post.id)})
                   </button>
-                 
                 </div>
               </div>
             ))}
           </div>
         )}
-             {openImage && (
-        <div className="image-modal-backdrop" onClick={() => setOpenImage(null)}>
-          <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
-            <img src={openImage} alt="Full view" />
-            <button className="close-btn" onClick={() => setOpenImage(null)}>✕</button>
+        {openImage && (
+          <div className="image-modal-backdrop" onClick={() => setOpenImage(null)}>
+            <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+              <img src={openImage} alt="Full view" />
+              <button className="close-btn" onClick={() => setOpenImage(null)}>✕</button>
+            </div>
           </div>
-        </div>
-      )}
-
+        )}
         {openVideo && (
           <div className="image-modal-backdrop" onClick={() => setOpenVideo(null)}>
             <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -232,24 +254,20 @@ function Posts() {
             </div>
           </div>
         )}
-
       </div>
-            {sharingPostId && (
+      {sharingPostId && (
         <ShareModal
           postId={sharingPostId}
           onClose={() => setSharingPostId(null)}
         />
       )}
-
-      {/* Comment Popup */}
       {activeCommentPostId && (
-        <CommentPopup 
-          postId={activeCommentPostId} 
-          isOpen={activeCommentPostId !== null} 
-          onClose={closeComments} 
+        <CommentPopup
+          postId={activeCommentPostId}
+          isOpen={activeCommentPostId !== null}
+          onClose={closeComments}
         />
       )}
-
       <Footer />
     </div>
   );
