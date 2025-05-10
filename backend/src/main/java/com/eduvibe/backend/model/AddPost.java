@@ -19,6 +19,7 @@ public class AddPost {
     private List<String> mediaTypes; // ⬅️ Optional: media type for each media
     private Date createdAt;
     private String repostOfPostId;
+    private String repostUsername;
     public AddPost() {}
 
     public AddPost(String userId, String username, String content, List<String> mediaUrls, List<String> mediaTypes, Date createdAt) {  //String mediaUrl, String mediaType
@@ -60,4 +61,7 @@ private AddPost repostOfPost;
 
     public AddPost getRepostOfPost() {return repostOfPost;}
     public void setRepostOfPost(AddPost repostOfPost) {this.repostOfPost = repostOfPost;}
+
+    public String getRepostUsername() {return repostUsername;}
+    public void setRepostUsername(String repostUsername) {this.repostUsername = repostUsername;}
 }
