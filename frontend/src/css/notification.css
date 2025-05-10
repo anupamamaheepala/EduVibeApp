@@ -1,4 +1,3 @@
-
 /* notification.css - Fixed Purple Theme for Notification System */
 
 /* Container styling */
@@ -174,6 +173,10 @@
   color: #10b981;
 }
 
+.notification-icon-reply {
+  color: #3b82f6; /* Blue for reply notifications */
+}
+
 /* Improve text styling */
 .notification-item p {
   margin: 0;
@@ -203,6 +206,28 @@
 
 .notification-item button:hover {
   background-color: #f3e8ff;
+}
+
+/* Delete button */
+.delete-btn {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  color: #4b5563;
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.delete-btn svg {
+  margin-right: 0.25rem;
 }
 
 /* Progress bar */
@@ -317,4 +342,13 @@ input:checked + .toggle-switch-bg {
 /* Fix for settings icon */
 button[type="button"] svg {
   display: block;
+}
+
+/* Adding styles for clickable notifications */
+.notification-clickable {
+  cursor: pointer;
+}
+
+.notification-clickable:hover {
+  background-color: #f5f5f5;
 }

@@ -1,6 +1,9 @@
 package com.eduvibe.backend.service;
 
+import com.eduvibe.backend.model.Comment;
+import com.eduvibe.backend.model.Notification;
 import com.eduvibe.backend.model.Reply;
+import com.eduvibe.backend.repository.CommentRepository;
 import com.eduvibe.backend.repository.ReplyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,11 +17,33 @@ public class ReplyService {
     @Autowired
     private ReplyRepository replyRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
     public Reply saveReply(Reply reply) {
         if (reply.getCreatedAt() == null) {
             reply.setCreatedAt(new Date());
         }
-        return replyRepository.save(reply);
+        Reply savedReply = replyRepository.save(reply);
+
+        // Create a notification for the parent comment's owner
+        Comment parentComment = commentRepository.findById(reply.getParentCommentId()).orElse(null);
+        if (parentComment != null && !parentComment.getUsername().equals(reply.getUsername())) {
+            Notification notification = new Notification();
+            notification.setPostId(parentComment.getPostId()); // Set the correct postId from the parent comment
+            notification.setOwnerUsername(parentComment.getUsername()); // Parent comment's owner
+            notification.setCommenterUsername(reply.getUsername()); // Replier's username
+            notification.setType("reply");
+            notification.setContent(reply.getUsername() + " replied to your comment: " + reply.getText());
+            notification.setCreatedAt(new Date());
+            notification.setRead(false);
+            notificationService.saveNotification(notification);
+        }
+
+        return savedReply;
     }
 
     public List<Reply> getRepliesByParentCommentId(String parentCommentId) {

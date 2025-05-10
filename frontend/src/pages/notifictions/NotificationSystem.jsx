@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Bell, Settings, CheckCircle, MessageCircle, Heart, BookOpen, User, Filter, ArrowLeft, MoreHorizontal, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Bell, Settings, CheckCircle, MessageCircle, Heart, BookOpen, User, Filter, ArrowLeft, MoreHorizontal, X, Trash2 } from 'lucide-react';
 import '../../css/notification.css';
 
 export default function NotificationSystem() {
@@ -11,11 +12,14 @@ export default function NotificationSystem() {
     comments: true,
     mentions: true,
     courseReminders: true,
+    replies: true,
     allEmail: true,
     allMobile: true
   });
+  const [deleteButtonVisible, setDeleteButtonVisible] = useState(null); // State to track which notification's delete button is visible
 
   const username = localStorage.getItem('username') || 'Anonymous';
+  const navigate = useNavigate();
 
   // Fetch notifications from backend
   useEffect(() => {
@@ -26,23 +30,35 @@ export default function NotificationSystem() {
           throw new Error('Failed to fetch notifications');
         }
         const data = await res.json();
-        setNotifications(data.map(notification => ({
-          id: notification.id,
-          type: notification.type,
-          content: notification.content,
-          time: formatTime(notification.createdAt),
-          read: notification.read,
-          user: {
-            name: notification.commenterUsername,
-            avatar: '/api/placeholder/40/40'
-          }
-        })));
+        // Sort notifications by createdAt in descending order (newest first)
+        const sortedData = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setNotifications(sortedData.map(notification => {
+          // Remove the username from the content string
+          const contentWithoutUsername = notification.content.replace(
+            new RegExp(`^${notification.commenterUsername}\\s+`, 'i'), ''
+          );
+          return {
+            id: notification.id,
+            type: notification.type,
+            content: contentWithoutUsername, // Use the modified content
+            time: formatTime(notification.createdAt),
+            read: notification.read,
+            user: {
+              name: notification.commenterUsername,
+              avatar: '/api/placeholder/40/40'
+            },
+            postId: notification.postId // For navigation
+          };
+        }));
       } catch (error) {
         console.error('Error fetching notifications:', error);
       }
     };
 
     fetchNotifications();
+    const interval = setInterval(fetchNotifications, 30000); // Fetch every 30 seconds
+
+    return () => clearInterval(interval); // Cleanup on unmount
   }, [username]);
 
   // Helper function to format time
@@ -52,7 +68,7 @@ export default function NotificationSystem() {
     const diffInSeconds = Math.floor((now - date) / 1000);
 
     if (diffInSeconds < 60) return 'just now';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago Kaur`;
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
     return `${Math.floor(diffInSeconds / 86400)} days ago`;
   };
@@ -96,6 +112,34 @@ export default function NotificationSystem() {
     }
   };
 
+  // Delete notification
+  const deleteNotification = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:8000/api/notifications/delete/${id}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        setNotifications(notifications.filter(notification => notification.id !== id));
+        setDeleteButtonVisible(null); // Hide delete button after deletion
+      }
+    } catch (error) {
+      console.error('Error deleting notification:', error);
+    }
+  };
+
+  // Handle clicking a comment, like, or reply notification
+  const handleNotificationClick = (notification) => {
+    if ((notification.type === 'comment' || notification.type === 'like' || notification.type === 'reply') && notification.postId) {
+      markAsRead(notification.id); // Mark as read on click
+      navigate(`/post/${notification.postId}`); // Navigate to post
+    }
+  };
+
+  // Toggle delete button visibility for a specific notification
+  const toggleDeleteButton = (id) => {
+    setDeleteButtonVisible(deleteButtonVisible === id ? null : id);
+  };
+
   // Filter notifications
   const filteredNotifications = notifications.filter(notification => {
     if (filter === 'all') return true;
@@ -108,8 +152,7 @@ export default function NotificationSystem() {
     switch(type) {
       case 'like': return <Heart size={20} className="text-red-500 notification-icon-like" />;
       case 'comment': return <MessageCircle size={20} className="text-purple-500 notification-icon-comment" />;
-      case 'mention': return <User size={20} className="text-purple-600 notification-icon-mention" />;
-      case 'course': return <BookOpen size={20} className="text-green-500 notification-icon-course" />;
+      case 'reply': return <MessageCircle size={20} className="text-blue-500 notification-icon-reply" />;
       default: return <Bell size={20} className="text-gray-500" />;
     }
   };
@@ -132,12 +175,6 @@ export default function NotificationSystem() {
             className="mark-all-read-btn"
           >
             Mark all as read
-          </button>
-          <button 
-            onClick={() => setShowSettings(!showSettings)}
-            className="p-1 rounded-full hover:bg-gray-100"
-          >
-            <Settings size={20} className="text-gray-600" />
           </button>
         </div>
       </div>
@@ -169,16 +206,10 @@ export default function NotificationSystem() {
           Comments
         </button>
         <button
-          onClick={() => setFilter('mention')}
-          className={`filter-btn ${filter === 'mention' ? 'active' : ''}`}
+          onClick={() => setFilter('reply')}
+          className={`filter-btn ${filter === 'reply' ? 'active' : ''}`}
         >
-          Mentions
-        </button>
-        <button
-          onClick={() => setFilter('course')}
-          className={`filter-btn ${filter === 'course' ? 'active' : ''}`}
-        >
-          Course Reminders
+          Replies
         </button>
       </div>
 
@@ -188,7 +219,8 @@ export default function NotificationSystem() {
           filteredNotifications.map((notification) => (
             <div
               key={notification.id}
-              className={`notification-item ${!notification.read ? 'notification-unread' : ''}`}
+              className={`notification-item ${!notification.read ? 'notification-unread' : ''} ${notification.type === 'comment' || notification.type === 'like' || notification.type === 'reply' ? 'notification-clickable' : ''}`}
+              onClick={() => handleNotificationClick(notification)}
             >
               {notification.user ? (
                 <div 
@@ -210,18 +242,39 @@ export default function NotificationSystem() {
                     </p>
                     <p className="text-xs">{notification.time}</p>
                   </div>
-                  <div className="flex items-center">
+                  <div className="flex items-center space-x-1">
                     {!notification.read && (
                       <button
-                        onClick={() => markAsRead(notification.id)}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent navigation when clicking mark as read
+                          markAsRead(notification.id);
+                        }}
                         className="p-1 text-purple-600 hover:text-purple-800"
                       >
                         <CheckCircle size={16} />
                       </button>
                     )}
-                    <button className="p-1 text-gray-500 hover:text-gray-700">
+                    <button 
+                      className="p-1 text-gray-500 hover:text-gray-700"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent navigation
+                        toggleDeleteButton(notification.id);
+                      }}
+                    >
                       <MoreHorizontal size={16} />
                     </button>
+                    {deleteButtonVisible === notification.id && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent navigation
+                          deleteNotification(notification.id);
+                        }}
+                        className="delete-btn"
+                      >
+                        <Trash2 size={16} className="mr-1" />
+                        Delete
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -321,6 +374,25 @@ export default function NotificationSystem() {
                       onChange={() => setNotificationSettings({
                         ...notificationSettings,
                         courseReminders: !notificationSettings.courseReminders
+                      })}
+                    />
+                    <div className="toggle-switch-bg w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                  </label>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <MessageCircle size={16} className="text-blue-500 mr-2" />
+                    <span className="text-sm text-gray-800">Replies to your comments</span>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      className="sr-only peer"
+                      checked={notificationSettings.replies}
+                      onChange={() => setNotificationSettings({
+                        ...notificationSettings,
+                        replies: !notificationSettings.replies
                       })}
                     />
                     <div className="toggle-switch-bg w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
