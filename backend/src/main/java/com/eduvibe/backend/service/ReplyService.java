@@ -30,12 +30,12 @@ public class ReplyService {
         Reply savedReply = replyRepository.save(reply);
 
         // Create a notification for the parent comment's owner
-        Notification notification = new Notification();
-        notification.setPostId(reply.getParentCommentId()); // Using parentCommentId as postId for context
-        String ownerUsername = getParentCommentOwnerUsername(reply.getParentCommentId());
-        if (ownerUsername != null) {
-            notification.setOwnerUsername(ownerUsername);
-            notification.setCommenterUsername(reply.getUsername());
+        Comment parentComment = commentRepository.findById(reply.getParentCommentId()).orElse(null);
+        if (parentComment != null && !parentComment.getUsername().equals(reply.getUsername())) {
+            Notification notification = new Notification();
+            notification.setPostId(parentComment.getPostId()); // Set the correct postId from the parent comment
+            notification.setOwnerUsername(parentComment.getUsername()); // Parent comment's owner
+            notification.setCommenterUsername(reply.getUsername()); // Replier's username
             notification.setType("reply");
             notification.setContent(reply.getUsername() + " replied to your comment: " + reply.getText());
             notification.setCreatedAt(new Date());
@@ -61,10 +61,5 @@ public class ReplyService {
 
     public void deleteReply(String id) {
         replyRepository.deleteById(id);
-    }
-
-    private String getParentCommentOwnerUsername(String parentCommentId) {
-        Comment comment = commentRepository.findById(parentCommentId).orElse(null);
-        return comment != null ? comment.getUsername() : null;
     }
 }

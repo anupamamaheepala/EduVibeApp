@@ -6,43 +6,43 @@
   --white: #ffffff;
 }
 
-.all-courses-page {
+.my-courses-page {
   padding-top: 70px;
   min-height: 100vh;
 }
 
-.semi-header {
+.my-courses-semi-header {
   padding: 2rem;
   background-color: var(--white);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-.my-courses-header .search-container {
+.my-courses-semi-header .my-courses-search-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.search-container {
+.my-courses-search-container {
   max-width: 1200px;
   margin: 0 auto;
   text-align: center;
 }
 
-.search-container h2 {
+.my-courses-search-container h2 {
   font-size: 2.2rem;
   color: var(--dark-gray);
   margin-bottom: 1.5rem;
 }
 
-.search-bar {
+.my-courses-search-bar {
   display: flex;
   justify-content: center;
   gap: 1rem;
   flex-wrap: wrap;
 }
 
-.search-bar input {
+.my-courses-search-bar input {
   width: 100%;
   max-width: 400px;
   padding: 0.8rem;
@@ -54,129 +54,104 @@
   transition: border-color 0.3s ease;
 }
 
-.search-bar input:focus {
+.my-courses-search-bar input:focus {
   outline: none;
   border-color: var(--primary);
 }
 
-.courses-section {
+.my-courses-section {
   padding: 5rem 2rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.courses-grid {
+.my-courses-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 300px)); /* Narrower column range */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 300px));
   gap: 1.5rem;
 }
 
-.course-card {
+.my-courses-card {
   background-color: var(--white);
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  padding: 1rem; /* Reduced padding */
+  padding: 1rem;
   width: 100%;
   max-width: 300px;
-  max-height: 10px;
-  height: 100%; /* Cap card width */
+  max-height: 300px;
+  height: 100%;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.course-card:hover {
+.my-courses-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
-.course-image {
-  height: 250px; /* Reduced height */
-  background-color: var(--primary-light);
-  position: relative;
-  border-radius: 8px 8px 0 0;
-}
-
-.course-content {
-  padding: 0.8rem; /* Reduced padding */
-}
-
-.course-content h3 {
-  margin-bottom: 0.2rem; /* Reduced margin */
+.my-courses-card h3 {
+  margin-bottom: 0.2rem;
   color: var(--dark-gray);
-  font-size: 1.3rem; /* Reduced font size */
+  font-size: 1.3rem;
 }
 
-.course-author {
+.my-courses-card p {
   color: #666;
-  font-size: 0.8rem; /* Reduced font size */
-  margin-bottom: 0.4rem; /* Reduced margin */
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
 }
 
-.course-description {
-  color: #666;
-  font-size: 0.9rem; /* Reduced font size */
-  margin-bottom: 0.8rem; /* Reduced margin */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.course-meta {
-  color: #666;
-  font-size: 0.8rem; /* Reduced font size */
-}
-
-.course-actions {
-  margin-top: 0.3rem; /* Reduced margin */
+.my-courses-actions {
+  margin-top: 0.3rem;
   display: flex;
-  gap: 0.2rem; /* Reduced gap */
+  gap: 0.2rem;
   flex-wrap: wrap;
 }
 
-.view-btn,
-.update-btn,
-.delete-btn,
-.add-course-btn {
-  padding: 0.4rem 0.8rem; /* Reduced padding */
+.my-courses-view-btn,
+.my-courses-update-btn,
+.my-courses-delete-btn,
+.my-courses-add-btn {
+  padding: 0.4rem 0.8rem;
   border: none;
   border-radius: 4px;
-  font-size: 0.8rem; /* Reduced font size */
+  font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.view-btn {
+.my-courses-view-btn {
   background-color: #28a745;
   color: var(--white);
 }
 
-.view-btn:hover {
+.my-courses-view-btn:hover {
   background-color: #218838;
 }
 
-.update-btn {
+.my-courses-update-btn {
   background-color: var(--primary);
   color: var(--white);
 }
 
-.update-btn:hover {
+.my-courses-update-btn:hover {
   background-color: #6a32d5;
 }
 
-.delete-btn {
+.my-courses-delete-btn {
   background-color: #ff4d4f;
   color: var(--white);
 }
 
-.delete-btn:hover {
+.my-courses-delete-btn:hover {
   background-color: #e63946;
 }
 
-.add-course-btn {
-  padding: 0.6rem 1.2rem; /* Reduced padding */
+.my-courses-add-btn {
+  padding: 0.6rem 1.2rem;
   border-radius: 4px;
   font-weight: 500;
-  font-size: 0.8rem; /* Reduced font size */
+  font-size: 0.8rem;
   cursor: pointer;
   background-color: var(--primary);
   color: var(--white);
@@ -184,18 +159,18 @@
   transition: all 0.3s ease;
 }
 
-.add-course-btn:hover {
+.my-courses-add-btn:hover {
   background-color: #6a32d5;
 }
 
-.no-courses {
+.my-courses-no-courses {
   text-align: center;
   font-size: 1.4rem;
   color: #666;
   padding: 2rem;
 }
 
-.feedback-message {
+.my-courses-feedback {
   text-align: center;
   padding: 1.2rem;
   margin-bottom: 1.5rem;
@@ -203,65 +178,57 @@
   font-size: 1.1rem;
 }
 
-.feedback-message.success {
+.my-courses-feedback.success {
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
 }
 
-.feedback-message.error {
+.my-courses-feedback.error {
   background-color: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
 
 @media (max-width: 768px) {
-  .semi-header {
+  .my-courses-semi-header {
     padding: 1.5rem 1rem;
   }
 
-  .search-container h2 {
+  .my-courses-search-container h2 {
     font-size: 1.8rem;
   }
 
-  .search-bar input {
+  .my-courses-search-bar input {
     max-width: 300px;
   }
 
-  .courses-section {
+  .my-courses-section {
     padding: 3rem 1rem;
   }
 
-  .courses-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 250px)); /* Narrower on mobile */
+  .my-courses-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 250px));
     gap: 1rem;
   }
 
-  .course-card {
+  .my-courses-card {
     padding: 1rem;
-    max-width: 250px; /* Adjusted for mobile */
+    max-width: 250px;
   }
 
-  .course-image {
-    height: 100px; /* Reduced height */
-  }
-
-  .course-content h3 {
+  .my-courses-card h3 {
     font-size: 1.1rem;
   }
 
-  .course-author {
-    font-size: 0.7rem;
-  }
-
-  .course-description {
+  .my-courses-card p {
     font-size: 0.8rem;
   }
 
-  .view-btn,
-  .update-btn,
-  .delete-btn,
-  .add-course-btn {
+  .my-courses-view-btn,
+  .my-courses-update-btn,
+  .my-courses-delete-btn,
+  .my-courses-add-btn {
     padding: 0.3rem 0.6rem;
     font-size: 0.7rem;
   }

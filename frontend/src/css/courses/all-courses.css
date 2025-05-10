@@ -1,0 +1,230 @@
+:root {
+  --primary: #773beb;
+  --primary-light: #f8f5ff;
+  --gray: #f0f0f0;
+  --dark-gray: #333;
+  --white: #ffffff;
+}
+
+.all-courses-page {
+  padding-top: 70px;
+  min-height: 100vh;
+}
+
+.all-courses-semi-header {
+  padding: 2rem;
+  background-color: var(--white);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.all-courses-search-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.all-courses-search-container h2 {
+  font-size: 2.2rem;
+  color: var(--dark-gray);
+  margin-bottom: 1.5rem;
+}
+
+.all-courses-search-bar {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.all-courses-search-bar input {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  color: var(--dark-gray);
+  background-color: var(--white);
+  transition: border-color 0.3s ease;
+}
+
+.all-courses-search-bar input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.all-courses-section {
+  padding: 5rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.all-courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 300px));
+  gap: 1.5rem;
+}
+
+.all-courses-card {
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  padding: 1rem;
+  width: 100%;
+  max-width: 300px;
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.all-courses-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.all-courses-image {
+  height: 250px;
+  background-color: var(--primary-light);
+  position: relative;
+  border-radius: 8px 8px 0 0;
+}
+
+.all-courses-content {
+  padding: 0.8rem;
+}
+
+.all-courses-content h3 {
+  margin-bottom: 0.2rem;
+  color: var(--dark-gray);
+  font-size: 1.3rem;
+}
+
+.all-courses-author {
+  color: #666;
+  font-size: 0.8rem;
+  margin-bottom: 0.4rem;
+}
+
+.all-courses-description {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.all-courses-meta {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.all-courses-actions {
+  margin-top: 0.3rem;
+  display: flex;
+  gap: 0.2rem;
+  flex-wrap: wrap;
+}
+
+.all-courses-view-btn,
+.all-courses-toggle-btn {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.all-courses-view-btn {
+  background-color: #28a745;
+  color: var(--white);
+}
+
+.all-courses-view-btn:hover {
+  background-color: #218838;
+}
+
+.all-courses-toggle-btn {
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.8rem;
+  cursor: pointer;
+  background-color: var(--primary);
+  color: var(--white);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.all-courses-toggle-btn:hover {
+  background-color: #6a32d5;
+}
+
+.all-courses-no-courses {
+  text-align: center;
+  font-size: 1.4rem;
+  color: #666;
+  padding: 2rem;
+}
+
+.all-courses-error {
+  text-align: center;
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+@media (max-width: 768px) {
+  .all-courses-semi-header {
+    padding: 1.5rem 1rem;
+  }
+
+  .all-courses-search-container h2 {
+    font-size: 1.8rem;
+  }
+
+  .all-courses-search-bar input {
+    max-width: 300px;
+  }
+
+  .all-courses-section {
+    padding: 3rem 1rem;
+  }
+
+  .all-courses-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 250px));
+    gap: 1rem;
+  }
+
+  .all-courses-card {
+    padding: 1rem;
+    max-width: 250px;
+  }
+
+  .all-courses-image {
+    height: 100px;
+  }
+
+  .all-courses-content h3 {
+    font-size: 1.1rem;
+  }
+
+  .all-courses-author {
+    font-size: 0.7rem;
+  }
+
+  .all-courses-description {
+    font-size: 0.8rem;
+  }
+
+  .all-courses-view-btn,
+  .all-courses-toggle-btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+  }
+}

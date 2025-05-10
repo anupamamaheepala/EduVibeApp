@@ -1,15 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import './../../css/user/Sidebar.css';
 
 const Sidebar = () => {
   const location = useLocation();
+  const [unreadCount, setUnreadCount] = useState(0); // State for unread notifications
+  const username = localStorage.getItem('username') || 'Anonymous'; // Get username
 
   // Check if current route is a dashboard sub-route
   const isDashboardRoute = location.pathname.startsWith('/dashboard');
 
-  // Mock total notification count (replace with actual data from state or API)
-  const totalNotifications = 10;
+  // Fetch unread notification count
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      try {
+        const res = await fetch(`http://localhost:8000/api/notifications/${encodeURIComponent(username)}`);
+        if (!res.ok) {
+          throw new Error('Failed to fetch notifications');
+        }
+        const data = await res.json();
+        // Count unread notifications
+        const unread = data.filter(notification => !notification.read).length;
+        setUnreadCount(unread);
+      } catch (error) {
+        console.error('Error fetching unread notifications:', error);
+        setUnreadCount(0); // Fallback to 0 on error
+      }
+    };
+
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 1000); // Changed from 30000 to 10000 (10 seconds)
+
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, [username]);
 
   return (
     <aside className="sidebar">
@@ -33,7 +56,10 @@ const Sidebar = () => {
                 isActive ? 'active' : ''
               }
             >
-             Notifications
+              Notifications
+              {unreadCount > 0 && (
+                <span className="notification-badge">{unreadCount}</span>
+              )}
             </NavLink>
           </li>
           <li>

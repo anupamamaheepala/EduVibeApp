@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import '../../css/all-courses.css'
+import '../../css/user/view-course.css';
 import { AuthContext } from '../AuthContext';
 
 const ViewCourse = () => {
@@ -32,7 +32,7 @@ const ViewCourse = () => {
           headers: { 'X-User-Id': userId },
         });
 
-        setCourse(response.data.course); // Adjusted to match backend response structure
+        setCourse(response.data.course);
         setMessage('');
       } catch (error) {
         const errorMessage =
@@ -71,25 +71,25 @@ const ViewCourse = () => {
   };
 
   if (!course && !message) {
-    return <div className="all-courses-page">Loading...</div>;
+    return <div className="view-course-page">Loading...</div>;
   }
 
   return (
-    <div className="all-courses-page">
-      <div className="semi-header my-courses-header">
-        <div className="search-container">
+    <div className="view-course-page">
+      <div className="view-course-semi-header">
+        <div className="view-course-search-container">
           <h2 style={{ color: 'var(--primary)' }}>{course?.name || 'Course'}</h2>
           <button
-            className="add-course-btn"
+            className="view-course-back-btn"
             onClick={() => navigate('/dashboard/mycourses')}
           >
             Back to My Courses
           </button>
         </div>
       </div>
-      <div className="courses-section">
+      <div className="view-course-section">
         {message && (
-          <p className={`feedback-message ${message.includes('success') ? 'success' : 'error'}`}>
+          <p className={`view-course-feedback ${message.includes('success') ? 'success' : 'error'}`}>
             {message}
           </p>
         )}
@@ -134,7 +134,7 @@ const ViewCourse = () => {
                   </div>
                 ))
               ) : (
-                <p className="no-courses">No chapters available for this course.</p>
+                <p className="view-course-no-chapters">No chapters available for this course.</p>
               )}
             </div>
           </div>
