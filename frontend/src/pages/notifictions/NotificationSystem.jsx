@@ -29,7 +29,9 @@ export default function NotificationSystem() {
           throw new Error('Failed to fetch notifications');
         }
         const data = await res.json();
-        setNotifications(data.map(notification => ({
+        // Sort notifications by createdAt in descending order (newest first)
+        const sortedData = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setNotifications(sortedData.map(notification => ({
           id: notification.id,
           type: notification.type,
           content: notification.content,
