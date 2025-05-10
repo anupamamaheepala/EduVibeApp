@@ -2,19 +2,17 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import '../../css/course-view.css';
+import '../../css/all-courses.css'
 import { AuthContext } from '../AuthContext';
 
-const CourseView = () => {
-  const { courseId } = useParams();
+const ViewCourse = () => {
+  const [course, setCourse] = useState(null);
+  const [message, setMessage] = useState('');
+  const [expandedChapters, setExpandedChapters] = useState({});
   const { isLoggedIn } = useContext(AuthContext);
+  const { courseId } = useParams();
   const navigate = useNavigate();
   const userId = localStorage.getItem('userId');
-
-  const [course, setCourse] = useState(null);
-  const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
-  const [visitedChapters, setVisitedChapters] = useState(new Set());
-  const [error, setError] = useState('');
 
   useEffect(() => {
     if (!isLoggedIn || !userId) {
@@ -31,14 +29,11 @@ const CourseView = () => {
     const fetchCourse = async () => {
       try {
         const response = await axios.get(`http://localhost:8000/api/courses/${courseId}`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'X-User-Id': userId,
-          },
+          headers: { 'X-User-Id': userId },
         });
-        setCourse(response.data);
-        setVisitedChapters(new Set([0])); // Mark first chapter as visited
-        setError('');
+
+        setCourse(response.data.course); // Adjusted to match backend response structure
+        setMessage('');
       } catch (error) {
         const errorMessage =
           error.response?.status === 401
@@ -46,7 +41,8 @@ const CourseView = () => {
             : error.response?.status === 404
             ? 'Course not found.'
             : error.response?.data?.message || 'Failed to fetch course. Please try again.';
-        setError(errorMessage);
+
+        setMessage(`Error: ${errorMessage}`);
         Swal.fire({
           icon: 'error',
           title: 'Error',
@@ -65,98 +61,87 @@ const CourseView = () => {
     };
 
     fetchCourse();
-  }, [courseId, isLoggedIn, userId, navigate]);
+  }, [isLoggedIn, userId, courseId, navigate]);
 
-  const handleNextChapter = () => {
-    if (currentChapterIndex < course.chapters.length - 1) {
-      const nextIndex = currentChapterIndex + 1;
-      setCurrentChapterIndex(nextIndex);
-      setVisitedChapters((prev) => new Set(prev).add(nextIndex));
-    }
+  const toggleChapter = (index) => {
+    setExpandedChapters((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
   };
 
-  const handlePreviousChapter = () => {
-    if (currentChapterIndex > 0) {
-      const prevIndex = currentChapterIndex - 1;
-      setCurrentChapterIndex(prevIndex);
-      setVisitedChapters((prev) => new Set(prev).add(prevIndex));
-    }
-  };
-
-  if (error) {
-    return <div className="error-message">{error}</div>;
+  if (!course && !message) {
+    return <div className="all-courses-page">Loading...</div>;
   }
-
-  if (!course) {
-    return <div className="loading">Loading...</div>;
-  }
-
-  const currentChapter = course.chapters[currentChapterIndex];
-  const completionPercentage = (visitedChapters.size / course.chapters.length) * 100;
 
   return (
-    <div className="course-view-page">
-      <div className="course-header">
-        <h2>{course.name}</h2>
-        <p>{course.description}</p>
-        <p>Created by: {course.username || 'Unknown'}</p>
-      </div>
-
-      <div className="completion-bar-container">
-        <div
-          className="completion-bar"
-          style={{ width: `${completionPercentage}%` }}
-        >
-          {Math.round(completionPercentage)}% Complete
+    <div className="all-courses-page">
+      <div className="semi-header my-courses-header">
+        <div className="search-container">
+          <h2 style={{ color: 'var(--primary)' }}>{course?.name || 'Course'}</h2>
+          <button
+            className="add-course-btn"
+            onClick={() => navigate('/dashboard/mycourses')}
+          >
+            Back to My Courses
+          </button>
         </div>
       </div>
-
-      <div className="chapter-container">
-        <h3>{currentChapter.title}</h3>
-        <p>{currentChapter.description}</p>
-        {currentChapter.youtubeUrl && (
-          <div className="youtube-embed">
-            <iframe
-              width="560"
-              height="315"
-              src={currentChapter.youtubeUrl.replace('watch?v=', 'embed/')}
-              title={currentChapter.title}
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
+      <div className="courses-section">
+        {message && (
+          <p className={`feedback-message ${message.includes('success') ? 'success' : 'error'}`}>
+            {message}
+          </p>
+        )}
+        {course && (
+          <div className="course-details" style={{ maxWidth: '600px', margin: '0 auto' }}>
+            <div className="chapters-list">
+              {course.chapters && course.chapters.length > 0 ? (
+                course.chapters.map((chapter, index) => (
+                  <div key={index} className="chapter-item" style={{ marginBottom: '1rem' }}>
+                    <div
+                      onClick={() => toggleChapter(index)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: '0.8rem',
+                        border: '1px solid var(--dark-gray)',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '1.1rem',
+                        color: 'var(--dark-gray)',
+                      }}
+                    >
+                      <span style={{ marginRight: '0.5rem' }}>
+                        {expandedChapters[index] ? '▼' : '▶'}
+                      </span>
+                      {`${index + 1}. ${chapter.title || `Chapter ${index + 1}`}`}
+                    </div>
+                    {expandedChapters[index] && (
+                      <div
+                        style={{
+                          marginTop: '0.5rem',
+                          padding: '0.8rem',
+                          border: '1px solid var(--dark-gray)',
+                          borderRadius: '4px',
+                          color: 'var(--dark-gray)',
+                          fontSize: '1rem',
+                        }}
+                      >
+                        {chapter.description || 'No description available'}
+                      </div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <p className="no-courses">No chapters available for this course.</p>
+              )}
+            </div>
           </div>
         )}
       </div>
-
-      <div className="navigation-buttons">
-        <button
-          className="nav-btn"
-          onClick={handlePreviousChapter}
-          disabled={currentChapterIndex === 0}
-        >
-          &lt; Previous
-        </button>
-        <span>
-          Chapter {currentChapterIndex + 1} of {course.chapters.length}
-        </span>
-        <button
-          className="nav-btn"
-          onClick={handleNextChapter}
-          disabled={currentChapterIndex === course.chapters.length - 1}
-        >
-          Next &gt;
-        </button>
-      </div>
-
-      <button
-        className="back-btn"
-        onClick={() => navigate('/my-courses')}
-      >
-        Back to My Courses
-      </button>
     </div>
   );
 };
 
-export default CourseView;
+export default ViewCourse;

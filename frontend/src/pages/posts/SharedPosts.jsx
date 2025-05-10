@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../../css/SharedPosts.css'; // Use same styles as ViewPosts
 import userLogo from '../../images/user.png';
+import CommentPopup from '../comments/CommentPopup';
 
 const SharedPosts = () => {
   const [sharedData, setSharedData] = useState([]);
@@ -9,6 +10,8 @@ const SharedPosts = () => {
   const userId = localStorage.getItem('userId');
   const [openImage, setOpenImage] = useState(null);
   const [openVideo, setOpenVideo] = useState(null);
+  const [activeCommentPostId, setActiveCommentPostId] = useState(null);
+  const [commentCounts, setCommentCounts] = useState({});
 
   useEffect(() => {
     const fetchSharedPosts = async () => {
@@ -43,6 +46,40 @@ const validPosts = detailedPosts.filter(Boolean).sort(
 
     fetchSharedPosts();
   }, [userId]);
+  const fetchCommentCounts = async (postsData) => {
+    try {
+      const counts = {};
+      for (const post of postsData) {
+        const response = await fetch(`http://localhost:8000/api/comments/post/${post.id}`);
+        if (response.ok) {
+          const comments = await response.json();
+          counts[post.id] = comments.length;
+        }
+      }
+      setCommentCounts(counts);
+    } catch (err) {
+      console.error('Error fetching comment counts:', err);
+    }
+  };
+
+  const openComments = (postId) => {
+    setActiveCommentPostId(postId);
+  };
+  
+
+  const closeComments = () => {
+    if (activeCommentPostId) {
+      fetchCommentCounts([{ id: activeCommentPostId }]);
+    }
+    setActiveCommentPostId(null);
+  };
+  
+  
+  
+  
+  const getCommentCount = (postId) => {
+    return commentCounts[postId] || 0;
+  };
 
   const getTimeAgo = (timestamp) => {
     const diff = Math.floor((new Date() - new Date(timestamp)) / 1000);
@@ -119,9 +156,21 @@ const validPosts = detailedPosts.filter(Boolean).sort(
                 <p className="post-meta">
                   Shared with you by <strong>{fromName}</strong> on {new Date(sharedAt).toLocaleString()}
                 </p>
-
-
+                
               </div>
+              {/* Post Actions - Like, Comment, etc. */}
+              <div className="post-actions">
+                  <button className="post-action-btn like-btn">
+                    <i className="far fa-thumbs-up"></i> Like
+                  </button>
+                  <button 
+                    className="post-action-btn comment-btn"
+                    onClick={() => openComments(post.id)}
+                  >
+                    <i className="far fa-comment"></i> Comment ({getCommentCount(post.id)})
+                  </button>
+                 
+                </div>
             </div>
           ))}
           {openImage && (
@@ -146,6 +195,14 @@ const validPosts = detailedPosts.filter(Boolean).sort(
 
 
         </div>
+      )}
+       {/* Comment Popup */}
+       {activeCommentPostId && (
+        <CommentPopup 
+          postId={activeCommentPostId} 
+          isOpen={activeCommentPostId !== null} 
+          onClose={closeComments} 
+        />
       )}
     </div>
   );
