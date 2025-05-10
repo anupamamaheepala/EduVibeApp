@@ -11,6 +11,7 @@ export default function NotificationSystem() {
     comments: true,
     mentions: true,
     courseReminders: true,
+    replies: true,
     allEmail: true,
     allMobile: true
   });
@@ -43,6 +44,9 @@ export default function NotificationSystem() {
     };
 
     fetchNotifications();
+    const interval = setInterval(fetchNotifications, 30000); // Fetch every 30 seconds
+
+    return () => clearInterval(interval); // Cleanup on unmount
   }, [username]);
 
   // Helper function to format time
@@ -52,7 +56,7 @@ export default function NotificationSystem() {
     const diffInSeconds = Math.floor((now - date) / 1000);
 
     if (diffInSeconds < 60) return 'just now';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago Kaur`;
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
     return `${Math.floor(diffInSeconds / 86400)} days ago`;
   };
@@ -108,8 +112,9 @@ export default function NotificationSystem() {
     switch(type) {
       case 'like': return <Heart size={20} className="text-red-500 notification-icon-like" />;
       case 'comment': return <MessageCircle size={20} className="text-purple-500 notification-icon-comment" />;
-      case 'mention': return <User size={20} className="text-purple-600 notification-icon-mention" />;
-      case 'course': return <BookOpen size={20} className="text-green-500 notification-icon-course" />;
+      //case 'mention': return <User size={20} className="text-purple-600 notification-icon-mention" />;
+      //case 'course': return <BookOpen size={20} className="text-green-500 notification-icon-course" />;
+      case 'reply': return <MessageCircle size={20} className="text-blue-500 notification-icon-reply" />;
       default: return <Bell size={20} className="text-gray-500" />;
     }
   };
@@ -133,12 +138,12 @@ export default function NotificationSystem() {
           >
             Mark all as read
           </button>
-          <button 
+          {/* <button 
             onClick={() => setShowSettings(!showSettings)}
             className="p-1 rounded-full hover:bg-gray-100"
           >
             <Settings size={20} className="text-gray-600" />
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -168,17 +173,23 @@ export default function NotificationSystem() {
         >
           Comments
         </button>
-        <button
+        {/* <button
           onClick={() => setFilter('mention')}
           className={`filter-btn ${filter === 'mention' ? 'active' : ''}`}
         >
           Mentions
-        </button>
-        <button
+        </button> */}
+        {/* <button
           onClick={() => setFilter('course')}
           className={`filter-btn ${filter === 'course' ? 'active' : ''}`}
         >
           Course Reminders
+        </button> */}
+        <button
+          onClick={() => setFilter('reply')}
+          className={`filter-btn ${filter === 'reply' ? 'active' : ''}`}
+        >
+          Replies
         </button>
       </div>
 
@@ -321,6 +332,25 @@ export default function NotificationSystem() {
                       onChange={() => setNotificationSettings({
                         ...notificationSettings,
                         courseReminders: !notificationSettings.courseReminders
+                      })}
+                    />
+                    <div className="toggle-switch-bg w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                  </label>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <MessageCircle size={16} className="text-blue-500 mr-2" />
+                    <span className="text-sm text-gray-800">Replies to your comments</span>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      className="sr-only peer"
+                      checked={notificationSettings.replies}
+                      onChange={() => setNotificationSettings({
+                        ...notificationSettings,
+                        replies: !notificationSettings.replies
                       })}
                     />
                     <div className="toggle-switch-bg w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>

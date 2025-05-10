@@ -1,6 +1,9 @@
 package com.eduvibe.backend.service;
 
+import com.eduvibe.backend.model.Comment;
+import com.eduvibe.backend.model.Notification;
 import com.eduvibe.backend.model.Reply;
+import com.eduvibe.backend.repository.CommentRepository;
 import com.eduvibe.backend.repository.ReplyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,11 +17,33 @@ public class ReplyService {
     @Autowired
     private ReplyRepository replyRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
     public Reply saveReply(Reply reply) {
         if (reply.getCreatedAt() == null) {
             reply.setCreatedAt(new Date());
         }
-        return replyRepository.save(reply);
+        Reply savedReply = replyRepository.save(reply);
+
+        // Create a notification for the parent comment's owner
+        Notification notification = new Notification();
+        notification.setPostId(reply.getParentCommentId()); // Using parentCommentId as postId for context
+        String ownerUsername = getParentCommentOwnerUsername(reply.getParentCommentId());
+        if (ownerUsername != null) {
+            notification.setOwnerUsername(ownerUsername);
+            notification.setCommenterUsername(reply.getUsername());
+            notification.setType("reply");
+            notification.setContent(reply.getUsername() + " replied to your comment: " + reply.getText());
+            notification.setCreatedAt(new Date());
+            notification.setRead(false);
+            notificationService.saveNotification(notification);
+        }
+
+        return savedReply;
     }
 
     public List<Reply> getRepliesByParentCommentId(String parentCommentId) {
@@ -36,5 +61,10 @@ public class ReplyService {
 
     public void deleteReply(String id) {
         replyRepository.deleteById(id);
+    }
+
+    private String getParentCommentOwnerUsername(String parentCommentId) {
+        Comment comment = commentRepository.findById(parentCommentId).orElse(null);
+        return comment != null ? comment.getUsername() : null;
     }
 }

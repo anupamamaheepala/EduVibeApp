@@ -10,10 +10,10 @@ public class Notification {
 
     @Id
     private String id;
-    private String postId; // ID of the post being commented on
-    private String ownerUsername; // Username of the post owner
-    private String commenterUsername; // Username of the person who commented
-    private String type; // e.g., "comment"
+    private String postId; // ID of the post or comment being interacted with
+    private String ownerUsername; // Username of the post/comment owner
+    private String commenterUsername; // Username of the person who interacted
+    private String type; // e.g., "comment", "like", "mention", "course", "reply"
     private String content; // Notification message
     private Date createdAt;
     private boolean read; // Whether the notification has been read
