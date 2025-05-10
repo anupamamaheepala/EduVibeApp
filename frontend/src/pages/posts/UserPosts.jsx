@@ -77,62 +77,105 @@ function UserPosts() {
     }
   };
 
-  const fetchLikeData = async (postsData) => {
-    try {
-      const likeCountsTemp = {};
-      const likedPostsTemp = {};
-      for (const post of postsData) {
-        const countResponse = await fetch(`http://localhost:8000/api/likes/count/${post.id}`);
-        if (countResponse.ok) {
-          likeCountsTemp[post.id] = await countResponse.json();
-        }
-        if (currentUserId) {
-          const isLikedResponse = await fetch(
-            `http://localhost:8000/api/likes/is-liked?postId=${post.id}&userId=${currentUserId}`
-          );
-          if (isLikedResponse.ok) {
-            likedPostsTemp[post.id] = await isLikedResponse.json();
-          }
+  // Fetch likes data for posts
+const fetchLikeData = async (postsData) => {
+  try {
+    const likeCountsTemp = {};
+    const likedPostsTemp = {};
+    
+    for (const post of postsData) {
+      // Fetch like count for each post
+      const countResponse = await fetch(`http://localhost:8000/api/likes/count/${post.id}`);
+      if (countResponse.ok) {
+        likeCountsTemp[post.id] = await countResponse.json();
+      }
+      
+      // Check if current user has liked each post
+      if (currentUserId) {
+        const isLikedResponse = await fetch(
+          `http://localhost:8000/api/likes/is-liked?postId=${post.id}&userId=${currentUserId}`
+        );
+        if (isLikedResponse.ok) {
+          likedPostsTemp[post.id] = await isLikedResponse.json();
         }
       }
-      setLikeCounts(likeCountsTemp);
-      setLikedPosts(likedPostsTemp);
-    } catch (err) {
-      console.error('Error fetching like data:', err);
     }
-  };
+    setLikeCounts(likeCountsTemp);
+    setLikedPosts(likedPostsTemp);
+  } catch (err) {
+    console.error('Error fetching like data:', err);
+  }
+};
 
-  const handleLike = async (postId) => {
-    if (!currentUserId) {
-      alert('Please log in to like posts');
-      return;
+// Handle like/unlike action
+const handleLike = async (postId) => {
+  // Check if user is logged in
+  if (!currentUserId) {
+    alert('Please log in to like posts');
+    return;
+  }
+  
+  const username = localStorage.getItem('username') || 'Anonymous';
+  
+  try {
+    // Show immediate feedback by updating UI optimistically
+    const currentlyLiked = likedPosts[postId] || false;
+    const currentCount = likeCounts[postId] || 0;
+    
+    // Update UI immediately (optimistic update)
+    setLikedPosts((prev) => ({
+      ...prev,
+      [postId]: !currentlyLiked,
+    }));
+    
+    setLikeCounts((prev) => ({
+      ...prev,
+      [postId]: currentlyLiked ? currentCount - 1 : currentCount + 1,
+    }));
+    
+    // Make API call to update server
+    const response = await fetch('http://localhost:8000/api/likes/toggle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        postId,
+        userId: currentUserId,
+        username,
+      }),
+    });
+    
+    // If API call fails, revert the optimistic update
+    if (!response.ok) {
+      setLikedPosts((prev) => ({
+        ...prev,
+        [postId]: currentlyLiked,
+      }));
+      
+      setLikeCounts((prev) => ({
+        ...prev,
+        [postId]: currentCount,
+      }));
+      
+      console.error('Server rejected like operation');
     }
-    const username = localStorage.getItem('username') || 'Anonymous';
-    try {
-      const response = await fetch('http://localhost:8000/api/likes/toggle', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          postId,
-          userId: currentUserId,
-          username,
-        }),
-      });
-      if (response.ok) {
-        const isLiked = response.status === 200;
-        setLikedPosts((prev) => ({
-          ...prev,
-          [postId]: isLiked,
-        }));
-        setLikeCounts((prev) => ({
-          ...prev,
-          [postId]: isLiked ? (prev[postId] || 0) + 1 : (prev[postId] || 1) - 1,
-        }));
-      }
-    } catch (err) {
-      console.error('Error toggling like:', err);
-    }
-  };
+  } catch (err) {
+    // Revert optimistic update on error
+    const currentlyLiked = likedPosts[postId] || false;
+    const currentCount = likeCounts[postId] || 0;
+    
+    setLikedPosts((prev) => ({
+      ...prev,
+      [postId]: currentlyLiked,
+    }));
+    
+    setLikeCounts((prev) => ({
+      ...prev,
+      [postId]: currentCount,
+    }));
+    
+    console.error('Error toggling like:', err);
+  }
+};
 
   const getTimeAgo = (timestamp) => {
     const diff = Math.floor((new Date() - new Date(timestamp)) / 1000);
@@ -200,25 +243,27 @@ function UserPosts() {
                     <span className="post-username">{post.username || post.userId}</span>
                   </div>
                   <div className="post-right">
-                    <span className="post-time">{getTimeAgo(post.createdAt)}</span>
-                    <button
-                      onClick={() => toggleDropdown(post.id)}
-                      className="dropdown-button"
-                      aria-label="More options"
-                    >
-                      ⋮
-                    </button>
-                    {openDropdown === post.id && (
-                      <div className="dropdown-menu" ref={dropdownRef}>
-                        <button onClick={() => handleEdit(post.id)} className="dropdown-item">
-                          Edit
-                        </button>
-                        <DeleteUserPost postId={post.id} onDelete={handlePostDeleted} />
-                        <button onClick={() => handleShare(post.id)} className="dropdown-item">
-                          Share
-                        </button>
-                      </div>
-                    )}
+                    <div className="dropdown-container">
+                      <span className="post-time">{getTimeAgo(post.createdAt)}</span>
+                      <button
+                        onClick={() => toggleDropdown(post.id)}
+                        className="dropdown-button"
+                        aria-label="More options"
+                      >
+                        ⋮
+                      </button>
+                      {openDropdown === post.id && (
+                        <div className="dropdown-menu" ref={dropdownRef}>
+                          <button onClick={() => handleEdit(post.id)} className="dropdown-item">
+                            Edit
+                          </button>
+                          <DeleteUserPost postId={post.id} onDelete={handlePostDeleted} />
+                          <button onClick={() => handleShare(post.id)} className="dropdown-item">
+                            Share
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -258,19 +303,21 @@ function UserPosts() {
                   );
                 })()}
 
-                <div className="post-content">
-                  <p className="post-caption">{post.content}</p>
-                  <p className="post-meta">
+                <div className="User-post-content">
+                  <p className="User-post-caption">{post.content}</p>
+                  <p className="User-post-meta">
                     Posted on {new Date(post.createdAt).toLocaleDateString()}
                   </p>
                 </div>
-                <div className="post-actions">
+                <div className="User-post-actions">
                   <button
                     className={`post-action-btn like-btn ${likedPosts[post.id] ? 'liked' : ''}`}
                     onClick={() => handleLike(post.id)}
                   >
-                    <i className={`far fa-thumbs-up ${likedPosts[post.id] ? 'fas' : ''}`}></i> Like (
-                    {likeCounts[post.id] || 0})
+                    <i className={`${likedPosts[post.id] ? 'fas' : 'far'} fa-thumbs-up`}></i>
+                    <span className="like-text">Like</span>
+                    <span className="liked-text">Liked</span>
+                    ({likeCounts[post.id] || 0})
                   </button>
                   <button
                     className="post-action-btn comment-btn"

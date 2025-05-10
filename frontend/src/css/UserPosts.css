@@ -178,17 +178,17 @@ font-size: 1.75rem;
   display: block;
 }
 
-.post-content {
+.User-post-content {
   padding: 1.5rem;
 }
 
-.post-caption {
+.User-post-caption {
   font-size: 1rem;
   color: #1f2937;
   margin-bottom: 0.5rem;
 }
 
-.post-meta {
+.User-post-meta {
   font-size: 0.875rem;
   color: #6b7280;
 }
@@ -352,4 +352,107 @@ font-size: 1.75rem;
   font-size: 16px;
   padding: 5px 10px;
   cursor: pointer;
+}
+
+/* Post actions container */
+.User-post-actions {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 0;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 12px;
+}
+
+/* Button base styling */
+.post-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  margin: 0 4px;
+  border: none;
+  background-color: transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #606770;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.post-action-btn:first-child {
+  margin-left: 0;
+}
+
+.post-action-btn:last-child {
+  margin-right: 0;
+}
+
+.post-action-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Icon styling */
+.post-action-btn i {
+  margin-right: 6px;
+  font-size: 16px;
+  transition: color 0.2s ease;
+}
+
+/* Like button specific styling */
+.like-btn.liked {
+  color: #1877f2;
+}
+
+.like-btn.liked i {
+  color: #1877f2;
+}
+
+/* Text toggle for like/liked state */
+.like-btn .like-text {
+  display: inline;
+  margin-right: 3px;
+}
+
+.like-btn .liked-text {
+  display: none;
+  margin-right: 3px;
+}
+
+.like-btn.liked .like-text {
+  display: none;
+}
+
+.like-btn.liked .liked-text {
+  display: inline;
+  color: #1877f2;
+}
+
+/* Comment button specific styling */
+.comment-btn:hover {
+  color: #65676b;
+}
+
+/* Active state when clicked */
+.post-action-btn:active {
+  transform: scale(0.98);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .User-post-actions {
+    padding: 8px 0;
+  }
+  
+  .post-action-btn {
+    font-size: 13px;
+    padding: 6px 8px;
+  }
+  
+  .post-action-btn i {
+    font-size: 14px;
+    margin-right: 4px;
+  }
 }
