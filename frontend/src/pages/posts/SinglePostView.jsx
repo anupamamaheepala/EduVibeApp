@@ -32,6 +32,12 @@ const SinglePostView = () => {
       });
   }, [postId]);
 
+  useEffect(() => {
+  if (isAuthenticated) {
+    setShowLoginPopup(false);
+  }
+}, [isAuthenticated]);
+
   const fetchCommentCounts = async (postsData) => {
     try {
       const counts = {};
@@ -78,7 +84,8 @@ const SinglePostView = () => {
 
   return (
   <div className="Single-page-container">
-    <Header />
+    <Header openPopup={() => setShowLoginPopup(true)} />
+
     <div className="Single-posts-container">
       <div className="Single-posts-feed">
         <div className="Single-post-card">
@@ -125,16 +132,20 @@ const SinglePostView = () => {
                   <button className="post-action-btn like-btn">
                     <i className="far fa-thumbs-up"></i> Like
                   </button>
-                  <button 
-                    className="post-action-btn comment-btn"
-                    onClick={() => openComments(post.id)}
-                  >
-                    <i className="far fa-comment"></i> Comment ({getCommentCount(post.id)})
-                  </button>
-                 
-                </div>
-
-        
+                 <button
+                  className="post-action-btn comment-btn"
+                  onClick={() => {
+                    const authed = localStorage.getItem("token"); // ✅ read directly from localStorage
+                    if (authed) {
+                      openComments(post.id);
+                    } else {
+                      setShowLoginPopup(true);
+                    }
+                  }}
+                >
+                  <i className="far fa-comment"></i> Comment ({getCommentCount(post.id)})
+                </button>                 
+          </div>
         </div>
       </div>
     </div>
@@ -146,13 +157,13 @@ const SinglePostView = () => {
           onClose={closeComments} 
         />
       )}
-        {!isAuthenticated && showLoginPopup && (
-        <div className="login-popup-overlay">
-          <div className="login-popup-content">
-             <Login onClose={() => setShowLoginPopup(false)} /> 
+        {!localStorage.getItem("token") && showLoginPopup && (
+          <div className="login-popup-overlay">
+            <div className="login-popup-content">
+              <Login onClose={() => setShowLoginPopup(false)} />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       <Footer />
     </div>
