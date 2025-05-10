@@ -59,13 +59,13 @@ const UserHeader = () => {
                 About
               </NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink to="/resources" className={({ isActive }) => (isActive ? 'active' : '')}>
                 Resources
               </NavLink>
-            </li>
+            </li> */}
             <li>
-              <NavLink to="/contact" className={({ isActive }) => (isActive ? 'active' : '')}>
+              <NavLink to="/contactus" className={({ isActive }) => (isActive ? 'active' : '')}>
                 Contact
               </NavLink>
             </li>
