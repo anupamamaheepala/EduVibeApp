@@ -21,6 +21,7 @@ const SinglePostView = () => {
   const [likedPosts, setLikedPosts] = useState({}); // New state for liked status
   const { isAuthenticated } = useContext(AuthContext);
   const [showLoginPopup, setShowLoginPopup] = useState(!isAuthenticated);
+  const currentUserId = localStorage.getItem('userId');
 
   useEffect(() => {
     const fetchPostAndLikeData = async () => {
@@ -148,73 +149,74 @@ const SinglePostView = () => {
     <div className="Single-page-container">
       <Header openPopup={() => setShowLoginPopup(true)} />
 
-      <div className="Single-posts-container">
-        <div className="Single-posts-feed">
-          <div className="Single-post-card">
-            <div className="Single-post-header">
-              <div className="Single-post-user">
-                <img className="Single-post-user-avatar" src={userLogo} alt="User avatar" />
-                <span className="Single-post-username">{post.username || post.userId}</span>
+      <div className="Single-post-container">
+        <div className="Single-post-card">
+          <div className="Single-post-header">
+            <div className="Single-post-user">
+              <img className="Single-post-user-avatar" src={userLogo} alt="User avatar" />
+              <span className="Single-post-username">{post.username || post.userId}</span>
+            </div>
+            <span className="Single-post-time">{getTimeAgo(post.createdAt)}</span>
+          </div>
+
+          {post.mediaUrls && post.mediaUrls.length > 0 && (() => {
+            const mediaCount = post.mediaUrls.length;
+            let mediaClass = 'SingleV-media-gallery';
+            
+            // Adding the correct class based on media count
+            if (mediaCount === 1) mediaClass += ' media-1';
+            else if (mediaCount === 2) mediaClass += ' media-2';
+            else if (mediaCount === 3) mediaClass += ' media-3';
+            else if (mediaCount === 4) mediaClass += ' media-4';
+            
+            return (
+              <div className={mediaClass}>
+                {post.mediaUrls.map((url, index) => {
+                  const type = post.mediaTypes?.[index] || (url.endsWith('.mp4') ? 'video' : 'image');
+                  return type === 'image' ? (
+                    <img key={index} src={url} alt={`Post media ${index}`} />
+                  ) : (
+                    <video key={index} controls>
+                      <source src={url} type="video/mp4" />
+                    </video>
+                  );
+                })}
               </div>
-              <span className="Single-post-time">{getTimeAgo(post.createdAt)}</span>
-            </div>
+            );
+          })()}
 
-            {post.mediaUrls && post.mediaUrls.length > 0 && (() => {
-              const mediaCount = post.mediaUrls.length;
-              let mediaClass = 'media-gallery';
-              if (mediaCount === 1) mediaClass += ' media-1';
-              else if (mediaCount === 2) mediaClass += ' media-2';
-              else if (mediaCount === 3) mediaClass += ' media-3';
-              else if (mediaCount === 4) mediaClass += ' media-4';
-
-              return (
-                <div className={mediaClass}>
-                  {post.mediaUrls.map((url, index) => {
-                    const type = post.mediaTypes?.[index] || (url.endsWith('.mp4') ? 'video' : 'image');
-                    return type === 'image' ? (
-                      <img key={index} src={url} alt={`Post media ${index}`} />
-                    ) : (
-                      <video key={index} controls>
-                        <source src={url} type="video/mp4" />
-                      </video>
-                    );
-                  })}
-                </div>
-              );
-            })()}
-
-            <div className="Single-post-content">
-              <p className="Single-post-caption">{post.content}</p>
-              <p className="Single-post-meta">
-                Posted by <strong>{post.username || post.userId}</strong> on{' '}
-                {new Date(post.createdAt).toLocaleDateString()}
-              </p>
-            </div>
-            <div className="post-actions">
-              <button
-                className={`post-action-btn like-btn ${likedPosts[post.id] ? 'liked' : ''}`}
-                onClick={() => handleLike(post.id)}
-              >
-                <i className={`far fa-thumbs-up ${likedPosts[post.id] ? 'fas' : ''}`}></i> Like (
-                {likeCounts[post.id] || 0})
-              </button>
-              <button
-                className="post-action-btn comment-btn"
-                onClick={() => {
-                  const authed = localStorage.getItem('token');
-                  if (authed) {
-                    openComments(post.id);
-                  } else {
-                    setShowLoginPopup(true);
-                  }
-                }}
-              >
-                <i className="far fa-comment"></i> Comment ({getCommentCount(post.id)})
-              </button>
-            </div>
+          <div className="Single-post-content">
+            <p className="Single-post-caption">{post.content}</p>
+            <p className="Single-post-meta">
+              Posted by <strong>{post.username || post.userId}</strong> on{' '}
+              {new Date(post.createdAt).toLocaleDateString()}
+            </p>
+          </div>
+          <div className="Single-post-actions">
+            <button
+              className={`Single-post-action-btn Single-like-btn ${likedPosts[post.id] ? 'liked' : ''}`}
+              onClick={() => handleLike(post.id)}
+            >
+              <i className={`far fa-thumbs-up ${likedPosts[post.id] ? 'fas' : ''}`}></i> Like (
+              {likeCounts[post.id] || 0})
+            </button>
+            <button
+              className="Single-post-action-btn Single-comment-btn"
+              onClick={() => {
+                const authed = localStorage.getItem('token');
+                if (authed) {
+                  openComments(post.id);
+                } else {
+                  setShowLoginPopup(true);
+                }
+              }}
+            >
+              <i className="far fa-comment"></i> Comment ({getCommentCount(post.id)})
+            </button>
           </div>
         </div>
       </div>
+
       {activeCommentPostId && (
         <CommentPopup
           postId={activeCommentPostId}

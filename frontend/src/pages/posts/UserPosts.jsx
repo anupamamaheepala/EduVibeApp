@@ -269,7 +269,7 @@ const handleLike = async (postId) => {
 
                 {post.mediaUrls && post.mediaUrls.length > 0 && (() => {
                   const mediaCount = post.mediaUrls.length;
-                  let mediaClass = 'media-gallery';
+                  let mediaClass = 'User-media-gallery';
                   if (mediaCount === 1) mediaClass += ' media-1';
                   else if (mediaCount === 2) mediaClass += ' media-2';
                   else if (mediaCount === 3) mediaClass += ' media-3';
