@@ -31,18 +31,24 @@ export default function NotificationSystem() {
         const data = await res.json();
         // Sort notifications by createdAt in descending order (newest first)
         const sortedData = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setNotifications(sortedData.map(notification => ({
-          id: notification.id,
-          type: notification.type,
-          content: notification.content,
-          time: formatTime(notification.createdAt),
-          read: notification.read,
-          user: {
-            name: notification.commenterUsername,
-            avatar: '/api/placeholder/40/40'
-          },
-          postId: notification.postId // For navigation
-        })));
+        setNotifications(sortedData.map(notification => {
+          // Remove the username from the content string
+          const contentWithoutUsername = notification.content.replace(
+            new RegExp(`^${notification.commenterUsername}\\s+`, 'i'), ''
+          );
+          return {
+            id: notification.id,
+            type: notification.type,
+            content: contentWithoutUsername, // Use the modified content
+            time: formatTime(notification.createdAt),
+            read: notification.read,
+            user: {
+              name: notification.commenterUsername,
+              avatar: '/api/placeholder/40/40'
+            },
+            postId: notification.postId // For navigation
+          };
+        }));
       } catch (error) {
         console.error('Error fetching notifications:', error);
       }
