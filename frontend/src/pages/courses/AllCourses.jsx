@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../UserHeader';
 import Footer from '../Footer';
 import '../../css/all-courses.css';
@@ -9,6 +10,8 @@ const AllCourses = () => {
   const [searchBy, setSearchBy] = useState('name'); // 'name' or 'author'
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -84,6 +87,14 @@ const AllCourses = () => {
                   <div className="course-meta">
                     <span>{course.chapters ? course.chapters.length : 0} Chapters</span>
                   </div>
+                </div>
+                <div className="course-actions">
+                  <button
+                    className="view-btn"
+                    onClick={() => navigate(`/view-all-course/${course.id}`)}
+                  >
+                    View Course
+                  </button>
                 </div>
               </div>
             ))

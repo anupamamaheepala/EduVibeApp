@@ -23,6 +23,7 @@ const CourseForm = () => {
   const [loading, setLoading] = useState(false);
 
   const userId = localStorage.getItem('userId');
+  const token = localStorage.getItem('token'); // Assuming token is stored
   const username = localStorage.getItem('username');
 
   // Fetch course data for edit mode
@@ -33,27 +34,38 @@ const CourseForm = () => {
           const response = await axios.get(`http://localhost:8000/api/courses/${courseId}`, {
             headers: {
               'X-User-Id': userId,
+              'Authorization': `Bearer ${token}`, // Add token if required
             },
           });
+          const courseData = response.data.course; // Match backend response structure
           setCourse({
-            name: response.data.name || '',
-            description: response.data.description || '',
-            chapters: response.data.chapters.length > 0
-              ? response.data.chapters
+            name: courseData.name || '',
+            description: courseData.description || '',
+            chapters: courseData.chapters && courseData.chapters.length > 0
+              ? courseData.chapters
               : [{ title: '', description: '', youtubeUrl: '' }],
           });
         } catch (error) {
-          setMessage('Error: Failed to load course data. Please try again.');
+          console.error('Fetch course error:', error.response ? error.response.data : error.message);
+          const errorMessage =
+            error.response?.status === 401
+              ? 'Session expired. Please log in again.'
+              : error.response?.status === 403
+              ? 'You are not authorized to view this course.'
+              : error.response?.status === 404
+              ? 'Course not found.'
+              : error.response?.data?.message || 'Failed to load course data. Please try again.';
+          setMessage(`Error: ${errorMessage}`);
           Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: error.response?.data?.message || 'Failed to load course data.',
+            text: errorMessage,
           });
         }
       };
       fetchCourse();
     }
-  }, [isEditMode, courseId, isLoggedIn, userId]);
+  }, [isEditMode, courseId, isLoggedIn, userId, token]);
 
   const handleCourseChange = (e) => {
     const { name, value } = e.target;
@@ -121,6 +133,7 @@ const CourseForm = () => {
             headers: {
               'Content-Type': 'application/json',
               'X-User-Id': userId,
+              'Authorization': `Bearer ${token}`, // Add token if required
             },
           }
         );
@@ -147,6 +160,7 @@ const CourseForm = () => {
           headers: {
             'Content-Type': 'application/json',
             'X-User-Id': userId,
+            'Authorization': `Bearer ${token}`, // Add token if required
           },
         });
 
