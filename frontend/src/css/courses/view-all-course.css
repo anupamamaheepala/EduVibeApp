@@ -6,21 +6,21 @@
   --white: #ffffff;
 }
 
-.view-course-page {
+.view-all-course-page {
   padding-top: 70px;
   min-height: 100vh;
-  background: url('../images/background.png') no-repeat center center/cover;
+  background: url('../../images/background.png') no-repeat center center/cover;
   background-attachment: fixed;
   background-color: var(--gray); /* Fallback color */
 }
 
-.view-course-header {
+.view-all-course-header {
   padding: 2rem;
   background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white for readability */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.header-container {
+.view-all-course-header-container {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
@@ -28,7 +28,7 @@
   align-items: center;
 }
 
-.header-container h2 {
+.view-all-course-header-container h2 {
   font-size: 2.5rem;
   color: var(--primary);
   font-weight: 700;
@@ -37,7 +37,7 @@
   margin: 0;
 }
 
-.back-btn {
+.view-all-course-back-btn {
   padding: 0.9rem 2rem;
   border-radius: 6px;
   font-weight: 600;
@@ -50,12 +50,12 @@
   box-shadow: 0 4px 12px rgba(119, 59, 235, 0.2);
 }
 
-.back-btn:hover {
+.view-all-course-back-btn:hover {
   background-color: #6a32d5;
   box-shadow: 0 6px 15px rgba(119, 59, 235, 0.3);
 }
 
-.course-content-section {
+.view-all-course-content-section {
   padding: 5rem 2rem;
   max-width: 1200px;
   margin: 0 auto;
@@ -63,7 +63,7 @@
   justify-content: center;
 }
 
-.course-card {
+.view-all-course-card {
   background-color: var(--white);
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
@@ -78,12 +78,12 @@
   overflow-y: auto; /* Add scrollbar if content exceeds height */
 }
 
-.course-card:hover {
+.view-all-course-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
-.course-title {
+.view-all-course-title {
   font-size: 2.2rem;
   color: var(--primary);
   margin-bottom: 1.5rem;
@@ -92,11 +92,11 @@
   padding-bottom: 1rem;
 }
 
-.chapter-item {
+.view-all-course-chapter-item {
   margin-bottom: 1.5rem;
 }
 
-.chapter-title {
+.view-all-course-chapter-title {
   display: flex;
   align-items: center;
   padding: 1rem;
@@ -110,18 +110,18 @@
   transition: all 0.3s ease;
 }
 
-.chapter-title:hover {
+.view-all-course-chapter-title:hover {
   background-color: var(--white);
   border-color: var(--primary);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.chapter-title span {
+.view-all-course-chapter-title span {
   margin-right: 0.8rem;
   font-size: 1.1rem;
 }
 
-.chapter-description {
+.view-all-course-chapter-description {
   margin-top: 0.8rem;
   padding: 1rem;
   border: 1px solid var(--dark-gray);
@@ -133,7 +133,7 @@
   line-height: 1.6;
 }
 
-.no-chapters {
+.view-all-course-no-chapters {
   text-align: center;
   font-size: 1.5rem;
   color: var(--dark-gray);
@@ -143,7 +143,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.start-btn {
+.view-all-course-start-btn {
   margin-top: 1rem;
   padding: 0.8rem 1.8rem;
   background-color: #28a745;
@@ -154,11 +154,11 @@
   transition: background-color 0.3s ease;
 }
 
-.start-btn:hover {
+.view-all-course-start-btn:hover {
   background-color: #218838;
 }
 
-.feedback-message {
+.view-all-course-feedback {
   text-align: center;
   padding: 1.2rem;
   margin-bottom: 1.5rem;
@@ -166,52 +166,52 @@
   font-size: 1.1rem;
 }
 
-.feedback-message.success {
+.view-all-course-feedback.success {
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
 }
 
-.feedback-message.error {
+.view-all-course-feedback.error {
   background-color: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
 
 @media (max-width: 768px) {
-  .view-course-header {
+  .view-all-course-header {
     padding: 1.5rem 1rem;
   }
 
-  .header-container h2 {
+  .view-all-course-header-container h2 {
     font-size: 2rem;
   }
 
-  .back-btn {
+  .view-all-course-back-btn {
     padding: 0.7rem 1.5rem;
     font-size: 1rem;
   }
 
-  .course-content-section {
+  .view-all-course-content-section {
     padding: 3rem 1rem;
   }
 
-  .course-card {
+  .view-all-course-card {
     padding: 2rem;
     width: 400px; /* Reduced width for mobile */
     min-height: 500px; /* Reduced min-height for mobile */
   }
 
-  .course-title {
+  .view-all-course-title {
     font-size: 1.8rem;
   }
 
-  .chapter-title {
+  .view-all-course-chapter-title {
     font-size: 1.1rem;
     padding: 0.8rem;
   }
 
-  .chapter-description {
+  .view-all-course-chapter-description {
     font-size: 1rem;
     padding: 0.8rem;
   }
