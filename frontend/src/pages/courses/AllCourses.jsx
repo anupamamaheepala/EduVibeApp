@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../UserHeader';
 import Footer from '../Footer';
-import '../../css/all-courses.css';
+import '../../css/courses/all-courses.css';
 
 const AllCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -54,43 +54,43 @@ const AllCourses = () => {
   return (
     <div className="all-courses-page">
       <Header />
-      <div className="semi-header">
-        <div className="search-container">
+      <div className="all-courses-semi-header">
+        <div className="all-courses-search-container">
           <h2>Explore All Courses</h2>
-          <div className="search-bar">
+          <div className="all-courses-search-bar">
             <input
               type="text"
               placeholder={`Search by ${searchBy}`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <button className="toggle-search-btn" onClick={toggleSearchBy}>
+            <button className="all-courses-toggle-btn" onClick={toggleSearchBy}>
               Search by {searchBy === 'name' ? 'Author' : 'Name'}
             </button>
           </div>
         </div>
       </div>
-      <div className="courses-section">
-        <div className="courses-grid">
+      <div className="all-courses-section">
+        <div className="all-courses-grid">
           {loading ? (
             <p>Loading courses...</p>
           ) : error ? (
-            <p className="error">Error: {error}</p>
+            <p className="all-courses-error">Error: {error}</p>
           ) : filteredCourses.length > 0 ? (
             filteredCourses.map((course) => (
-              <div key={course.id} className="course-card">
-                <div className="course-image"></div>
-                <div className="course-content">
+              <div key={course.id} className="all-courses-card">
+                <div className="all-courses-image"></div>
+                <div className="all-courses-content">
                   <h3>{course.name}</h3>
-                  <p className="course-author">By {course.username}</p> {/* Use username */}
-                  <p className="course-description">{course.description}</p>
-                  <div className="course-meta">
+                  <p className="all-courses-author">By {course.username}</p>
+                  <p className="all-courses-description">{course.description}</p>
+                  <div className="all-courses-meta">
                     <span>{course.chapters ? course.chapters.length : 0} Chapters</span>
                   </div>
                 </div>
-                <div className="course-actions">
+                <div className="all-courses-actions">
                   <button
-                    className="view-btn"
+                    className="all-courses-view-btn"
                     onClick={() => navigate(`/view-all-course/${course.id}`)}
                   >
                     View Course
@@ -99,7 +99,7 @@ const AllCourses = () => {
               </div>
             ))
           ) : (
-            <p className="no-courses">No courses found.</p>
+            <p className="all-courses-no-courses">No courses found.</p>
           )}
         </div>
       </div>
