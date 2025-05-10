@@ -39,7 +39,7 @@ export default function NotificationSystem() {
             name: notification.commenterUsername,
             avatar: '/api/placeholder/40/40'
           },
-          postId: notification.postId // Added for navigation
+          postId: notification.postId // For navigation
         })));
       } catch (error) {
         console.error('Error fetching notifications:', error);
@@ -103,9 +103,9 @@ export default function NotificationSystem() {
     }
   };
 
-  // Handle clicking a comment notification
+  // Handle clicking a comment or like notification
   const handleNotificationClick = (notification) => {
-    if (notification.type === 'comment' && notification.postId) {
+    if ((notification.type === 'comment' || notification.type === 'like') && notification.postId) {
       markAsRead(notification.id); // Mark as read on click
       navigate(`/post/${notification.postId}`); // Navigate to post
     }
@@ -190,7 +190,7 @@ export default function NotificationSystem() {
           filteredNotifications.map((notification) => (
             <div
               key={notification.id}
-              className={`notification-item ${!notification.read ? 'notification-unread' : ''} ${notification.type === 'comment' ? 'notification-clickable' : ''}`}
+              className={`notification-item ${!notification.read ? 'notification-unread' : ''} ${notification.type === 'comment' || notification.type === 'like' ? 'notification議clickable' : ''}`}
               onClick={() => handleNotificationClick(notification)}
             >
               {notification.user ? (
