@@ -11,7 +11,6 @@ import AddCourseForm from './pages/courses/AddCourseForm';
 import AllCourses from './pages/courses/AllCourses'
 import ViewAllCourse from './pages/courses/ViewAllCourse';
 
-import AllCourses from './pages/courses/AllCourses';
 import ViewCourse from './pages/user/CourseView';
 
 import CheckImages from './components/CheckImages';
