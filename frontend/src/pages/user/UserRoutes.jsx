@@ -3,12 +3,11 @@ import { Routes, Route } from 'react-router-dom';
 import DashboardLayout from './DashboardLayout';
 import UserDashboard from './UserDashboard';
 import MyCourses from './MyCourses';
-import CourseView from './CourseView';
-import MyPosts from '../posts/UserPosts'
+import CourseDetails from './CourseView'; // Renamed from CourseView for clarity
+import MyPosts from '../posts/UserPosts';
 import SharedWithMe from '../posts/SharedPosts';
-// import LearningPlan from './LearningPlan';
-// import Groups from './Groups';
-// import Settings from './Settings';
+import LearningPlans from './LearningPlans';
+import CourseChapters from './CourseChapters';
 
 const UserRoutes = () => {
   return (
@@ -19,10 +18,9 @@ const UserRoutes = () => {
         <Route path="mycourses" element={<MyCourses />} />
         <Route path="MyPosts" element={<MyPosts />} />
         <Route path="SharedWithMe" element={<SharedWithMe />} />
-        <Route path="course/:courseId" element={<CourseView />} />
-        {/* <Route path="learning-plan" element={<LearningPlan />} />
-        <Route path="groups" element={<Groups />} />
-        <Route path="settings" element={<Settings />} /> */}
+        <Route path="course/:courseId" element={<CourseDetails />} />
+        <Route path="learning-plan" element={<LearningPlans />} />
+        <Route path="course-chapters/:courseId" element={<CourseChapters />} />
       </Route>
     </Routes>
   );
