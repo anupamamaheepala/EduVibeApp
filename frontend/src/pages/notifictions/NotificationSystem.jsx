@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Settings, CheckCircle, MessageCircle, Heart, BookOpen, User, Filter, ArrowLeft, MoreHorizontal, X } from 'lucide-react';
+import { Bell, Settings, CheckCircle, MessageCircle, Heart, BookOpen, User, Filter, ArrowLeft, MoreHorizontal, X, Trash2 } from 'lucide-react';
 import '../../css/notification.css';
 
 export default function NotificationSystem() {
@@ -16,6 +16,7 @@ export default function NotificationSystem() {
     allEmail: true,
     allMobile: true
   });
+  const [deleteButtonVisible, setDeleteButtonVisible] = useState(null); // State to track which notification's delete button is visible
 
   const username = localStorage.getItem('username') || 'Anonymous';
   const navigate = useNavigate();
@@ -111,12 +112,32 @@ export default function NotificationSystem() {
     }
   };
 
+  // Delete notification
+  const deleteNotification = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:8000/api/notifications/delete/${id}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        setNotifications(notifications.filter(notification => notification.id !== id));
+        setDeleteButtonVisible(null); // Hide delete button after deletion
+      }
+    } catch (error) {
+      console.error('Error deleting notification:', error);
+    }
+  };
+
   // Handle clicking a comment, like, or reply notification
   const handleNotificationClick = (notification) => {
     if ((notification.type === 'comment' || notification.type === 'like' || notification.type === 'reply') && notification.postId) {
       markAsRead(notification.id); // Mark as read on click
       navigate(`/post/${notification.postId}`); // Navigate to post
     }
+  };
+
+  // Toggle delete button visibility for a specific notification
+  const toggleDeleteButton = (id) => {
+    setDeleteButtonVisible(deleteButtonVisible === id ? null : id);
   };
 
   // Filter notifications
@@ -221,7 +242,7 @@ export default function NotificationSystem() {
                     </p>
                     <p className="text-xs">{notification.time}</p>
                   </div>
-                  <div className="flex items-center">
+                  <div className="flex items-center space-x-1">
                     {!notification.read && (
                       <button
                         onClick={(e) => {
@@ -235,10 +256,25 @@ export default function NotificationSystem() {
                     )}
                     <button 
                       className="p-1 text-gray-500 hover:text-gray-700"
-                      onClick={(e) => e.stopPropagation()} // Prevent navigation
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent navigation
+                        toggleDeleteButton(notification.id);
+                      }}
                     >
                       <MoreHorizontal size={16} />
                     </button>
+                    {deleteButtonVisible === notification.id && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent navigation
+                          deleteNotification(notification.id);
+                        }}
+                        className="delete-btn"
+                      >
+                        <Trash2 size={16} className="mr-1" />
+                        Delete
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

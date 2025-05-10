@@ -208,6 +208,28 @@
   background-color: #f3e8ff;
 }
 
+/* Delete button */
+.delete-btn {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  color: #4b5563;
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.delete-btn svg {
+  margin-right: 0.25rem;
+}
+
 /* Progress bar */
 .progress-bar {
   background-color: #e5e7eb;
@@ -322,7 +344,6 @@ button[type="button"] svg {
   display: block;
 }
 
-/* Existing styles from notification.css assumed to be unchanged */
 /* Adding styles for clickable notifications */
 .notification-clickable {
   cursor: pointer;
