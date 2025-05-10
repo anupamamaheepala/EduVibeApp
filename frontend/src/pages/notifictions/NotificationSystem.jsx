@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Bell, Settings, CheckCircle, MessageCircle, Heart, BookOpen, User, Filter, ArrowLeft, MoreHorizontal, X } from 'lucide-react';
 import '../../css/notification.css';
 
@@ -17,6 +18,7 @@ export default function NotificationSystem() {
   });
 
   const username = localStorage.getItem('username') || 'Anonymous';
+  const navigate = useNavigate();
 
   // Fetch notifications from backend
   useEffect(() => {
@@ -36,7 +38,8 @@ export default function NotificationSystem() {
           user: {
             name: notification.commenterUsername,
             avatar: '/api/placeholder/40/40'
-          }
+          },
+          postId: notification.postId // Added for navigation
         })));
       } catch (error) {
         console.error('Error fetching notifications:', error);
@@ -100,6 +103,14 @@ export default function NotificationSystem() {
     }
   };
 
+  // Handle clicking a comment notification
+  const handleNotificationClick = (notification) => {
+    if (notification.type === 'comment' && notification.postId) {
+      markAsRead(notification.id); // Mark as read on click
+      navigate(`/post/${notification.postId}`); // Navigate to post
+    }
+  };
+
   // Filter notifications
   const filteredNotifications = notifications.filter(notification => {
     if (filter === 'all') return true;
@@ -112,8 +123,6 @@ export default function NotificationSystem() {
     switch(type) {
       case 'like': return <Heart size={20} className="text-red-500 notification-icon-like" />;
       case 'comment': return <MessageCircle size={20} className="text-purple-500 notification-icon-comment" />;
-      //case 'mention': return <User size={20} className="text-purple-600 notification-icon-mention" />;
-      //case 'course': return <BookOpen size={20} className="text-green-500 notification-icon-course" />;
       case 'reply': return <MessageCircle size={20} className="text-blue-500 notification-icon-reply" />;
       default: return <Bell size={20} className="text-gray-500" />;
     }
@@ -138,12 +147,6 @@ export default function NotificationSystem() {
           >
             Mark all as read
           </button>
-          {/* <button 
-            onClick={() => setShowSettings(!showSettings)}
-            className="p-1 rounded-full hover:bg-gray-100"
-          >
-            <Settings size={20} className="text-gray-600" />
-          </button> */}
         </div>
       </div>
 
@@ -173,18 +176,6 @@ export default function NotificationSystem() {
         >
           Comments
         </button>
-        {/* <button
-          onClick={() => setFilter('mention')}
-          className={`filter-btn ${filter === 'mention' ? 'active' : ''}`}
-        >
-          Mentions
-        </button> */}
-        {/* <button
-          onClick={() => setFilter('course')}
-          className={`filter-btn ${filter === 'course' ? 'active' : ''}`}
-        >
-          Course Reminders
-        </button> */}
         <button
           onClick={() => setFilter('reply')}
           className={`filter-btn ${filter === 'reply' ? 'active' : ''}`}
@@ -199,7 +190,8 @@ export default function NotificationSystem() {
           filteredNotifications.map((notification) => (
             <div
               key={notification.id}
-              className={`notification-item ${!notification.read ? 'notification-unread' : ''}`}
+              className={`notification-item ${!notification.read ? 'notification-unread' : ''} ${notification.type === 'comment' ? 'notification-clickable' : ''}`}
+              onClick={() => handleNotificationClick(notification)}
             >
               {notification.user ? (
                 <div 
@@ -224,13 +216,19 @@ export default function NotificationSystem() {
                   <div className="flex items-center">
                     {!notification.read && (
                       <button
-                        onClick={() => markAsRead(notification.id)}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent navigation when clicking mark as read
+                          markAsRead(notification.id);
+                        }}
                         className="p-1 text-purple-600 hover:text-purple-800"
                       >
                         <CheckCircle size={16} />
                       </button>
                     )}
-                    <button className="p-1 text-gray-500 hover:text-gray-700">
+                    <button 
+                      className="p-1 text-gray-500 hover:text-gray-700"
+                      onClick={(e) => e.stopPropagation()} // Prevent navigation
+                    >
                       <MoreHorizontal size={16} />
                     </button>
                   </div>

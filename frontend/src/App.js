@@ -27,6 +27,7 @@ import SinglePostView from './pages/posts/SinglePostView';
 import ContactUs from './pages/ContactUs';
 import About from './pages/About';
 import NotificationSystem from './pages/notifictions/NotificationSystem';
+import PostDetailView from './pages/notifictions/PostDetailView';
 
 
 const App = () => {
@@ -58,6 +59,7 @@ const App = () => {
             <Route path="/SharedWithMe" element={<SharedWithMe />} />
             <Route path="/post/:postId" element={<SinglePostView />} />
             <Route path="/notifications" element={<NotificationSystem />} />
+            <Route path="/post/:postId" element={<PostDetailView />} />
 
             {/* Dashboard Routes */}
             <Route path="/dashboard/*" element={<UserRoutes />} />
