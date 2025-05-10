@@ -2,12 +2,9 @@ package com.eduvibe.backend.service;
 
 import com.eduvibe.backend.model.AddPost;
 import com.eduvibe.backend.model.Comment;
-
 import com.eduvibe.backend.model.Reply;
-
 import com.eduvibe.backend.model.Notification;
 import com.eduvibe.backend.repository.AddPostRepository;
-
 import com.eduvibe.backend.repository.CommentRepository;
 import com.eduvibe.backend.repository.ReplyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +22,11 @@ public class CommentService {
     @Autowired
     private ReplyRepository replyRepository;
 
+    @Autowired // Add this annotation to properly inject AddPostRepository
     private AddPostRepository addPostRepository;
 
     @Autowired
     private NotificationService notificationService;
-
 
     public Comment saveComment(Comment comment) {
         if (comment.getCreatedAt() == null) {
