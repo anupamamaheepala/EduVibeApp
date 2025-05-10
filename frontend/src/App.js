@@ -20,6 +20,9 @@ import ShareModal from './pages/posts/PostShareModal';
 import UserRoutes from './pages/user/UserRoutes';
 import SharedWithMe from './pages/posts/SharedPosts';
 import SinglePostView from './pages/posts/SinglePostView';
+import ContactUs from './pages/ContactUs';
+import NotificationSystem from './pages/notifictions/NotificationSystem';
+
 
 const App = () => {
   return (
@@ -31,6 +34,7 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/contactus" element={<ContactUs />} />
             <Route path="/courses" element={<AllCourses />} />
             <Route path="/add-course" element={<AddCourseForm />} />
             <Route path="/edit-course/:courseId" element={<AddCourseForm />} />
@@ -47,6 +51,7 @@ const App = () => {
             <Route path="/ShareModal" element={<ShareModal />} />
             <Route path="/SharedWithMe" element={<SharedWithMe />} />
             <Route path="/post/:postId" element={<SinglePostView />} />
+            <Route path="/notifications" element={<NotificationSystem />} />
 
             {/* Dashboard Routes */}
             <Route path="/dashboard/*" element={<UserRoutes />} />
