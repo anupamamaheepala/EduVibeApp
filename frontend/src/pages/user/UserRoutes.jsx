@@ -6,10 +6,10 @@ import MyCourses from './MyCourses';
 import CourseDetails from './CourseView'; // Renamed from CourseView for clarity
 import MyPosts from '../posts/UserPosts';
 import SharedWithMe from '../posts/SharedPosts';
-import NotificationSystem from '../notifictions/NotificationSystem';
-import Groups from './Groups';
 import LearningPlans from './LearningPlans';
 import CourseChapters from './CourseChapters';
+import NotificationSystem from '../notifictions/NotificationSystem';
+import Groups from './Groups';
 
 const UserRoutes = () => {
   return (
