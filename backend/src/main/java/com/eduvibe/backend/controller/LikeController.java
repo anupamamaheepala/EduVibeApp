@@ -15,7 +15,10 @@ public class LikeController {
     private LikeService likeService;
 
     @PostMapping("/toggle")
-    public ResponseEntity<Like> toggleLike(@RequestParam String postId, @RequestParam String userId, @RequestParam String username) {
+    public ResponseEntity<Like> toggleLike(
+            @RequestParam String postId,
+            @RequestParam String userId,
+            @RequestParam String username) {
         Like like = likeService.toggleLike(postId, userId, username);
         if (like != null) {
             return ResponseEntity.ok(like);
@@ -30,7 +33,9 @@ public class LikeController {
     }
 
     @GetMapping("/is-liked")
-    public ResponseEntity<Boolean> isLikedByUser(@RequestParam String postId, @RequestParam String userId) {
+    public ResponseEntity<Boolean> isLikedByUser(
+            @RequestParam String postId,
+            @RequestParam String userId) {
         return ResponseEntity.ok(likeService.isLikedByUser(postId, userId));
     }
 }

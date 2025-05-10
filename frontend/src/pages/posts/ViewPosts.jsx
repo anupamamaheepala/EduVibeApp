@@ -90,11 +90,11 @@ function Posts() {
 
   const handleLike = async (postId) => {
     const userId = user?.id || localStorage.getItem('userId');
+    const username = localStorage.getItem('username') || 'Anonymous';
     if (!userId) {
-      alert('Please log in for liking posts');
+      alert('Please log in to like posts');
       return;
     }
-    const username = localStorage.getItem('username') || 'Unknown';
     try {
       const response = await fetch('http://localhost:8000/api/likes/toggle', {
         method: 'POST',
@@ -102,17 +102,18 @@ function Posts() {
         body: new URLSearchParams({
           postId,
           userId,
-          username,
+          username
         }),
       });
       if (response.ok) {
+        const isLiked = response.status === 200;
         setLikedPosts((prev) => ({
           ...prev,
-          [postId]: response.status === 200,
+          [postId]: isLiked,
         }));
         setLikeCounts((prev) => ({
           ...prev,
-          [postId]: response.status === 200 ? (prev[postId] || 0) + 1 : (prev[postId] || 1) - 1,
+          [postId]: isLiked ? (prev[postId] || 0) + 1 : (prev[postId] || 1) - 1,
         }));
       }
     } catch (err) {
