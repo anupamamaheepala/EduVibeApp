@@ -55,7 +55,7 @@
 
 .View-post-card {
   width: 700px;
-  min-height: 800px;
+  min-height: 600px;
   margin: 10px auto;
   padding: 16px;
   /* background: #fff; */
@@ -63,17 +63,18 @@
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Important: hide overflow */
+  overflow: hidden;
+  background: linear-gradient(to right, #CBC3E3, #eef1ff);
 }
 .View-header-actions {
   display: flex;
   flex-direction: column;
-  align-items: center; /* 🔥 Center children horizontally */
+  align-items: center; 
   margin-bottom: 2rem;
 }
 
 .create-post-button {
-  margin-top: 0.5rem; /* Space between title and button */
+  margin-top: 0.5rem; 
   padding: 10px 16px;
   background-color: purple;
   color: white;
@@ -89,19 +90,20 @@
 
 
 .View-posts-feed {
-  background: linear-gradient(to right, #f0f4ff, #eef1ff);
+  
   display: flex;
   flex-direction: column;
   gap: 30px;
 }
 
-.post-caption {
+.View-post-caption {
+  font-weight: bold;
   font-size: 16px;
   margin-bottom: 8px;
-  color: #444;
+  color: #e40808;
 }
 
-.post-meta {
+.View-post-meta {
   font-size: 13px;
   color: #888;
 }
@@ -138,7 +140,7 @@
   color: #666;
   font-size: 18px;
 }
-/* Media frame for a single image or video */
+
 .single-media-frame {
   width: 100%;
   height: 400px;
@@ -151,7 +153,6 @@
   margin-bottom: 16px;
 }
 
-/* Image or video fills the frame with crop effect */
 .single-media-frame img,
 .single-media-frame video {
   width: 100%;
@@ -161,10 +162,7 @@
   border-radius: 8px;
 }
 
-
-/* Unified media container with fixed height */
 .media-gallery {
-   /* 60% of the card height for media */
   display: grid;
   width: 100%;
   gap: 6px;
@@ -172,7 +170,7 @@
   overflow: hidden;
 }
 
-/* Grid layout changes dynamically */
+
 .media-gallery.media-1 {
   grid-template-columns: 1fr;
 }
@@ -191,7 +189,7 @@
   overflow: hidden; /* Prevent overflow from affecting layout */
 }
 
-/* Ensure media items fit the grid cells exactly */
+
 .media-gallery.media-3 img,
 .media-gallery.media-3 video {
   width: 100%;
@@ -200,7 +198,7 @@
   display: block; /* Remove any default inline-block spacing */
 }
 
-/* The third item spans both columns in the second row */
+
 .media-gallery.media-3 img:nth-child(3),
 .media-gallery.media-3 video:nth-child(3) {
   grid-column: 1 / 3; /* Span both columns */
@@ -225,7 +223,7 @@
   overflow: hidden; /* Prevent overflow from affecting layout */
 }
 
-/* Ensure media items fit the grid cells exactly */
+
 .media-gallery.media-4 img,
 .media-gallery.media-4 video {
   width: 100%;
@@ -234,14 +232,13 @@
   display: block; /* Remove any default inline-block spacing */
 }
 
-/* The third item spans both columns in the second row */
+
 .media-gallery.media-4 img:nth-child(4),
 .media-gallery.media-4 video:nth-child(4) {
-  grid-column: 1 / 4; /* Span both columns */
+  grid-column: 1 / 4; 
   grid-row: 1 / 2; 
-  /* Second row */
   width: 100%;
-  height: 150px; /* Match the row height */
+  height: 150px; 
   object-fit: cover;
 }
 
@@ -254,7 +251,6 @@
   grid-template-columns: 2fr 1fr;
 }
 
-/* Media items */
 .media-gallery img,
 .media-gallery video {
   width: 100%;
@@ -263,15 +259,13 @@
   border-radius: 8px;
 }
 
-/* Text content below media */
-.post-content {
+.View-post-content {
   margin-top: 15px;
   display: flex;
   flex-direction: column;
-  gap: 0px; /* Small gap between caption and meta */
+  gap: 0px; 
 }
 
-/*post header*/
 .post-header {
   display: flex;
   justify-content: space-between;
@@ -299,14 +293,15 @@
   object-fit: cover;
 }
 
-/* Add these styles to your existing ViewPosts.css file */
-
 .post-actions {
   display: flex;
   justify-content: space-around;
   padding: 10px 0;
   border-top: 1px solid #eee;
   margin-top: 10px;
+  background-color: #f9fafb; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04); 
+  border-radius: 8px;
 }
 
 .post-action-btn {
@@ -314,8 +309,8 @@
   padding: 8px 0;
   font-size: 14px;
   border: none;
-  background: none;
-  color: #555;
+  background: #e0e7ff;
+  color: #4f46e5;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -335,18 +330,13 @@
 }
 
 .like-btn:hover {
-  color: #1877f2; /* Facebook blue */
+  color: #1877f2; 
 }
 
 .comment-btn:hover {
-  color: #6d28d9; /* Purple */
+  color: #6d28d9;
 }
 
-.share-btn:hover {
-  color: #0da45e; /* Green */
-}
-
-/* For the comment count display */
 .comment-count-display {
   display: flex;
   align-items: center;
@@ -386,7 +376,7 @@
 }
 
 .share-btn {
-  background-color: #6366f1;
+  background-color: purple;
   color: white;
   border: none;
   padding: 4px 10px;
@@ -397,7 +387,7 @@
 }
 
 .share-btn:hover {
-  background-color: #4f46e5;
+  background-color: blue;
 }
 
 .post-time {
@@ -446,5 +436,17 @@
   font-size: 16px;
   padding: 5px 10px;
   cursor: pointer;
+}
+.repost-btn {
+  margin-left: 8px;
+  padding: 6px 12px;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.repost-btn:hover {
+  background-color: #d9d9d9;
 }
 

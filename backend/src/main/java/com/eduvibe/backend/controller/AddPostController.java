@@ -51,6 +51,7 @@ import com.eduvibe.backend.model.AddPost;
 import com.eduvibe.backend.service.AddPostService;
 
 import java.util.List;
+import com.eduvibe.backend.model.RepostRequest;
 
 @RestController
 @RequestMapping("/api/add-post")
@@ -88,4 +89,11 @@ public class AddPostController {
         List<AddPost> userPosts = addPostService.getPostsByUserId(userId);
         return ResponseEntity.ok(userPosts);
     }
+
+    @PostMapping("/repost/{postId}")
+    public ResponseEntity<AddPost> repostPost(@PathVariable String postId, @RequestBody RepostRequest request) {
+        AddPost repost = addPostService.repostPost(postId, request.getUserId(), request.getUsername());
+        return ResponseEntity.ok(repost);
+    }
+
 }

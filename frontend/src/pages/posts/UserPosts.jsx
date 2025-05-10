@@ -7,6 +7,7 @@ import { AuthContext } from '../AuthContext';
 import CommentSection from '../comments/CommentSection';
 import userLogo from '../../images/user.png';
 import ShareModal from './PostShareModal';
+import CommentPopup from '../comments/CommentPopup';
 
 function UserPosts() {
   const { isLoggedIn } = useContext(AuthContext);
@@ -20,6 +21,8 @@ function UserPosts() {
   const currentUserId = localStorage.getItem('userId'); // ✅ Get logged-in userId
   const [openImage, setOpenImage] = useState(null);
   const [openVideo, setOpenVideo] = useState(null);
+    const [activeCommentPostId, setActiveCommentPostId] = useState(null);
+    const [commentCounts, setCommentCounts] = useState({});
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -55,12 +58,43 @@ function UserPosts() {
     fetchUserPosts();
   }, [currentUserId]);
 
+  const fetchCommentCounts = async (postsData) => {
+    try {
+      const counts = {};
+      for (const post of postsData) {
+        const response = await fetch(`http://localhost:8000/api/comments/post/${post.id}`);
+        if (response.ok) {
+          const comments = await response.json();
+          counts[post.id] = comments.length;
+        }
+      }
+      setCommentCounts(counts);
+    } catch (err) {
+      console.error('Error fetching comment counts:', err);
+    }
+  };
+
+
   const getTimeAgo = (timestamp) => {
     const diff = Math.floor((new Date() - new Date(timestamp)) / 1000);
     if (diff < 60) return `${diff} seconds ago`;
     if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;
     if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
     return `${Math.floor(diff / 86400)} days ago`;
+  };
+
+  const openComments = (postId) => {
+    setActiveCommentPostId(postId);
+  };
+  
+  const closeComments = () => {
+    setActiveCommentPostId(null);
+    // Refresh comment counts after closing
+    fetchCommentCounts(posts);
+  };
+  
+  const getCommentCount = (postId) => {
+    return commentCounts[postId] || 0;
   };
 
   const toggleDropdown = (postId) => {
@@ -210,9 +244,24 @@ function UserPosts() {
                     Posted on {new Date(post.createdAt).toLocaleDateString()}
                   </p>
                 </div>
+
                 
                 {/*Comment system component */}
                 <CommentSection postId={post.id} />
+
+
+                <div className="post-actions">
+                  <button className="post-action-btn like-btn">
+                    <i className="far fa-thumbs-up"></i> Like
+                  </button>
+                  <button 
+                    className="post-action-btn comment-btn"
+                    onClick={() => openComments(post.id)}
+                  >
+                    <i className="far fa-comment"></i> Comment ({getCommentCount(post.id)})
+                  </button>
+                 
+                </div>
 
               </div>
             ))}
@@ -247,6 +296,14 @@ function UserPosts() {
         onClose={() => setSharingPostId(null)}
       />
     )}
+      {/* Comment Popup */}
+      {activeCommentPostId && (
+        <CommentPopup 
+          postId={activeCommentPostId} 
+          isOpen={activeCommentPostId !== null} 
+          onClose={closeComments} 
+        />
+      )}
       {/* <Footer /> */}
     </div>
   );

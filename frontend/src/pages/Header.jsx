@@ -56,7 +56,7 @@ const Header = () => {
             </li>
             <li>
               <NavLink
-                to="/contact"
+                to="/contactus"
                 className={({ isActive }) => (isActive ? 'active' : '')}
               >
                 Contact
