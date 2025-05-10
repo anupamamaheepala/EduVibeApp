@@ -204,6 +204,11 @@ function Posts() {
           <div className="View-posts-feed">
             {posts.map((post) => (
               <div key={post.id} className="View-post-card">
+                <div className="View-post-Repost">
+                    {post.repostUsername && (
+                      <span className="repost-tag">Reposted from {post.repostUsername}</span>
+                    )}
+                    </div>
                 <div className="post-header">
                   <div className="post-user">
                     <img className="post-user-avatar" src={userLogo} alt="User avatar" />
@@ -254,13 +259,14 @@ function Posts() {
 
                 <div className="View-post-content">
                   <p className="View-post-caption">{post.content}</p>
-                  <div className="post-content">
-                    <p className="post-meta">
+                  
+                    <p className="View-post-meta">
                       Posted by {post.username || post.userId} on {new Date(post.createdAt).toLocaleDateString()}
                     </p>
-                    {post.repostOfPostId && post.username && (
+                    {/* {post.repostOfPostId && post.username && (
                       <p className="repost-tag">Reposted from {post.username}</p>
-                    )}
+                    )} */}
+                    
                   </div>
                   <div className="post-actions">
                     <button
@@ -275,7 +281,7 @@ function Posts() {
                     >
                       <i className="far fa-comment"></i> Comment ({getCommentCount(post.id)})
                     </button>
-                  </div>
+                  
                 </div>
               </div>
             ))}
