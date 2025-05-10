@@ -14,12 +14,14 @@ const Header = ({ openPopup }) => {
   };
 
   return (
-    <header className="header">
-      <div className="header-container">
-        <div className="logo" onClick={() => navigate('/')}>
-          <img src={logo} alt="EduVibe Logo" />
-        </div>
+  <header className="header">
+    <div className="header-container">
+      <div className="logo" onClick={() => navigate('/')}>
+        <img src={logo} alt="EduVibe Logo" />
+      </div>
 
+      {/* ✅ Show navigation only if logged in */}
+      {isLoggedIn && (
         <nav className="navigation">
           <ul>
             <li><NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>Home</NavLink></li>
@@ -30,27 +32,28 @@ const Header = ({ openPopup }) => {
             <li><NavLink to="/contactus" className={({ isActive }) => (isActive ? 'active' : '')}>Contact</NavLink></li>
           </ul>
         </nav>
+      )}
 
-        <div className="auth-buttons">
-          {isLoggedIn ? (
-            <>
-              <span className="user-info"><i className="fas fa-user"></i> {username}</span>
-              <button className="logout-btn" onClick={handleLogout}>Log Out</button>
-            </>
-          ) : (
-            <>
-              <button className="login-btn" onClick={openPopup}>
-                Log In
-              </button>
-              <button className="signup-btn" onClick={() => navigate('/signup')}>
-                Sign Up
-              </button>
-            </>
-          )}
-        </div>
+      <div className="auth-buttons">
+        {isLoggedIn ? (
+          <>
+            <span className="user-info"><i className="fas fa-user"></i> {username}</span>
+            <button className="logout-btn" onClick={handleLogout}>Log Out</button>
+          </>
+        ) : (
+          <>
+            <button className="login-btn" onClick={openPopup}>
+              Log In
+            </button>
+            <button className="signup-btn" onClick={() => navigate('/signup')}>
+              Sign Up
+            </button>
+          </>
+        )}
       </div>
-    </header>
-  );
+    </div>
+  </header>
+);
 };
 
 // ✅ This must be at the top level (not inside any block)

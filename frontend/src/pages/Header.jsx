@@ -12,7 +12,7 @@ const Header = () => {
         <div className="logo">
           <img src={logo} alt="EduLearn Logo" />
         </div>
-        <nav className="navigation">
+        {/* <nav className="navigation">
           <ul>
             <li>
               <NavLink
@@ -63,7 +63,7 @@ const Header = () => {
               </NavLink>
             </li>
           </ul>
-        </nav>
+        </nav> */}
         <div className="auth-buttons">
           <button className="login-btn" onClick={() => navigate('/login')}>
             Log In
