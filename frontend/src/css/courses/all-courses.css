@@ -69,11 +69,14 @@
   background-color: var(--white);
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  padding: 1rem;
+  padding: 1.5rem; /* Increased padding to fill space */
   width: 100%;
   max-width: 300px;
-  height: 100%;
+  height: auto; /* Adjusted height to fit content */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .all-courses-card:hover {
@@ -81,19 +84,13 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
-.all-courses-image {
-  height: 250px;
-  background-color: var(--primary-light);
-  position: relative;
-  border-radius: 8px 8px 0 0;
-}
-
 .all-courses-content {
-  padding: 0.8rem;
+  padding: 0; /* Removed padding to utilize full card space */
+  flex-grow: 1; /* Ensure content takes available space */
 }
 
 .all-courses-content h3 {
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.4rem; /* Increased margin for better spacing */
   color: var(--dark-gray);
   font-size: 1.3rem;
 }
@@ -101,7 +98,7 @@
 .all-courses-author {
   color: #666;
   font-size: 0.8rem;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.6rem; /* Adjusted spacing */
 }
 
 .all-courses-description {
@@ -110,16 +107,19 @@
   margin-bottom: 0.8rem;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Allow description to span 2 lines */
+  -webkit-box-orient: vertical;
 }
 
 .all-courses-meta {
   color: #666;
   font-size: 0.8rem;
+  margin-bottom: 0.8rem; /* Added spacing before actions */
 }
 
 .all-courses-actions {
-  margin-top: 0.3rem;
+  margin-top: 0.5rem; /* Adjusted margin */
   display: flex;
   gap: 0.2rem;
   flex-wrap: wrap;
@@ -202,12 +202,8 @@
   }
 
   .all-courses-card {
-    padding: 1rem;
+    padding: 1.2rem;
     max-width: 250px;
-  }
-
-  .all-courses-image {
-    height: 100px;
   }
 
   .all-courses-content h3 {
