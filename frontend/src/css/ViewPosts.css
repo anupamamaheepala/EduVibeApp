@@ -375,7 +375,7 @@
   gap: 10px;
 }
 
-.share-btn {
+.share-btn, .repost-btn {
   background-color: purple;
   color: white;
   border: none;
@@ -386,9 +386,11 @@
   transition: background-color 0.3s ease;
 }
 
-.share-btn:hover {
+.share-btn:hover , .repost-btn:hover {
   background-color: blue;
 }
+
+
 
 .post-time {
   font-size: 13px;
@@ -437,16 +439,5 @@
   padding: 5px 10px;
   cursor: pointer;
 }
-.repost-btn {
-  margin-left: 8px;
-  padding: 6px 12px;
-  background-color: #f0f0f0;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
 
-.repost-btn:hover {
-  background-color: #d9d9d9;
-}
 
