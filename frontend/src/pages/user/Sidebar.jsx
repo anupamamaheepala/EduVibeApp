@@ -8,14 +8,17 @@ const Sidebar = () => {
   // Check if current route is a dashboard sub-route
   const isDashboardRoute = location.pathname.startsWith('/dashboard');
 
+  // Mock total notification count (replace with actual data from state or API)
+  const totalNotifications = 10;
+
   return (
     <aside className="sidebar">
       <nav className="sidebar-navigation">
         <ul>
           <li>
             <NavLink
-              to="/dashboard" // Updated to absolute path
-              end // Highlights only on exact match
+              to="/dashboard"
+              end
               className={({ isActive }) => 
                 isActive ? 'active' : ''
               }
@@ -25,7 +28,17 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/dashboard/mycourses" // Absolute path
+              to="/dashboard/Notifications"
+              className={({ isActive }) => 
+                isActive ? 'active' : ''
+              }
+            >
+             Notifications
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/dashboard/mycourses"
               className={({ isActive }) => 
                 isActive ? 'active' : ''
               }
@@ -35,7 +48,7 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/dashboard/MyPosts" // Absolute path
+              to="/dashboard/MyPosts"
               className={({ isActive }) => 
                 isActive ? 'active' : ''
               }
@@ -45,7 +58,7 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/dashboard/SharedWithMe" 
+              to="/dashboard/SharedWithMe"
               className={({ isActive }) => 
                 isActive ? 'active' : ''
               }
@@ -55,7 +68,7 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/dashboard/learning-plan" // Absolute path
+              to="/dashboard/learning-plan"
               className={({ isActive }) => 
                 isActive ? 'active' : ''
               }
@@ -65,7 +78,7 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/dashboard/groups" // Absolute path
+              to="/dashboard/groups"
               className={({ isActive }) => 
                 isActive ? 'active' : ''
               }
@@ -75,7 +88,7 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/dashboard/settings" // Absolute path
+              to="/dashboard/settings"
               className={({ isActive }) => 
                 isActive ? 'active' : ''
               }

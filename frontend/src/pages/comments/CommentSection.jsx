@@ -84,6 +84,11 @@ const CommentSection = ({ postId }) => {
     }
   };
 
+  const handleCancelEdit = () => {
+    setEditingCommentId(null);
+    setEditingText('');
+  };
+
   const handleDeleteComment = async (commentId) => {
     if (!window.confirm('Are you sure you want to delete this comment?')) {
       return;
@@ -118,8 +123,6 @@ const CommentSection = ({ postId }) => {
     };
     return date.toLocaleString('en-US', options);
   };
-  
-  
 
   return (
     <div className="comment-section">
@@ -131,11 +134,10 @@ const CommentSection = ({ postId }) => {
         <div className="comments-list">
           {comments.map((c, index) => (
             <div key={index} className="comment">
-            <div className="comment-header">
-              <span className="comment-username">{c.username}:</span>
-              <small className="comment-time">{formatDateTime(c.createdAt)}</small>
-            </div>
-          
+              <div className="comment-header">
+                <span className="comment-username">{c.username}:</span>
+                <small className="comment-time">{formatDateTime(c.createdAt)}</small>
+              </div>
 
               {editingCommentId === c.id ? (
                 <>
@@ -147,13 +149,13 @@ const CommentSection = ({ postId }) => {
                   />
                   <div className="comment-actions">
                     <button onClick={() => handleSaveEdit(c.id)}>Save</button>
-                    <button onClick={() => setEditingCommentId(null)}>Cancel</button>
+                    <button onClick={handleCancelEdit}>Cancel</button>
                   </div>
                 </>
               ) : (
                 <>
                   <span className="comment-text">{c.text}</span>
-                  
+
                   {c.userId === userId && (
                     <div className="comment-actions">
                       <button onClick={() => handleEditClick(c)}>Edit</button>

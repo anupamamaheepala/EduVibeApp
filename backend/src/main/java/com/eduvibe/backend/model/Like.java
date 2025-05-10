@@ -3,29 +3,21 @@ package com.eduvibe.backend.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
-import java.util.List;
-
-@Document(collection = "comments")
-public class Comment {
+@Document(collection = "likes")
+public class Like {
 
     @Id
     private String id;
     private String postId;
     private String userId;
     private String username;
-    private String text;
-    private Date createdAt;
-    private List<Reply> replies;
 
-    public Comment() {}
+    public Like() {}
 
-    public Comment(String postId, String userId, String username, String text, Date createdAt) {
+    public Like(String postId, String userId, String username) {
         this.postId = postId;
         this.userId = userId;
         this.username = username;
-        this.text = text;
-        this.createdAt = createdAt;
     }
 
     // Getters & Setters
@@ -40,13 +32,4 @@ public class Comment {
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
-
-    public String getText() { return text; }
-    public void setText(String text) { this.text = text; }
-
-    public Date getCreatedAt() { return createdAt; }
-    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
-
-    public List<Reply> getReplies() { return replies; }
-    public void setReplies(List<Reply> replies) { this.replies = replies; }
 }
