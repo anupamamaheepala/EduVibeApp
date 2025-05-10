@@ -28,15 +28,12 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/dashboard/notifications"
+              to="/dashboard/Notifications"
               className={({ isActive }) => 
                 isActive ? 'active' : ''
               }
             >
-              Notifications
-              {totalNotifications > 0 && (
-                <span className="notification-badge">{totalNotifications}</span>
-              )}
+             Notifications
             </NavLink>
           </li>
           <li>
