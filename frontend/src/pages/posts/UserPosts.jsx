@@ -4,7 +4,6 @@ import axios from 'axios';
 import '../../css/UserPosts.css';
 import DeleteUserPost from './DeleteUserPosts';
 import { AuthContext } from '../AuthContext';
-import CommentSection from '../comments/CommentSection';
 import userLogo from '../../images/user.png';
 import ShareModal from './PostShareModal';
 import CommentPopup from '../comments/CommentPopup';
@@ -244,12 +243,6 @@ function UserPosts() {
                     Posted on {new Date(post.createdAt).toLocaleDateString()}
                   </p>
                 </div>
-
-                
-                {/*Comment system component */}
-                <CommentSection postId={post.id} />
-
-
                 <div className="post-actions">
                   <button className="post-action-btn like-btn">
                     <i className="far fa-thumbs-up"></i> Like
@@ -262,7 +255,6 @@ function UserPosts() {
                   </button>
                  
                 </div>
-
               </div>
             ))}
           </div>
