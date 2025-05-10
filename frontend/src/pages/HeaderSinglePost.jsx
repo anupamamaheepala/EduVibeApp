@@ -28,7 +28,7 @@ const Header = ({ openPopup }) => {
             <li><NavLink to="/courses" className={({ isActive }) => (isActive ? 'active' : '')}>Courses</NavLink></li>
             <li><NavLink to="/posts" className={({ isActive }) => (isActive ? 'active' : '')}>Posts</NavLink></li>
             <li><NavLink to="/about" className={({ isActive }) => (isActive ? 'active' : '')}>About</NavLink></li>
-            <li><NavLink to="/resources" className={({ isActive }) => (isActive ? 'active' : '')}>Resources</NavLink></li>
+            {/* <li><NavLink to="/resources" className={({ isActive }) => (isActive ? 'active' : '')}>Resources</NavLink></li> */}
             <li><NavLink to="/contactus" className={({ isActive }) => (isActive ? 'active' : '')}>Contact</NavLink></li>
           </ul>
         </nav>

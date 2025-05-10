@@ -9,6 +9,8 @@ const CommentPopup = ({ postId, isOpen, onClose }) => {
   const [loading, setLoading] = useState(true);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingText, setEditingText] = useState('');
+  const [editingReplyId, setEditingReplyId] = useState(null);
+  const [editingReplyText, setEditingReplyText] = useState('');
   const [replyText, setReplyText] = useState('');
   const [replyingToCommentId, setReplyingToCommentId] = useState(null);
   const modalRef = useRef(null);
@@ -139,6 +141,73 @@ const CommentPopup = ({ postId, isOpen, onClose }) => {
     }
   };
 
+  const handleEditReplyClick = (reply) => {
+    setEditingReplyId(reply.id);
+    setEditingReplyText(reply.text);
+  };
+
+  const handleSaveEditReply = async (replyId, parentCommentId) => {
+    try {
+      const res = await fetch(`http://localhost:8000/api/replies/${replyId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: editingReplyText }),
+      });
+
+      if (res.ok) {
+        setComments(prevComments =>
+          prevComments.map(comment =>
+            comment.id === parentCommentId
+              ? {
+                  ...comment,
+                  replies: comment.replies.map(reply =>
+                    reply.id === replyId ? { ...reply, text: editingReplyText } : reply
+                  ),
+                }
+              : comment
+          )
+        );
+        setEditingReplyId(null);
+        setEditingReplyText('');
+      } else {
+        console.error('Failed to update reply');
+      }
+    } catch (error) {
+      console.error('Error updating reply:', error);
+    }
+  };
+
+  const handleCancelEditReply = () => {
+    setEditingReplyId(null);
+    setEditingReplyText('');
+  };
+
+  const handleDeleteReply = async (replyId, parentCommentId) => {
+    if (!window.confirm('Are you sure you want to delete this reply?')) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`http://localhost:8000/api/replies/${replyId}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        setComments(prevComments =>
+          prevComments.map(comment =>
+            comment.id === parentCommentId
+              ? { ...comment, replies: comment.replies.filter(reply => reply.id !== replyId) }
+              : comment
+          )
+        );
+      } else {
+        console.error('Failed to delete reply');
+      }
+    } catch (error) {
+      console.error('Error deleting reply:', error);
+    }
+  };
+
   const handleReplyChange = (e) => {
     setReplyText(e.target.value);
   };
@@ -253,7 +322,31 @@ const CommentPopup = ({ postId, isOpen, onClose }) => {
                               <span className="comment-username">{reply.username}</span>
                               <small className="comment-time">{formatDateTime(reply.createdAt)}</small>
                             </div>
-                            <span className="comment-text">{reply.text}</span>
+
+                            {editingReplyId === reply.id ? (
+                              <>
+                                <input
+                                  type="text"
+                                  value={editingReplyText}
+                                  onChange={(e) => setEditingReplyText(e.target.value)}
+                                  className="comment-edit-input"
+                                />
+                                <div className="comment-actions">
+                                  <button onClick={() => handleSaveEditReply(reply.id, c.id)}>Save</button>
+                                  <button onClick={handleCancelEditReply}>Cancel</button>
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <span className="comment-text">{reply.text}</span>
+                                {reply.userId === userId && (
+                                  <div className="comment-actions">
+                                    <button onClick={() => handleEditReplyClick(reply)}>Edit</button>
+                                    <button onClick={() => handleDeleteReply(reply.id, c.id)}>Delete</button>
+                                  </div>
+                                )}
+                              </>
+                            )}
                           </div>
                         ))}
                       </div>
