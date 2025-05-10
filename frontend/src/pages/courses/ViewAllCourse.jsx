@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { AuthContext } from '../AuthContext';
-import '../../css/view-all-course.css';
+import '../../css/courses/view-all-course.css';
 
 const ViewAllCourse = () => {
   const [course, setCourse] = useState(null);
@@ -94,35 +94,32 @@ const ViewAllCourse = () => {
   };
 
   if (!course && !message) {
-    return <div className="view-course-page">Loading...</div>;
+    return <div className="view-all-course-page">Loading...</div>;
   }
 
   return (
-    <div className="view-course-page">
-      <div className="view-course-header">
-        <div className="header-container">
+    <div className="view-all-course-page">
+      <div className="view-all-course-header">
+        <div className="view-all-course-header-container">
           <h2>{course?.name || 'Course'}</h2>
-          <button className="back-btn" onClick={() => navigate('/courses')}>
+          <button className="view-all-course-back-btn" onClick={() => navigate('/courses')}>
             Back to Courses
           </button>
         </div>
       </div>
-      <div className="course-content-section">
+      <div className="view-all-course-content-section">
         {message && (
-          <p className={`feedback-message ${message.includes('success') ? 'success' : 'error'}`}>
+          <p className={`view-all-course-feedback ${message.includes('success') ? 'success' : 'error'}`}>
             {message}
           </p>
         )}
         {course && (
-          <div className="course-card">
-            <div className="course-title">{course.name}</div>
-            <div className="chapter-item">
+          <div className="view-all-course-card">
+            <div className="view-all-course-title">{course.name}</div>
+            <div className="view-all-course-chapter-item">
               <button
-                className="start-btn"
+                className="view-all-course-start-btn"
                 onClick={handleStartCourse}
-                style={{ marginTop: '1rem', padding: '0.8rem 1.8rem', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', transition: 'background-color 0.3s ease' }}
-                onMouseOver={(e) => (e.target.style.backgroundColor = '#218838')}
-                onMouseOut={(e) => (e.target.style.backgroundColor = '#28a745')}
               >
                 Start Course
               </button>
@@ -130,23 +127,23 @@ const ViewAllCourse = () => {
             <div className="chapters-list">
               {course.chapters && course.chapters.length > 0 ? (
                 course.chapters.map((chapter, index) => (
-                  <div key={index} className="chapter-item">
+                  <div key={index} className="view-all-course-chapter-item">
                     <div
-                      className="chapter-title"
+                      className="view-all-course-chapter-title"
                       onClick={() => toggleChapter(index)}
                     >
                       <span>{expandedChapters[index] ? '▼' : '▶'}</span>
                       {`${index + 1}. ${chapter.title || `Chapter ${index + 1}`}`}
                     </div>
                     {expandedChapters[index] && (
-                      <div className="chapter-description">
+                      <div className="view-all-course-chapter-description">
                         {chapter.description || 'No description available'}
                       </div>
                     )}
                   </div>
                 ))
               ) : (
-                <p className="no-chapters">No chapters available for this course.</p>
+                <p className="view-all-course-no-chapters">No chapters available for this course.</p>
               )}
             </div>
           </div>

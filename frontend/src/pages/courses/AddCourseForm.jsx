@@ -5,14 +5,14 @@ import Swal from 'sweetalert2';
 import Header from '../Header';
 import UserHeader from '../UserHeader';
 import Footer from '../Footer';
-import '../../css/course-form.css';
+import '../../css/courses/course-form.css';
 import { AuthContext } from '../AuthContext';
 
 const CourseForm = () => {
   const { isLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { courseId } = useParams(); // Get courseId from URL for edit mode
-  const isEditMode = !!courseId; // True if courseId exists (edit mode)
+  const { courseId } = useParams();
+  const isEditMode = !!courseId;
 
   const [course, setCourse] = useState({
     name: '',
@@ -21,12 +21,12 @@ const CourseForm = () => {
   });
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const userId = localStorage.getItem('userId');
-  const token = localStorage.getItem('token'); // Assuming token is stored
+  const token = localStorage.getItem('token');
   const username = localStorage.getItem('username');
 
-  // Fetch course data for edit mode
   useEffect(() => {
     if (isEditMode && isLoggedIn && userId) {
       const fetchCourse = async () => {
@@ -34,10 +34,10 @@ const CourseForm = () => {
           const response = await axios.get(`http://localhost:8000/api/courses/${courseId}`, {
             headers: {
               'X-User-Id': userId,
-              'Authorization': `Bearer ${token}`, // Add token if required
+              'Authorization': `Bearer ${token}`,
             },
           });
-          const courseData = response.data.course; // Match backend response structure
+          const courseData = response.data.course;
           setCourse({
             name: courseData.name || '',
             description: courseData.description || '',
@@ -45,6 +45,7 @@ const CourseForm = () => {
               ? courseData.chapters
               : [{ title: '', description: '', youtubeUrl: '' }],
           });
+          setErrors({});
         } catch (error) {
           console.error('Fetch course error:', error.response ? error.response.data : error.message);
           const errorMessage =
@@ -67,9 +68,28 @@ const CourseForm = () => {
     }
   }, [isEditMode, courseId, isLoggedIn, userId, token]);
 
+  const validateYouTubeUrl = (url) => {
+    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}/;
+    return youtubeRegex.test(url);
+  };
+
   const handleCourseChange = (e) => {
     const { name, value } = e.target;
     setCourse((prev) => ({ ...prev, [name]: value }));
+
+    const newErrors = { ...errors };
+    if (name === 'name') {
+      if (!value) newErrors.name = 'Course name is required.';
+      else if (value.length < 3) newErrors.name = 'Course name must be at least 3 characters long.';
+      else if (value.length > 100) newErrors.name = 'Course name cannot exceed 100 characters.';
+      else delete newErrors.name;
+    } else if (name === 'description') {
+      if (!value) newErrors.description = 'Course description is required.';
+      else if (value.length < 10) newErrors.description = 'Course description must be at least 10 characters long.';
+      else if (value.length > 500) newErrors.description = 'Course description cannot exceed 500 characters.';
+      else delete newErrors.description;
+    }
+    setErrors(newErrors);
   };
 
   const handleChapterChange = (index, e) => {
@@ -77,6 +97,26 @@ const CourseForm = () => {
     const updatedChapters = [...course.chapters];
     updatedChapters[index] = { ...updatedChapters[index], [name]: value };
     setCourse((prev) => ({ ...prev, chapters: updatedChapters }));
+
+    const newErrors = { ...errors };
+    if (!newErrors.chapters) newErrors.chapters = course.chapters.map(() => ({}));
+
+    if (name === 'title') {
+      if (!value) newErrors.chapters[index].title = 'Chapter title is required.';
+      else if (value.length < 3) newErrors.chapters[index].title = 'Chapter title must be at least 3 characters long.';
+      else if (value.length > 50) newErrors.chapters[index].title = 'Chapter title cannot exceed 50 characters.';
+      else delete newErrors.chapters[index].title;
+    } else if (name === 'description') {
+      if (!value) newErrors.chapters[index].description = 'Chapter description is required.';
+      else if (value.length < 10) newErrors.chapters[index].description = 'Chapter description must be at least 10 characters long.';
+      else if (value.length > 300) newErrors.chapters[index].description = 'Chapter description cannot exceed 300 characters.';
+      else delete newErrors.chapters[index].description;
+    } else if (name === 'youtubeUrl') {
+      if (!value) newErrors.chapters[index].youtubeUrl = 'YouTube URL is required.';
+      else if (!validateYouTubeUrl(value)) newErrors.chapters[index].youtubeUrl = 'Please enter a valid YouTube URL.';
+      else delete newErrors.chapters[index].youtubeUrl;
+    }
+    setErrors(newErrors);
   };
 
   const addChapter = () => {
@@ -84,12 +124,20 @@ const CourseForm = () => {
       ...prev,
       chapters: [...prev.chapters, { title: '', description: '', youtubeUrl: '' }],
     }));
+    setErrors((prev) => ({
+      ...prev,
+      chapters: [...(prev.chapters || []), {}],
+    }));
   };
 
   const removeChapter = (index) => {
     setCourse((prev) => ({
       ...prev,
       chapters: prev.chapters.filter((_, i) => i !== index),
+    }));
+    setErrors((prev) => ({
+      ...prev,
+      chapters: prev.chapters ? prev.chapters.filter((_, i) => i !== index) : [],
     }));
   };
 
@@ -106,12 +154,14 @@ const CourseForm = () => {
       return;
     }
 
-    if (!course.name || !course.description || course.chapters.length === 0) {
-      setMessage('Please fill in all required fields.');
+    const hasErrors = Object.keys(errors).some(key => 
+      (key === 'name' || key === 'description' || (key === 'chapters' && errors.chapters.some(ch => Object.keys(ch).length > 0)))
+    );
+    if (hasErrors) {
       Swal.fire({
         icon: 'warning',
-        title: 'Incomplete Form',
-        text: 'Please fill in all required fields.',
+        title: 'Validation Error',
+        text: 'Please fix the errors in the form before submitting.',
       });
       return;
     }
@@ -121,7 +171,6 @@ const CourseForm = () => {
 
     try {
       if (isEditMode) {
-        // Update course (PUT request)
         const response = await axios.put(
           `http://localhost:8000/api/courses/${courseId}`,
           {
@@ -133,7 +182,7 @@ const CourseForm = () => {
             headers: {
               'Content-Type': 'application/json',
               'X-User-Id': userId,
-              'Authorization': `Bearer ${token}`, // Add token if required
+              'Authorization': `Bearer ${token}`,
             },
           }
         );
@@ -147,7 +196,6 @@ const CourseForm = () => {
           navigate('/dashboard/mycourses');
         });
       } else {
-        // Create course (POST request)
         const courseData = {
           userId,
           username,
@@ -160,7 +208,7 @@ const CourseForm = () => {
           headers: {
             'Content-Type': 'application/json',
             'X-User-Id': userId,
-            'Authorization': `Bearer ${token}`, // Add token if required
+            'Authorization': `Bearer ${token}`,
           },
         });
 
@@ -179,6 +227,7 @@ const CourseForm = () => {
         description: '',
         chapters: [{ title: '', description: '', youtubeUrl: '' }],
       });
+      setErrors({});
     } catch (error) {
       console.error(`${isEditMode ? 'Course update' : 'Course creation'} failed:`, error);
       const errorMessage =
@@ -215,7 +264,9 @@ const CourseForm = () => {
                 onChange={handleCourseChange}
                 placeholder="Enter course name"
                 required
+                className={errors.name ? 'has-error' : ''}
               />
+              {errors.name && <p className="course-form-error">{errors.name}</p>}
             </div>
             <div className="form-group">
               <label htmlFor="description">Course Description</label>
@@ -227,7 +278,9 @@ const CourseForm = () => {
                 placeholder="Enter course description"
                 rows="4"
                 required
+                className={errors.description ? 'has-error' : ''}
               ></textarea>
+              {errors.description && <p className="course-form-error">{errors.description}</p>}
             </div>
             <h2 className="chapters-title">Chapters</h2>
             {course.chapters.map((chapter, index) => (
@@ -242,7 +295,11 @@ const CourseForm = () => {
                     onChange={(e) => handleChapterChange(index, e)}
                     placeholder="Enter chapter title"
                     required
+                    className={errors.chapters && errors.chapters[index]?.title ? 'has-error' : ''}
                   />
+                  {errors.chapters && errors.chapters[index]?.title && (
+                    <p className="course-form-error">{errors.chapters[index].title}</p>
+                  )}
                 </div>
                 <div className="form-group">
                   <label htmlFor={`chapter-description-${index}`}>Chapter Description</label>
@@ -254,7 +311,11 @@ const CourseForm = () => {
                     placeholder="Enter chapter description"
                     rows="3"
                     required
+                    className={errors.chapters && errors.chapters[index]?.description ? 'has-error' : ''}
                   ></textarea>
+                  {errors.chapters && errors.chapters[index]?.description && (
+                    <p className="course-form-error">{errors.chapters[index].description}</p>
+                  )}
                 </div>
                 <div className="form-group">
                   <label htmlFor={`chapter-youtube-${index}`}>YouTube Video URL</label>
@@ -266,7 +327,11 @@ const CourseForm = () => {
                     onChange={(e) => handleChapterChange(index, e)}
                     placeholder="Enter YouTube video URL"
                     required
+                    className={errors.chapters && errors.chapters[index]?.youtubeUrl ? 'has-error' : ''}
                   />
+                  {errors.chapters && errors.chapters[index]?.youtubeUrl && (
+                    <p className="course-form-error">{errors.chapters[index].youtubeUrl}</p>
+                  )}
                 </div>
                 {course.chapters.length > 1 && (
                   <button

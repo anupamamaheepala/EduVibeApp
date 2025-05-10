@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import '../../css/all-courses.css';
+import '../../css/user/my-courses.css';
 import { AuthContext } from '../AuthContext';
 
 const MyCourses = () => {
@@ -120,51 +120,51 @@ const MyCourses = () => {
   );
 
   return (
-    <div className="all-courses-page">
-      <div className="semi-header my-courses-header">
-        <div className="search-container">
+    <div className="my-courses-page">
+      <div className="my-courses-semi-header">
+        <div className="my-courses-search-container">
           <h2>My Courses</h2>
-          <div className="search-bar">
+          <div className="my-courses-search-bar">
             <input
               type="text"
               placeholder="Search by name"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <button className="add-course-btn" onClick={() => navigate('/add-course')}>
+            <button className="my-courses-add-btn" onClick={() => navigate('/add-course')}>
               Add New Course
             </button>
           </div>
         </div>
       </div>
-      <div className="courses-section">
-        <div className="courses-grid">
+      <div className="my-courses-section">
+        <div className="my-courses-grid">
           {message && (
-            <p className={`feedback-message ${message.includes('success') ? 'success' : 'error'}`}>
+            <p className={`my-courses-feedback ${message.includes('success') ? 'success' : 'error'}`}>
               {message}
             </p>
           )}
           {filteredCourses.length > 0 ? (
             filteredCourses.map((course) => (
-              <div key={course.id} className="course-card">
+              <div key={course.id} className="my-courses-card">
                 <h3>{course.name || 'Unnamed Course'}</h3>
                 <p>{course.description || 'No description available'}</p>
                 <p>Created by: {course.username || 'Unknown'}</p>
-                <div className="course-actions">
+                <div className="my-courses-actions">
                   <button
-                    className="view-btn"
+                    className="my-courses-view-btn"
                     onClick={() => navigate(`/dashboard/course/${course.id}`)}
                   >
                     View Course
                   </button>
                   <button
-                    className="update-btn"
+                    className="my-courses-update-btn"
                     onClick={() => handleUpdate(course.id)}
                   >
                     Update
                   </button>
                   <button
-                    className="delete-btn"
+                    className="my-courses-delete-btn"
                     onClick={() => handleDelete(course.id)}
                   >
                     Delete
@@ -173,7 +173,7 @@ const MyCourses = () => {
               </div>
             ))
           ) : (
-            <p className="no-courses">No courses found.</p>
+            <p className="my-courses-no-courses">No courses found.</p>
           )}
         </div>
       </div>

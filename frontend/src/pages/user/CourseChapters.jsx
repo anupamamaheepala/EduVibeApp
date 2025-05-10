@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { AuthContext } from '../AuthContext';
-import '../../css/course-chapters.css';
+import '../../css/user/course-chapters.css';
 
 const CourseChapters = () => {
   const [course, setCourse] = useState(null);

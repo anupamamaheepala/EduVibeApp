@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
 import Swal from 'sweetalert2';
 import Header from '../UserHeader';
-import Footer from '../Footer';
-import '../../css/learning-plans.css';
+import '../../css/user/learning-plans.css';
 
 const LearningPlans = () => {
   const [courses, setCourses] = useState([]);
@@ -95,7 +94,7 @@ const LearningPlans = () => {
           )}
         </div>
       </div>
-      <Footer />
+      
     </div>
   );
 };
