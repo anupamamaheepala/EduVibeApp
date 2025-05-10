@@ -25,6 +25,7 @@ import UserRoutes from './pages/user/UserRoutes';
 import SharedWithMe from './pages/posts/SharedPosts';
 import SinglePostView from './pages/posts/SinglePostView';
 import ContactUs from './pages/ContactUs';
+import About from './pages/About';
 import NotificationSystem from './pages/notifictions/NotificationSystem';
 
 
@@ -39,6 +40,7 @@ const App = () => {
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
             <Route path="/contactus" element={<ContactUs />} />
+            <Route path="/about" element={<About />} />
             <Route path="/courses" element={<AllCourses />} />
             <Route path="/add-course" element={<AddCourseForm />} />
             <Route path="/edit-course/:courseId" element={<AddCourseForm />} />
