@@ -34,7 +34,7 @@ public class NotificationController {
         return ResponseEntity.ok().build();
     }
 
-    // New endpoint for deleting a notification
+    
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteNotification(@PathVariable String id) {
         notificationService.deleteById(id);

@@ -16,7 +16,7 @@ export default function NotificationSystem() {
     allEmail: true,
     allMobile: true
   });
-  const [deleteButtonVisible, setDeleteButtonVisible] = useState(null); // State to track which notification's delete button is visible
+  const [deleteButtonVisible, setDeleteButtonVisible] = useState(null); 
 
   const username = localStorage.getItem('username') || 'Anonymous';
   const navigate = useNavigate();
@@ -40,14 +40,14 @@ export default function NotificationSystem() {
           return {
             id: notification.id,
             type: notification.type,
-            content: contentWithoutUsername, // Use the modified content
+            content: contentWithoutUsername, 
             time: formatTime(notification.createdAt),
             read: notification.read,
             user: {
               name: notification.commenterUsername,
               avatar: '/api/placeholder/40/40'
             },
-            postId: notification.postId // For navigation
+            postId: notification.postId 
           };
         }));
       } catch (error) {
@@ -56,9 +56,9 @@ export default function NotificationSystem() {
     };
 
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 30000); // Fetch every 30 seconds
+    const interval = setInterval(fetchNotifications, 30000); 
 
-    return () => clearInterval(interval); // Cleanup on unmount
+    return () => clearInterval(interval);
   }, [username]);
 
   // Helper function to format time
@@ -120,7 +120,7 @@ export default function NotificationSystem() {
       });
       if (res.ok) {
         setNotifications(notifications.filter(notification => notification.id !== id));
-        setDeleteButtonVisible(null); // Hide delete button after deletion
+        setDeleteButtonVisible(null); 
       }
     } catch (error) {
       console.error('Error deleting notification:', error);
@@ -246,7 +246,7 @@ export default function NotificationSystem() {
                     {!notification.read && (
                       <button
                         onClick={(e) => {
-                          e.stopPropagation(); // Prevent navigation when clicking mark as read
+                          e.stopPropagation(); 
                           markAsRead(notification.id);
                         }}
                         className="p-1 text-purple-600 hover:text-purple-800"
@@ -257,7 +257,7 @@ export default function NotificationSystem() {
                     <button 
                       className="p-1 text-gray-500 hover:text-gray-700"
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent navigation
+                        e.stopPropagation();
                         toggleDeleteButton(notification.id);
                       }}
                     >
@@ -266,7 +266,7 @@ export default function NotificationSystem() {
                     {deleteButtonVisible === notification.id && (
                       <button
                         onClick={(e) => {
-                          e.stopPropagation(); // Prevent navigation
+                          e.stopPropagation(); 
                           deleteNotification(notification.id);
                         }}
                         className="delete-btn"

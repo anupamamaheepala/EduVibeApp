@@ -43,7 +43,7 @@ public class NotificationService {
         }
     }
 
-    // New method to delete a notification by ID
+    
     public void deleteById(String id) {
         notificationRepository.deleteById(id);
     }

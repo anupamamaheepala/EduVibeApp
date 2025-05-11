@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../../css/UserPosts.css'; // Reuse UserPosts.css for styling
+import '../../css/UserPosts.css'; 
 import { AuthContext } from '../AuthContext';
 import userLogo from '../../images/user.png';
 import CommentPopup from '../comments/CommentPopup';

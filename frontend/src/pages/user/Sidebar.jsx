@@ -4,8 +4,8 @@ import './../../css/user/Sidebar.css';
 
 const Sidebar = () => {
   const location = useLocation();
-  const [unreadCount, setUnreadCount] = useState(0); // State for unread notifications
-  const username = localStorage.getItem('username') || 'Anonymous'; // Get username
+  const [unreadCount, setUnreadCount] = useState(0); 
+  const username = localStorage.getItem('username') || 'Anonymous'; 
 
   // Check if current route is a dashboard sub-route
   const isDashboardRoute = location.pathname.startsWith('/dashboard');
@@ -29,9 +29,9 @@ const Sidebar = () => {
     };
 
     fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 1000); // Changed from 30000 to 10000 (10 seconds)
+    const interval = setInterval(fetchUnreadCount, 1000); 
 
-    return () => clearInterval(interval); // Cleanup on unmount
+    return () => clearInterval(interval); 
   }, [username]);
 
   return (

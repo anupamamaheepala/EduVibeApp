@@ -22,7 +22,7 @@ public class CommentService {
     @Autowired
     private ReplyRepository replyRepository;
 
-    @Autowired // Add this annotation to properly inject AddPostRepository
+    @Autowired 
     private AddPostRepository addPostRepository;
 
     @Autowired
@@ -39,8 +39,8 @@ public class CommentService {
         if (post != null && !post.getUsername().equals(comment.getUsername())) {
             Notification notification = new Notification(
                 comment.getPostId(),
-                post.getUsername(), // Post owner's username
-                comment.getUsername(), // Commenter's username
+                post.getUsername(), 
+                comment.getUsername(), 
                 "comment",
                 comment.getUsername() + " commented on your post",
                 new Date(),
