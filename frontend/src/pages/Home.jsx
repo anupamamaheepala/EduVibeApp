@@ -4,7 +4,7 @@ import UserHeader from './UserHeader';
 import Footer from './Footer';
 import '../css/home.css';
 import { AuthContext } from './AuthContext';
-
+import HomeImage from '../images/Home.jpeg';
 const Home = () => {
   const { isLoggedIn } = useContext(AuthContext);
 
@@ -21,7 +21,8 @@ const Home = () => {
           </div>
         </div>
         <div className="hero-image">
-          <div className="image-placeholder"></div>
+          
+          <img src={HomeImage} alt="Description"/>
         </div>
       </div>
 
