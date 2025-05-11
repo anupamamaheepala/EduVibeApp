@@ -67,7 +67,7 @@ const SharedPosts = () => {
     }
   };
 
- // Fetch likes data for posts
+
 const fetchLikeData = async (postsData) => {
   try {
     const likeCountsTemp = {};
@@ -100,7 +100,6 @@ const fetchLikeData = async (postsData) => {
 
 // Handle like/unlike action
 const handleLike = async (postId) => {
-  // Check if user is logged in
   if (!currentUserId) {
     alert('Please log in to like posts');
     return;
@@ -109,11 +108,9 @@ const handleLike = async (postId) => {
   const username = localStorage.getItem('username') || 'Anonymous';
   
   try {
-    // Show immediate feedback by updating UI optimistically
     const currentlyLiked = likedPosts[postId] || false;
     const currentCount = likeCounts[postId] || 0;
     
-    // Update UI immediately (optimistic update)
     setLikedPosts((prev) => ({
       ...prev,
       [postId]: !currentlyLiked,
@@ -124,7 +121,6 @@ const handleLike = async (postId) => {
       [postId]: currentlyLiked ? currentCount - 1 : currentCount + 1,
     }));
     
-    // Make API call to update server
     const response = await fetch('http://localhost:8000/api/likes/toggle', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -134,8 +130,7 @@ const handleLike = async (postId) => {
         username,
       }),
     });
-    
-    // If API call fails, revert the optimistic update
+
     if (!response.ok) {
       setLikedPosts((prev) => ({
         ...prev,
@@ -150,7 +145,6 @@ const handleLike = async (postId) => {
       console.error('Server rejected like operation');
     }
   } catch (err) {
-    // Revert optimistic update on error
     const currentlyLiked = likedPosts[postId] || false;
     const currentCount = likeCounts[postId] || 0;
     

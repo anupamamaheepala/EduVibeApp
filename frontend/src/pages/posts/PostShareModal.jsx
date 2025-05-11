@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../../css/PostShareModal.css'; // make sure styling is included
+import '../../css/PostShareModal.css'; 
 import Swal from 'sweetalert2';
 
 
@@ -36,7 +36,7 @@ const PostShareModal = ({ postId, onClose }) => {
         icon: 'warning',
         title: 'No users selected',
         text: 'Please select at least one user to share the post.',
-        confirmButtonColor: '#f59e0b' // amber/yellow tone
+        confirmButtonColor: '#f59e0b' 
       });
       return;
     }
@@ -77,72 +77,69 @@ const PostShareModal = ({ postId, onClose }) => {
         <h3>Share Post</h3>
         <div className="user-list">
         {users.map(user => (
-  <button
-    key={user.id}
-    className={`user-select-button ${selectedUserIds.includes(user.id) ? 'selected' : ''}`}
-    onClick={() => toggleSelectUser(user.id)}
-  >
-    <strong>{user.username || `${user.firstName} ${user.lastName}` || 'Unknown User'}</strong>
-    <br />
-    <span style={{ color: '#666', fontSize: '12px' }}>
-      {user.email && user.email.trim() !== '' ? user.email : 'No email'}
-    </span>
-  </button>
-))}
+          <button
+            key={user.id}
+            className={`user-select-button ${selectedUserIds.includes(user.id) ? 'selected' : ''}`}
+            onClick={() => toggleSelectUser(user.id)}
+          >
+            <strong>{user.username || `${user.firstName} ${user.lastName}` || 'Unknown User'}</strong>
+            <br />
+            <span style={{ color: '#666', fontSize: '12px' }}>
+              {user.email && user.email.trim() !== '' ? user.email : 'No email'}
+            </span>
+          </button>
+        ))}
+    </div>
 
+    <div className="external-share">
+      <p>Or share via:</p>
+      <div className="share-icons">
+        <a
+          href={`mailto:?subject=Check out this post&body=Here's a post you might find interesting: http://localhost:3000/post/${postId}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Share via Email"
+        >
+          <img src="https://img.icons8.com/color/48/000000/gmail--v1.png" alt="Email" />
+        </a>
+        <a
+          href={`https://wa.me/?text=Check out this post: http://localhost:3000/post/${postId}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Share on WhatsApp"
+        >
+          <img src="https://img.icons8.com/color/48/000000/whatsapp--v1.png" alt="WhatsApp" />
+        </a>
+        <a
+          href={`https://t.me/share/url?url=http://localhost:3000/post/${postId}&text=Check out this post`}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Share on Telegram"
+        >
+          <img src="https://img.icons8.com/color/48/000000/telegram-app--v1.png" alt="Telegram" />
+        </a>
+      </div>
+    </div>
 
-</div>
-<div className="external-share">
-  <p>Or share via:</p>
-  <div className="share-icons">
-    <a
-      href={`mailto:?subject=Check out this post&body=Here's a post you might find interesting: http://localhost:3000/post/${postId}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      title="Share via Email"
-    >
-      <img src="https://img.icons8.com/color/48/000000/gmail--v1.png" alt="Email" />
-    </a>
-    <a
-      href={`https://wa.me/?text=Check out this post: http://localhost:3000/post/${postId}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      title="Share on WhatsApp"
-    >
-      <img src="https://img.icons8.com/color/48/000000/whatsapp--v1.png" alt="WhatsApp" />
-    </a>
-    <a
-      href={`https://t.me/share/url?url=http://localhost:3000/post/${postId}&text=Check out this post`}
-      target="_blank"
-      rel="noopener noreferrer"
-      title="Share on Telegram"
-    >
-      <img src="https://img.icons8.com/color/48/000000/telegram-app--v1.png" alt="Telegram" />
-    </a>
-  </div>
-</div>
-
-<div className="copy-link-section">
-  <button
-    className="copy-link-button"
-    onClick={() => {
-      const shareUrl = `http://localhost:3000/post/${postId}`;
-      navigator.clipboard.writeText(shareUrl).then(() => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Link copied!',
-          text: 'Post link has been copied to clipboard.',
-          timer: 1500,
-          showConfirmButton: false,
-        });
-      });
-    }}
-  >
-    📋 Copy Link
-  </button>
-</div>
-
-
+    <div className="copy-link-section">
+      <button
+        className="copy-link-button"
+        onClick={() => {
+          const shareUrl = `http://localhost:3000/post/${postId}`;
+          navigator.clipboard.writeText(shareUrl).then(() => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Link copied!',
+              text: 'Post link has been copied to clipboard.',
+              timer: 1500,
+              showConfirmButton: false,
+            });
+          });
+        }}
+      >
+        📋 Copy Link
+      </button>
+    </div>
 
         <div className="modal-actions">
         <button onClick={handleShare}>

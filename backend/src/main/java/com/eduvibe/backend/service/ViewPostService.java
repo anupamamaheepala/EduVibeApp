@@ -17,7 +17,7 @@ public class ViewPostService {
         return addPostRepository.findById(id).orElse(null);
     }
 
-    // ✅ Add this method to get posts by user ID
+    //  get posts by user ID
     public List<AddPost> getPostsByUserId(String userId) {
         return addPostRepository.findByUserId(userId);
     }

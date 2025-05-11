@@ -41,16 +41,12 @@ public class AddPostService {
         repost.setMediaUrls(original.getMediaUrls());
         repost.setMediaTypes(original.getMediaTypes());
         repost.setCreatedAt(new Date());
-        repost.setRepostOfPostId(original.getId()); // 💡 store original post ID
+        repost.setRepostOfPostId(original.getId()); 
         repost.setRepostUsername(original.getUsername());
 
         return addPostRepository.save(repost);
     }
 
-
-    // public List<AddPost> getAllPosts() {
-    //     return addPostRepository.findAll();
-    // }
     public List<AddPost> getAllPosts() {
     List<AddPost> posts = addPostRepository.findAll();
 

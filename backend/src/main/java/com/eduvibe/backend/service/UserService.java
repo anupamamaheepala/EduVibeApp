@@ -168,4 +168,22 @@ public class UserService {
         User user = getUserById(userId);
         return user.getEnrolledCourses();
     }
+
+    public void resetPassword(String userId, String currentPassword, String newPassword) throws Exception {
+        User user = getUserById(userId);
+
+        // Verify current password
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new Exception("Current password is incorrect");
+        }
+
+        // Validate new password
+        if (newPassword.length() < 8) {
+            throw new Exception("New password must be at least 8 characters long");
+        }
+
+        // Update password
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
 }

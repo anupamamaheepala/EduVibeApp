@@ -1,8 +1,8 @@
 package com.eduvibe.backend.model;
 import java.util.List;
-import java.util.Date; // ✅ Required
-import org.springframework.data.annotation.Id; // ✅ Required
-import org.springframework.data.mongodb.core.mapping.Document; // ✅ Required
+import java.util.Date; 
+import org.springframework.data.annotation.Id; 
+import org.springframework.data.mongodb.core.mapping.Document; 
 import org.springframework.data.annotation.Transient;
 
 @Document(collection = "posts")
@@ -15,8 +15,8 @@ public class AddPost {
     private String content;
     // private String mediaUrl;
     // private String mediaType;
-    private List<String> mediaUrls; // ⬅️ Change here to List
-    private List<String> mediaTypes; // ⬅️ Optional: media type for each media
+    private List<String> mediaUrls; 
+    private List<String> mediaTypes; 
     private Date createdAt;
     private String repostOfPostId;
     private String repostUsername;
@@ -34,7 +34,7 @@ public class AddPost {
     }
 @Transient
 private AddPost repostOfPost;
-    // Getters & Setters
+
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 

@@ -19,7 +19,7 @@ public class ViewPostController {
     private ViewPostService viewPostService;
 
     @Autowired
-    private AddPostRepository addPostRepository; // ✅ Inject the repository
+    private AddPostRepository addPostRepository; 
 
     @GetMapping("/{id}")
     public ResponseEntity<AddPost> getPostById(@PathVariable String id) {
@@ -31,14 +31,14 @@ public class ViewPostController {
         }
     }
 
-    // ✅ Get all posts
+    // Get all posts
     @GetMapping
     public ResponseEntity<List<AddPost>> getAllPosts() {
         List<AddPost> posts = addPostRepository.findAll();
         return ResponseEntity.ok(posts);
     }
 
-    // ✅ Get posts by userId
+    // Get posts by userId
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<AddPost>> getPostsByUser(@PathVariable String userId) {
         List<AddPost> posts = viewPostService.getPostsByUserId(userId);
