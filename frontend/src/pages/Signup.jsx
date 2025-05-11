@@ -19,6 +19,25 @@ const SignUp = () => {
   });
   const navigate = useNavigate();
 
+  const validatePassword = (password) => {
+    const minLength = password.length >= 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*]/.test(password);
+
+    return {
+      isValid: minLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar,
+      errors: [
+        !minLength ? 'Password must be at least 8 characters long.' : '',
+        !hasUpperCase ? 'Password must contain at least one uppercase letter.' : '',
+        !hasLowerCase ? 'Password must contain at least one lowercase letter.' : '',
+        !hasNumber ? 'Password must contain at least one number.' : '',
+        !hasSpecialChar ? 'Password must contain at least one special character (!@#$%^&*).' : '',
+      ].filter((error) => error !== ''),
+    };
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -59,6 +78,18 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate password
+    const passwordValidation = validatePassword(formData.password);
+    if (!passwordValidation.isValid) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Invalid Password',
+        html: passwordValidation.errors.join('<br>'),
+      });
+      return;
+    }
+
+    // Check if passwords match
     if (formData.password !== formData.confirmPassword) {
       Swal.fire({
         icon: 'error',
@@ -68,6 +99,7 @@ const SignUp = () => {
       return;
     }
 
+    // Validate phone number
     if (formData.phoneNumber.length !== 10) {
       Swal.fire({
         icon: 'warning',
@@ -99,7 +131,7 @@ const SignUp = () => {
       Swal.fire({
         icon: 'error',
         title: 'Signup Failed',
-        text: 'An error occurred while signing up. Please try again.'
+        text: error.response?.data || 'An error occurred while signing up. Please try again.'
       });
       clearForm();
     }
