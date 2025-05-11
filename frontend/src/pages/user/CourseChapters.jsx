@@ -104,38 +104,38 @@ const CourseChapters = () => {
   };
 
   if (!course && !message) {
-    return <div className="course-chapters-page">Loading...</div>;
+    return <div className="coursechapter-course-chapters-page">Loading...</div>;
   }
 
   return (
-    <div className="course-chapters-page">
-      <div className="course-chapters-header">
-        <div className="header-container">
+    <div className="coursechapter-course-chapters-page">
+      <div className="coursechapter-course-chapters-header">
+        <div className="coursechapter-header-container">
           <h2>{course?.name || 'Course Chapters'}</h2>
-          <button className="back-btn" onClick={() => navigate('/dashboard/learning-plan')}>
+          <button className="coursechapter-back-btn" onClick={() => navigate('/dashboard/learning-plan')}>
             Back to Learning Plans
           </button>
         </div>
       </div>
-      <div className="chapters-section">
+      <div className="coursechapter-chapters-section">
         {message && (
-          <p className={`feedback-message ${message.includes('success') ? 'success' : 'error'}`}>
+          <p className={`coursechapter-feedback-message ${message.includes('success') ? 'success' : 'error'}`}>
             {message}
           </p>
         )}
         {course && (
-          <div className="chapters-container">
-            <div className="chapters-list">
+          <div className="coursechapter-chapters-container">
+            <div className="coursechapter-chapters-list">
               {course.chapters && course.chapters.length > 0 ? (
                 course.chapters.map((chapter, index) => (
-                  <div key={index} className="chapter-item">
+                  <div key={index} className="coursechapter-chapter-item">
                     <input
                       type="checkbox"
                       checked={progress?.completedChapterIndices?.includes(index) || false}
                       readOnly
                     />
                     <span
-                      className="chapter-title"
+                      className="coursechapter-chapter-title"
                       onClick={() => handleChapterClick(chapter, index)}
                     >
                       {`${index + 1}. ${chapter.title || `Chapter ${index + 1}`}`}
@@ -143,18 +143,18 @@ const CourseChapters = () => {
                   </div>
                 ))
               ) : (
-                <p className="no-chapters">No chapters available for this course.</p>
+                <p className="coursechapter-no-chapters">No chapters available for this course.</p>
               )}
             </div>
             {progress && (
-              <div className="progress-container">
-                <div className="progress-bar">
+              <div className="coursechapter-progress-container">
+                <div className="coursechapter-progress-bar">
                   <div
-                    className="progress-fill"
+                    className="coursechapter-progress-fill"
                     style={{ width: `${progress.completionPercentage}%` }}
                   ></div>
                 </div>
-                <span className="progress-percentage">
+                <span className="coursechapter-progress-percentage">
                   {progress.completionPercentage.toFixed(1)}% Complete
                 </span>
               </div>
@@ -164,8 +164,8 @@ const CourseChapters = () => {
       </div>
 
       {selectedChapter && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+        <div className="coursechapter-modal-overlay">
+          <div className="coursechapter-modal-content">
             <h3>{selectedChapter.title || `Chapter ${selectedChapter.index + 1}`}</h3>
             <p>{selectedChapter.description || 'No description available'}</p>
             {selectedChapter.youtubeUrl ? (
@@ -173,18 +173,18 @@ const CourseChapters = () => {
                 href={selectedChapter.youtubeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="youtube-link"
+                className="coursechapter-youtube-link"
               >
                 Watch on YouTube
               </a>
             ) : (
               <p>No YouTube video available</p>
             )}
-            <div className="modal-actions">
-              <button className="done-btn" onClick={handleMarkAsDone}>
+            <div className="coursechapter-modal-actions">
+              <button className="coursechapter-done-btn" onClick={handleMarkAsDone}>
                 Done
               </button>
-              <button className="close-btn" onClick={closeModal}>
+              <button className="coursechapter-close-btn" onClick={closeModal}>
                 Close
               </button>
             </div>

@@ -6,19 +6,19 @@
   --white: #ffffff;
 }
 
-.course-chapters-page {
+.coursechapter-course-chapters-page {
   padding-top: 70px;
   min-height: 100vh;
   background-color: var(--gray);
 }
 
-.course-chapters-header {
+.coursechapter-course-chapters-header {
   padding: 1.5rem;
   background-color: var(--white);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-.header-container {
+.coursechapter-header-container {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
@@ -26,12 +26,12 @@
   align-items: center;
 }
 
-.header-container h2 {
+.coursechapter-header-container h2 {
   font-size: 2rem;
   color: var(--dark-gray);
 }
 
-.back-btn {
+.coursechapter-back-btn {
   padding: 0.5rem 1rem;
   background-color: var(--primary);
   color: var(--white);
@@ -41,63 +41,63 @@
   transition: background-color 0.3s ease;
 }
 
-.back-btn:hover {
+.coursechapter-back-btn:hover {
   background-color: #6a32d5;
 }
 
-.chapters-section {
+.coursechapter-chapters-section {
   padding: 3rem 2rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.chapters-container {
+.coursechapter-chapters-container {
   background-color: var(--white);
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.chapters-list {
+.coursechapter-chapters-list {
   margin-bottom: 2rem;
 }
 
-.chapter-item {
+.coursechapter-chapter-item {
   display: flex;
   align-items: center;
   padding: 0.8rem 0;
   border-bottom: 1px solid var(--gray);
 }
 
-.chapter-item input[type="checkbox"] {
+.coursechapter-chapter-item input[type="checkbox"] {
   margin-right: 1rem;
   cursor: pointer;
 }
 
-.chapter-title {
+.coursechapter-chapter-title {
   font-size: 1.2rem;
   color: var(--dark-gray);
   cursor: pointer;
   transition: color 0.3s ease;
 }
 
-.chapter-title:hover {
+.coursechapter-chapter-title:hover {
   color: var(--primary);
 }
 
-.no-chapters {
+.coursechapter-no-chapters {
   text-align: center;
   font-size: 1.2rem;
   color: #666;
   padding: 1rem;
 }
 
-.progress-container {
+.coursechapter-progress-container {
   margin-top: 2rem;
   text-align: center;
 }
 
-.progress-bar {
+.coursechapter-progress-bar {
   width: 100%;
   height: 10px;
   background-color: var(--gray);
@@ -105,20 +105,20 @@
   overflow: hidden;
 }
 
-.progress-fill {
+.coursechapter-progress-fill {
   height: 100%;
   background-color: var(--primary);
   transition: width 0.3s ease;
 }
 
-.progress-percentage {
+.coursechapter-progress-percentage {
   display: block;
   margin-top: 0.5rem;
   font-size: 1rem;
   color: var(--dark-gray);
 }
 
-.modal-overlay {
+.coursechapter-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -131,7 +131,7 @@
   z-index: 1000;
 }
 
-.modal-content {
+.coursechapter-modal-content {
   background-color: var(--white);
   padding: 2rem;
   border-radius: 8px;
@@ -140,19 +140,19 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-.modal-content h3 {
+.coursechapter-modal-content h3 {
   font-size: 1.5rem;
   color: var(--dark-gray);
   margin-bottom: 1rem;
 }
 
-.modal-content p {
+.coursechapter-modal-content p {
   font-size: 1rem;
   color: #666;
   margin-bottom: 1rem;
 }
 
-.youtube-link {
+.coursechapter-youtube-link {
   display: inline-block;
   padding: 0.5rem 1rem;
   background-color: var(--primary);
@@ -163,18 +163,18 @@
   transition: background-color 0.3s ease;
 }
 
-.youtube-link:hover {
+.coursechapter-youtube-link:hover {
   background-color: #6a32d5;
 }
 
-.modal-actions {
+.coursechapter-modal-actions {
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
 }
 
-.done-btn,
-.close-btn {
+.coursechapter-done-btn,
+.coursechapter-close-btn {
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
@@ -183,25 +183,25 @@
   transition: background-color 0.3s ease;
 }
 
-.done-btn {
+.coursechapter-done-btn {
   background-color: #28a745;
   color: var(--white);
 }
 
-.done-btn:hover {
+.coursechapter-done-btn:hover {
   background-color: #218838;
 }
 
-.close-btn {
+.coursechapter-close-btn {
   background-color: #ff4d4f;
   color: var(--white);
 }
 
-.close-btn:hover {
+.coursechapter-close-btn:hover {
   background-color: #e63946;
 }
 
-.feedback-message {
+.coursechapter-feedback-message {
   text-align: center;
   padding: 1.2rem;
   margin-bottom: 1.5rem;
@@ -209,68 +209,68 @@
   font-size: 1.1rem;
 }
 
-.feedback-message.success {
+.coursechapter-feedback-message.success {
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
 }
 
-.feedback-message.error {
+.coursechapter-feedback-message.error {
   background-color: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
 
 @media (max-width: 768px) {
-  .course-chapters-header {
+  .coursechapter-course-chapters-header {
     padding: 1rem;
   }
 
-  .header-container h2 {
+  .coursechapter-header-container h2 {
     font-size: 1.5rem;
   }
 
-  .back-btn {
+  .coursechapter-back-btn {
     padding: 0.4rem 0.8rem;
     font-size: 0.9rem;
   }
 
-  .chapters-section {
+  .coursechapter-chapters-section {
     padding: 2rem 1rem;
   }
 
-  .chapters-container {
+  .coursechapter-chapters-container {
     padding: 1.5rem;
   }
 
-  .chapter-item {
+  .coursechapter-chapter-item {
     padding: 0.5rem 0;
   }
 
-  .chapter-title {
+  .coursechapter-chapter-title {
     font-size: 1rem;
   }
 
-  .modal-content {
+  .coursechapter-modal-content {
     padding: 1.5rem;
     max-width: 90%;
   }
 
-  .modal-content h3 {
+  .coursechapter-modal-content h3 {
     font-size: 1.3rem;
   }
 
-  .modal-content p {
+  .coursechapter-modal-content p {
     font-size: 0.9rem;
   }
 
-  .youtube-link {
+  .coursechapter-youtube-link {
     padding: 0.4rem 0.8rem;
     font-size: 0.9rem;
   }
 
-  .done-btn,
-  .close-btn {
+  .coursechapter-done-btn,
+  .coursechapter-close-btn {
     padding: 0.4rem 0.8rem;
     font-size: 0.9rem;
   }
