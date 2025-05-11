@@ -2,6 +2,7 @@ import React from 'react';
 import Header from './UserHeader';
 import Footer from './Footer';
 import '../css/about.css';
+import AboutImage from '../images/About.png';
 
 const About = () => {
   const teamMembers = [
@@ -51,7 +52,9 @@ const About = () => {
             </p>
           </div>
           <div className="section-image mission-image">
-            <div className="image-placeholder"></div>
+            <div className="image-placeholder">
+              <img src={AboutImage} alt="Description"/>
+            </div>
           </div>
         </section>
 

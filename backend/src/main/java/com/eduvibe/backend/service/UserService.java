@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,6 +17,30 @@ public class UserService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    private void validatePassword(String password) throws Exception {
+        List<String> errors = new ArrayList<>();
+
+        if (password.length() < 8) {
+            errors.add("Password must be at least 8 characters long.");
+        }
+        if (!password.matches(".*[A-Z].*")) {
+            errors.add("Password must contain at least one uppercase letter.");
+        }
+        if (!password.matches(".*[a-z].*")) {
+            errors.add("Password must contain at least one lowercase letter.");
+        }
+        if (!password.matches(".*[0-9].*")) {
+            errors.add("Password must contain at least one number.");
+        }
+        if (!password.matches(".*[!@#$%^&*].*")) {
+            errors.add("Password must contain at least one special character (!@#$%^&*).");
+        }
+
+        if (!errors.isEmpty()) {
+            throw new Exception(String.join(" ", errors));
+        }
+    }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -29,6 +54,7 @@ public class UserService {
             throw new Exception("Email already exists");
         }
 
+        validatePassword(user.getPassword());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
@@ -178,9 +204,7 @@ public class UserService {
         }
 
         // Validate new password
-        if (newPassword.length() < 8) {
-            throw new Exception("New password must be at least 8 characters long");
-        }
+        validatePassword(newPassword);
 
         // Update password
         user.setPassword(passwordEncoder.encode(newPassword));
