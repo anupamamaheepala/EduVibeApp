@@ -54,35 +54,35 @@ const LearningPlans = () => {
   }, [isLoggedIn, userId, navigate]);
 
   return (
-    <div className="learning-plans-page">
+    <div className="learningplan-learning-plans-page">
       <Header />
-      <div className="semi-header">
-        <div className="search-container">
+      <div className="learningplan-semi-header">
+        <div className="learningplan-search-container">
           <h2>Your Learning Plans</h2>
         </div>
       </div>
-      <div className="courses-section">
-        <div className="courses-grid">
+      <div className="learningplan-courses-section">
+        <div className="learningplan-courses-grid">
           {loading ? (
             <p>Loading learning plans...</p>
           ) : error ? (
             <p className="error">Error: {error}</p>
           ) : courses.length > 0 ? (
             courses.map((course) => (
-              <div key={course.id} className="course-card">
-                <div className="course-image"></div>
-                <div className="course-content">
+              <div key={course.id} className="learningplan-course-card">
+                
+                <div className="learningplan-course-content">
                   <h3>{course.name}</h3>
-                  <p className="course-author">By {course.username}</p>
-                  <p className="course-description">{course.description}</p>
-                  <div className="course-meta">
+                  <p className="learningplan-course-author">By {course.username}</p>
+                  <p className="learningplan-course-description">{course.description}</p>
+                  <div className="learningplan-course-meta">
                     <span>{course.chapters ? course.chapters.length : 0} Chapters</span>
                   </div>
                 </div>
-                <div className="course-actions">
+                <div className="learningplan-course-actions">
                   <button
-                    className="continue-btn"
-                    onClick={() => navigate(`/dashboard/course-chapters/${course.id}`)} // Fixed navigation path
+                    className="learningplan-continue-btn"
+                    onClick={() => navigate(`/dashboard/course-chapters/${course.id}`)}
                   >
                     Continue Course
                   </button>
@@ -90,11 +90,10 @@ const LearningPlans = () => {
               </div>
             ))
           ) : (
-            <p className="no-courses">No courses in your learning plan yet. Start a course to add it here!</p>
+            <p className="learningplan-no-courses">No courses in your learning plan yet. Start a course to add it here!</p>
           )}
         </div>
       </div>
-      
     </div>
   );
 };

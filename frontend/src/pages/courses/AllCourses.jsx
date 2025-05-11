@@ -43,7 +43,7 @@ const AllCourses = () => {
   const filteredCourses = courses.filter((course) =>
     searchBy === 'name'
       ? course.name.toLowerCase().includes(searchTerm.toLowerCase())
-      : course.username.toLowerCase().includes(searchTerm.toLowerCase()) // Use username instead of createdBy
+      : course.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const toggleSearchBy = () => {
@@ -79,7 +79,6 @@ const AllCourses = () => {
           ) : filteredCourses.length > 0 ? (
             filteredCourses.map((course) => (
               <div key={course.id} className="all-courses-card">
-                <div className="all-courses-image"></div>
                 <div className="all-courses-content">
                   <h3>{course.name}</h3>
                   <p className="all-courses-author">By {course.username}</p>

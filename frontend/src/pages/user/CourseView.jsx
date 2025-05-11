@@ -71,25 +71,25 @@ const ViewCourse = () => {
   };
 
   if (!course && !message) {
-    return <div className="view-course-page">Loading...</div>;
+    return <div className="viewcourse-view-course-page">Loading...</div>;
   }
 
   return (
-    <div className="view-course-page">
-      <div className="view-course-semi-header">
-        <div className="view-course-search-container">
-          <h2 style={{ color: 'var(--primary)' }}>{course?.name || 'Course'}</h2>
+    <div className="viewcourse-view-course-page">
+      <div className="viewcourse-view-course-semi-header">
+        <div className="viewcourse-view-course-search-container">
+          <h2>{course?.name || 'Course'}</h2>
           <button
-            className="view-course-back-btn"
+            className="viewcourse-view-course-back-btn"
             onClick={() => navigate('/dashboard/mycourses')}
           >
             Back to My Courses
           </button>
         </div>
       </div>
-      <div className="view-course-section">
+      <div className="viewcourse-view-course-section">
         {message && (
-          <p className={`view-course-feedback ${message.includes('success') ? 'success' : 'error'}`}>
+          <p className={`viewcourse-view-course-feedback ${message.includes('success') ? 'success' : 'error'}`}>
             {message}
           </p>
         )}
@@ -98,43 +98,25 @@ const ViewCourse = () => {
             <div className="chapters-list">
               {course.chapters && course.chapters.length > 0 ? (
                 course.chapters.map((chapter, index) => (
-                  <div key={index} className="chapter-item" style={{ marginBottom: '1rem' }}>
-                    <div
-                      onClick={() => toggleChapter(index)}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        padding: '0.8rem',
-                        border: '1px solid var(--dark-gray)',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        fontSize: '1.1rem',
-                        color: 'var(--dark-gray)',
-                      }}
-                    >
-                      <span style={{ marginRight: '0.5rem' }}>
-                        {expandedChapters[index] ? '▼' : '▶'}
-                      </span>
-                      {`${index + 1}. ${chapter.title || `Chapter ${index + 1}`}`}
-                    </div>
-                    {expandedChapters[index] && (
+                  <div key={index} className="viewcourse-course-card">
+                    <div className="viewcourse-chapter-item">
                       <div
-                        style={{
-                          marginTop: '0.5rem',
-                          padding: '0.8rem',
-                          border: '1px solid var(--dark-gray)',
-                          borderRadius: '4px',
-                          color: 'var(--dark-gray)',
-                          fontSize: '1rem',
-                        }}
+                        className="viewcourse-chapter-title"
+                        onClick={() => toggleChapter(index)}
                       >
-                        {chapter.description || 'No description available'}
+                        <span>{expandedChapters[index] ? '▼' : '▶'}</span>
+                        {`${index + 1}. ${chapter.title || `Chapter ${index + 1}`}`}
                       </div>
-                    )}
+                      {expandedChapters[index] && (
+                        <div className={`viewcourse-chapter-description ${expandedChapters[index] ? 'active' : ''}`}>
+                          {chapter.description || 'No description available'}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ))
               ) : (
-                <p className="view-course-no-chapters">No chapters available for this course.</p>
+                <p className="viewcourse-view-course-no-chapters">No chapters available for this course.</p>
               )}
             </div>
           </div>

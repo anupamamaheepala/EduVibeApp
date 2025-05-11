@@ -52,45 +52,28 @@ const Home = () => {
       </div>
 
       <div className="popular-courses">
-        <h2>Popular Courses</h2>
+        <h2>Popular Learning Plan Topics</h2>
         <div className="course-grid">
           <div className="course-card">
-            <div className="course-image"></div>
             <div className="course-content">
               <span className="course-category">Development</span>
-              <h3>Web Development Bootcamp</h3>
-              <div className="course-meta">
-                <span>24 Lessons</span>
-                <span>Beginner</span>
-              </div>
+              <h3>Web Development</h3>
             </div>
           </div>
           <div className="course-card">
-            <div className="course-image"></div>
             <div className="course-content">
               <span className="course-category">Design</span>
               <h3>UI/UX Design Fundamentals</h3>
-              <div className="course-meta">
-                <span>18 Lessons</span>
-                <span>Intermediate</span>
-              </div>
             </div>
           </div>
           <div className="course-card">
-            <div className="course-image"></div>
             <div className="course-content">
               <span className="course-category">Business</span>
               <h3>Digital Marketing Strategy</h3>
-              <div className="course-meta">
-                <span>20 Lessons</span>
-                <span>All Levels</span>
-              </div>
             </div>
           </div>
         </div>
-        <div className="view-all">
-          <button className="view-all-btn">View All Courses</button>
-        </div>
+        
       </div>
       <Footer />
     </div>
