@@ -129,7 +129,6 @@ function AddPost() {
         createdAt: new Date().toISOString(),
       };
   
-      // ✅ Here we use axios instead of fetch
       const response = await axios.post('http://localhost:8000/api/add-post', postData, {
         headers: {
           'Content-Type': 'application/json',
@@ -140,15 +139,14 @@ function AddPost() {
       setContent('');
       setFiles([]);
       setPreviews([]);
-      // ✅ Show sweet alert
+
 Swal.fire({
   title: 'Success!',
   text: 'Post added successfully!',
   icon: 'success',
   confirmButtonText: 'View Posts'
 }).then(() => {
-  // ✅ After user clicks OK, navigate to posts page
-  navigate('/posts'); // <-- adjust this path to your posts page
+  navigate('/posts'); 
 });
     } catch (error) {
       console.error('Post creation failed:', error);

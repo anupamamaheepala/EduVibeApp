@@ -32,7 +32,7 @@ function DeleteUserPost({ postId, onDelete }) {
         showConfirmButton: false,
       });
 
-      onDelete(postId); // Inform parent component
+      onDelete(postId); 
     } catch (error) {
       Swal.fire({
         title: 'Error!',

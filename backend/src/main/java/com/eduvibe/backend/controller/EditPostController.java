@@ -9,17 +9,17 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:3000") // Allow React frontend
+@CrossOrigin(origins = "http://localhost:3000") 
 public class EditPostController {
 
     @Autowired
     private EditPostService editPostService;
 
-    // ✅ Updated PUT method to accept JSON
+    // Updated PUT method to accept JSON
     @PutMapping("/edit-post/{id}")
     public ResponseEntity<AddPost> updatePost(
             @PathVariable String id,
-            @RequestBody EditPostRequest editPostRequest // JSON body
+            @RequestBody EditPostRequest editPostRequest 
     ) {
         AddPost post = editPostService.updatePost(id, editPostRequest);
         if (post != null) {
@@ -29,7 +29,7 @@ public class EditPostController {
         }
     }
 
-    // ✅ Existing GET method stays the same
+    //  Existing GET method stays the same
     @GetMapping("/edit-post/{id}")
     public ResponseEntity<AddPost> getPostById(@PathVariable String id) {
         AddPost post = editPostService.getPostById(id);

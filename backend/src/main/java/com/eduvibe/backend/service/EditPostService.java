@@ -3,7 +3,6 @@ import com.eduvibe.backend.repository.AddPostRepository;
 
 import com.eduvibe.backend.model.EditPostRequest;
 import com.eduvibe.backend.model.AddPost;
-//import com.eduvibe.backend.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
