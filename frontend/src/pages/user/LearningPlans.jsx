@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
 import Swal from 'sweetalert2';
-import Header from '../UserHeader';
+
 import '../../css/user/learning-plans.css';
 
 const LearningPlans = () => {
@@ -55,7 +55,7 @@ const LearningPlans = () => {
 
   return (
     <div className="learningplan-learning-plans-page">
-      <Header />
+      
       <div className="learningplan-semi-header">
         <div className="learningplan-search-container">
           <h2>Your Learning Plans</h2>
