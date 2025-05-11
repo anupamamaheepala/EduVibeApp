@@ -13,6 +13,25 @@ const Settings = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
 
+  const validatePassword = (password) => {
+    const minLength = password.length >= 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*]/.test(password);
+
+    return {
+      isValid: minLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar,
+      errors: [
+        !minLength ? 'Password must be at least 8 characters long.' : '',
+        !hasUpperCase ? 'Password must contain at least one uppercase letter.' : '',
+        !hasLowerCase ? 'Password must contain at least one lowercase letter.' : '',
+        !hasNumber ? 'Password must contain at least one number.' : '',
+        !hasSpecialChar ? 'Password must contain at least one special character (!@#$%^&*).' : '',
+      ].filter((error) => error !== ''),
+    };
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -33,22 +52,24 @@ const Settings = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Validate inputs
-    if (formData.newPassword !== formData.confirmNewPassword) {
+    // Validate new password
+    const passwordValidation = validatePassword(formData.newPassword);
+    if (!passwordValidation.isValid) {
       Swal.fire({
-        icon: 'error',
-        title: 'Passwords Do Not Match',
-        text: 'Please ensure the new password and confirmation match.',
+        icon: 'warning',
+        title: 'Invalid Password',
+        html: passwordValidation.errors.join('<br>'),
       });
       setIsLoading(false);
       return;
     }
 
-    if (formData.newPassword.length < 8) {
+    // Check if passwords match
+    if (formData.newPassword !== formData.confirmNewPassword) {
       Swal.fire({
-        icon: 'warning',
-        title: 'Invalid Password',
-        text: 'New password must be at least 8 characters long.',
+        icon: 'error',
+        title: 'Passwords Do Not Match',
+        text: 'Please ensure the new password and confirmation match.',
       });
       setIsLoading(false);
       return;
